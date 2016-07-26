@@ -1,0 +1,36 @@
+{
+  "name"        : "puppetlabs-iis",
+  "version"     : "0.1.0",
+  "author"      : "puppetlabs",
+  "license"     : "Apache-2.0",
+  "summary"     : "Module that will manage IIS for Windows Server 2008 and above. It will help maintain application sites, pools, virtual applications, and many other IIS settings",
+  "source"      : "https://github.com/puppetlabs/puppetlabs-iis.git",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-iis",
+  "issues_url"  : "https://tickets.puppet.com/browse/MODULES",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "windows",
+      "operatingsystemrelease": [
+        "2008R2",
+        "2012",
+        "2012R2"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 3.0.0 < 5.0.0"
+    }
+  ]
+}

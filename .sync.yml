@@ -1,0 +1,33 @@
+---
+.travis.yml:
+  includes:
+  - rvm: 2.0.0
+    env: PUPPET_GEM_VERSION="4.0.0"
+  - rvm: 2.1.5
+    env: PUPPET_GEM_VERSION="~> 4.0"
+Gemfile:
+  supports_windows: true
+Rakefile:
+  unmanaged: true
+spec/spec_helper.rb:
+  unmanaged: true
+appveyor.yml:
+  matrix:
+    - PUPPET_GEM_VERSION: '4.0.0'
+      RUBY_VER: 200
+    - PUPPET_GEM_VERSION: '4.0.0'
+      RUBY_VER: 200-x64
+    - PUPPET_GEM_VERSION: '~> 4.0'
+      RUBY_VER: 21
+    - PUPPET_GEM_VERSION: '~> 4.0'
+      RUBY_VER: 21-x64
+MAINTAINERS.md:
+  maintainers:
+    - "Puppet Windows Team `windows |at| puppet |dot| com`"
+NOTICE:
+  copyright_holders:
+    - name: 'OpenTable'
+      begin: 2012
+      end: 2015
+    - name: 'Puppet, Inc.'
+      begin: 2015
