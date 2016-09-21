@@ -1,0 +1,38 @@
+<% if !resource[:serviceautostartprovidername].nil? -%>
+$resource.serviceautostartprovidername = '<%= "#{resource[:serviceautostartprovidername]}" %>'
+$resource.serviceautostartprovidertype = '<%= "#{resource[:serviceautostartprovidertype]}" %>'
+
+$provider = @(New-Object -TypeName PSObject -Property @{
+  Name = $resource.serviceautostartprovidername
+  Type = $resource.serviceautostartprovidertype
+})
+
+$website = Get-Website -Name '<%= "#{resource[:name]}" %>' -ErrorAction 'Continue'
+
+if($website){
+  $current = $website.applicationDefaults.ServiceAutoStartProvider
+
+  if(($provider.name) -and ($current -ne $provider.name)){
+    $webConfig = (Get-WebConfiguration -filter '/system.applicationHost/serviceAutoStartProviders').Collection
+    $existing  = $webConfig | Where-Object { $_.Name -eq $provider.name } | Select-Object Name,Type
+    
+    if($existing){
+      if($existing.name -ne $provider.name){
+        if($existing.type -ne $provider.type){
+          throw 'The specified AutoStartProvider is the same as a Global Property.
+                  Ensure that the serviceAutoStartProvider is unique'
+        }
+      }
+    }else{
+      Add-WebConfiguration -Filter "/system.applicationHost/serviceAutoStartProviders" `
+                           -Value $provider `
+                           -ErrorAction 'Stop'
+    }
+    
+    Set-ItemProperty -Path "IIS:\Sites\<%= "#{resource[:name]}" %>" `
+                     -Name 'applicationDefaults.serviceAutoStartProvider' `
+                     -Value $provider.name `
+                     -ErrorAction Stop
+  }
+}
+<% end -%>

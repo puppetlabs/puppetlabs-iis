@@ -1,0 +1,61 @@
+<% if !resource[:logformat].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'LogFile.logFormat'
+  Value = '<%= "#{resource[:logformat]}" %>'
+}
+Try-SetItemProperty @logParams
+<% end -%>
+
+<% if !resource[:logpath].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'LogFile.directory'
+  value = '<%= "#{resource[:logpath]}" %>'
+}
+Try-SetItemProperty @logParams
+<% end -%>
+
+<% if !resource[:logflags].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'LogFile.logFormat'
+  value = 'W3C'
+}
+Try-SetItemProperty @logParams
+
+$logParams.Name  = 'LogFile.LogExtFileFlags'
+$logParams.value = '<%= "#{resource[:logflags]}" %>'
+Try-SetItemProperty @logParams
+<% end -%>
+
+<% if !resource[:logperiod].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'LogFile.period'
+  value = '<%= "#{resource[:logperiod]}" %>'
+}
+Try-SetItemProperty @logParams
+<% end -%>
+
+<% if !resource[:logtruncatesize].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'LogFile.truncateSize'
+  value = '<%= "#{resource[:logtruncatesize]}" %>'
+}
+Try-SetItemProperty @logParams
+
+$logParams.Name  = 'LogFile.period'
+$logParams.value = 'MaxSize'
+Try-SetItemProperty @logParams
+<% end -%>
+
+<% if !resource[:loglocaltimerollover].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'LogFile.localTimeRollover'
+  value = '<%= "#{resource[:loglocaltimerollover]}" %>'
+}
+Try-SetItemProperty @logParams
+<% end -%>

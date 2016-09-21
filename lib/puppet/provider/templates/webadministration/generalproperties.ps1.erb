@@ -1,0 +1,41 @@
+<% if !resource[:defaultpage].nil? -%>
+$resource.defaultpage = @('<%= "#{resource[:defaultpage].join("','")}" %>')
+$AllDefaultPages = @(
+  Get-WebConfiguration -Filter '//defaultDocument/files/*' -PSPath "IIS:\Sites\$($resource.name)" |
+    ForEach-Object { $_.value }
+)
+$resource.defaultpage | %{
+  if ($AllDefaultPages -inotcontains $_){
+    Add-WebConfiguration -Filter '//defaultDocument/files' `
+                         -PSPath "IIS:\Sites\$($resource.name)" `
+                         -Value @{value = $_}
+  }
+}
+<% end -%>
+
+<% if !resource[:enabledprotocols].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'enabledProtocols'
+  Value = '<%= "#{resource[:enabledprotocols]}" %>'
+}
+Try-SetItemProperty @logParams
+<% end -%>
+
+<% if !resource[:serviceautostart].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'applicationDefaults.serviceAutoStartEnabled'
+  Value = '<%= "#{resource[:serviceautostart]}" %>'
+}
+Try-SetItemProperty @logParams
+<% end -%>
+
+<% if !resource[:preloadenabled].nil? -%>
+$logParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'applicationDefaults.serviceAutoStartEnabled'
+  Value = '<%= "#{resource[:preloadenabled]}" %>'
+}
+Try-SetItemProperty @logParams
+<% end -%>
