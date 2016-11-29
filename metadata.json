@@ -3,7 +3,7 @@
   "version"     : "0.1.0",
   "author"      : "puppetlabs",
   "license"     : "Apache-2.0",
-  "summary"     : "Module that will manage IIS for Windows Server 2008 and above. It will help maintain application sites, pools, virtual applications, and many other IIS settings",
+  "summary"     : "Manage IIS for Windows Server 2008 and above. Maintain application sites, pools, virtual applications, and many other IIS settings.",
   "source"      : "https://github.com/puppetlabs/puppetlabs-iis.git",
   "project_page": "https://github.com/puppetlabs/puppetlabs-iis",
   "issues_url"  : "https://tickets.puppet.com/browse/MODULES",
