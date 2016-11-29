@@ -3,22 +3,15 @@ require 'puppet/type'
 require 'puppet/type/iis_site'
 
 describe Puppet::Type.type(:iis_site) do
-  let(:resource) { Puppet::Type.type(:iis_site).new(:name => "iis_site") }
-  let(:provider) { Puppet::Provider.new(resource) }
-  let(:catalog)  { Puppet::Resource::Catalog.new }
+  let(:resource) { described_class.new(:name => "iis_site") }
+  subject { resource }
 
-  before :each do
-    resource.provider = provider
-  end
+  it { is_expected.to be_a_kind_of Puppet::Type::Iis_site }
 
-  it "should be an instance of Puppet::Type::Iis_site" do
-    expect(resource).to be_a_kind_of Puppet::Type::Iis_site
-  end
+  describe "parameter :name" do
+    subject { resource.parameters[:name] }
 
-  context "parameter :name" do
-    it "should be the name var" do
-      expect(resource.parameters[:name].isnamevar?).to be true
-    end
+    it { is_expected.to be_isnamevar }
 
     it "should not allow nil" do
       expect {
@@ -32,12 +25,20 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /A non-empty name must/)
     end
 
-    it "should accept any string value" do
-      resource[:name] = 'value'
-      resource[:name] = "thisstring-location"
+    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-' ].each do |value|
+      it "should accept '#{value}'" do
+        expect { resource[:name] = value }.not_to raise_error
+      end
+    end
+
+    [ '*', '()', '[]', '!@' ].each do |value|
+      it "should reject '#{value}'" do
+        expect { resource[:name] = value }.to raise_error(Puppet::ResourceError, /name is not a valid web site name/)
+      end
     end
   end
 
+  # TODO: fix tests below
   context "parameter :physicalpath" do
     it "should not allow nil" do
       expect {
@@ -101,7 +102,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /Invalid value 'woot'. Valid values are http, https/)
     end
   end
-  
+
   context "parameter :serviceautostart" do
     it "should accept :true" do
       resource[:serviceautostart] = :true
@@ -135,7 +136,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /Invalid value "woot". Valid values are true, false./)
     end
   end
-  
+
   context "parameter :serviceautostartprovidername" do
     it "should not allow nil" do
       expect {
@@ -154,7 +155,7 @@ describe Puppet::Type.type(:iis_site) do
       resource[:serviceautostartprovidername] = "thisstring-location"
     end
   end
-  
+
   context "parameter :serviceautostartprovidertype" do
     it "should not allow nil" do
       expect {
@@ -173,8 +174,8 @@ describe Puppet::Type.type(:iis_site) do
       resource[:serviceautostartprovidertype] = "thisstring-location"
     end
   end
-  
-  context "parameter :preloadenabled" do 
+
+  context "parameter :preloadenabled" do
     it "should accept :true" do
       resource[:preloadenabled] = :true
     end
@@ -207,7 +208,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /Invalid value "woot". Valid values are true, false./)
     end
   end
-  
+
   context "parameter :defaultpage" do
     it "should not allow nil" do
       expect {
@@ -301,7 +302,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /Invalid value 'woot'. Valid values are Hourly, Daily, Weekly, Monthly, MaxSize/)
     end
   end
-  
+
   context "parameter :logtruncatesize" do
     it "should not allow nil" do
       expect {
@@ -314,7 +315,7 @@ describe Puppet::Type.type(:iis_site) do
         resource[:logtruncatesize] = ''
       }.to raise_error(Puppet::ResourceError, /Invalid value ''. Should be a number/)
     end
-    
+
     it "should not accept invalid int value" do
       expect {
         resource[:logtruncatesize] = 128576
@@ -335,7 +336,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /Invalid value 'woot'. Should be a number/)
     end
   end
-  
+
   context "parameter :loglocaltimerollover" do
     it "should accept :true" do
       resource[:loglocaltimerollover] = :true
