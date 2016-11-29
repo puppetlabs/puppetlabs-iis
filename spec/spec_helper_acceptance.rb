@@ -2,10 +2,12 @@ require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
 require 'beaker/puppet_install_helper'
 
+# automatically load any shared examples or contexts
+Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
+
 run_puppet_install_helper
 
 unless ENV['MODULE_provision'] == 'no'
-
   on default, "mkdir -p #{default['distmoduledir']}/powershell"
   result = on default, "echo #{default['distmoduledir']}/powershell"
   target = result.raw_output.chomp
@@ -17,9 +19,6 @@ end
 
 RSpec.configure do |c|
   proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-
-  # Readable test descriptions
-  c.formatter = :documentation
 
   # Configure all nodes in nodeset
   c.before :suite do
