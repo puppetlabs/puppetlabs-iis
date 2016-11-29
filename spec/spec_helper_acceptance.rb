@@ -2,9 +2,6 @@ require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
 require 'beaker/puppet_install_helper'
 
-UNSUPPORTED_PLATFORMS = ['debian', 'ubuntu', 'Solaris']
-FUTURE_PARSER = ENV['FUTURE_PARSER'] == 'true' || false
-
 run_puppet_install_helper
 
 unless ENV['MODULE_provision'] == 'no'
@@ -33,4 +30,3 @@ RSpec.configure do |c|
     apply_manifest(absent_files)
   end
 end
-
