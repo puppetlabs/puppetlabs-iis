@@ -23,6 +23,16 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     shell("/bin/touch #{default['puppetpath']}/hiera.yaml")
+    # install iis
+    on(agents, puppet("module install puppet/windowsfeature"))
+    pp=<<-EOS
+$iis_features = ['Web-WebServer','Web-Scripting-Tools']
+
+windowsfeature { $iis_features:
+  ensure => present,
+}
+    EOS
+    apply_manifest(pp)
   end
   c.after :suite do
     absent_files = 'file{["c:/services.txt","c:/process.txt","c:/try_success.txt","c:/catch_shouldntexist.txt","c:/try_shouldntexist.txt","c:/catch_success.txt"]: ensure => absent }'
