@@ -10,14 +10,14 @@ init:
 - 'mkdir C:\ProgramData\PuppetLabs\puppet\var && exit 0'
 environment:
   matrix:
-  - PUPPET_GEM_VERSION: 4.0.0
-    RUBY_VER: 200
-  - PUPPET_GEM_VERSION: 4.0.0
-    RUBY_VER: 200-x64
   - PUPPET_GEM_VERSION: ~> 4.0
     RUBY_VER: 21
   - PUPPET_GEM_VERSION: ~> 4.0
     RUBY_VER: 21-x64
+  - PUPPET_GEM_VERSION: ~> 4.0
+    RUBY_VER: 23
+  - PUPPET_GEM_VERSION: ~> 4.0
+    RUBY_VER: 23-x64
 matrix:
   fast_finish: true
 install:
