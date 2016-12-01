@@ -8,8 +8,8 @@ Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 run_puppet_install_helper
 
 unless ENV['MODULE_provision'] == 'no'
-  on default, "mkdir -p #{default['distmoduledir']}/powershell"
-  result = on default, "echo #{default['distmoduledir']}/powershell"
+  on default, "mkdir -p #{default['distmoduledir']}/iis"
+  result = on default, "echo #{default['distmoduledir']}/iis"
   target = result.raw_output.chomp
   proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   %w(lib metadata.json).each do |file|
