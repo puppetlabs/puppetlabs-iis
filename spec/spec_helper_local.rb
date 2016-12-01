@@ -20,7 +20,7 @@ if Puppet.features.microsoft_windows?
 end
 
 RSpec.configure do |config|
-  tmpdir = Dir.mktmpdir("rspecrun_powershell")
+  tmpdir = Dir.mktmpdir("rspecrun_iis")
   oldtmpdir = Dir.tmpdir()
   ENV['TMPDIR'] = tmpdir
 
