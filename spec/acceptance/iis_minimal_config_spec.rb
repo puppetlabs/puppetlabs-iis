@@ -3,8 +3,16 @@ require 'spec_helper_acceptance'
 describe 'a minimal IIS config:' do
   before(:all) do
     @manifest = <<-EOF
-      # iis_site { "minimal": }
-      notify { "something should happen here": }
+file {'c:\\inetpub\\minimal':
+  ensure => directory,
+  source => 'C:\\inetpub\\wwwroot',
+  recurse => true
+}
+iis_site { 'minimal':
+  ensure          => 'stopped',
+  physicalpath    => 'c:\\inetpub\\minimal',
+  applicationpool => 'DefaultAppPool',
+}
     EOF
     @result = apply_manifest(@manifest, acceptable_exit_codes: (0...256))
   end
