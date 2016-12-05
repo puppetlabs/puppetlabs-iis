@@ -13,7 +13,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration) do
   require Pathname.new(__FILE__).dirname + '../../../' + 'puppet_x/puppetlabs/iis/powershell_common'
   include PuppetX::IIS::PowerShellCommon
   
-  confine    :iis_version     => ['8','8.5']
+  confine    :iis_version     => ['8.0','8.5']
   confine    :operatingsystem => [:windows ]
   defaultfor :operatingsystem => :windows
 
