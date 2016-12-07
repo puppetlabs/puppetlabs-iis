@@ -169,7 +169,7 @@ Invoke-PowerShellUserCode @params
       WAIT_TIMEOUT = 0x00000102
       WAIT_FAILED = 0xFFFFFFFF
 
-      def self.wait_on(wait_object, timeout_ms = 50)
+      def self.wait_on(wait_object, timeout_ms = 1000)
         wait_result = WaitForSingleObject(wait_object, timeout_ms)
 
         case wait_result
