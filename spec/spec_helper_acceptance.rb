@@ -9,8 +9,10 @@ Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 run_puppet_install_helper
 
 unless ENV['MODULE_provision'] == 'no'
-  on default, "mkdir -p #{default['distmoduledir']}/iis"
-  result = on default, "echo #{default['distmoduledir']}/iis"
+  # hardcode distmoduledir while beaker-rspec can't remember it across re-runs of the testsuite
+  distmoduledir = '/cygdrive/c/ProgramData/PuppetLabs/code/modules'
+  on default, "mkdir -p #{distmoduledir}/iis"
+  result = on default, "echo #{distmoduledir}/iis"
   target = result.raw_output.chomp
   proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   %w(lib metadata.json).each do |file|
@@ -47,6 +49,7 @@ end
 
 def beaker_opts
   @env ||= {
+    acceptable_exit_codes: (0...256),
     debug: true,
     trace: true,
   }
