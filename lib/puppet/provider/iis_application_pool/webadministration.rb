@@ -39,28 +39,19 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     result   = run(inst_cmd)
     text     = result[:stdout]
 
-    puts text
+    site_json = JSON.parse(text)
+    site_json = [site_json] if site_json.is_a?(Hash)
+    site_json.collect do |site|
+      site_hash = {}
 
-    # site_json = JSON.parse(text)
-    # site_json = [site_json] if site_json.is_a?(Hash)
-    # site_json.collect do |site|
-    #   site_hash = {}
-    #
-    #   site_hash[:ensure]               = site['state'].downcase
-    #   site_hash[:name]                 = site['name']
-    #   site_hash[:physicalpath]         = site['physicalpath']
-    #   site_hash[:applicationpool]      = site['applicationpool']
-    #   site_hash[:serverautostart]      = to_bool(site['serverautostart'].downcase) unless site['serverautostart'].empty?
-    #   site_hash[:enabledprotocols]     = site['enabledprotocols']
-    #   site_hash[:logpath]              = site['logpath']
-    #   site_hash[:logperiod]            = site['logperiod']
-    #   site_hash[:logtruncatesize]      = site['logtruncatesize']
-    #   site_hash[:loglocaltimerollover] = to_bool(site['loglocaltimerollover'].downcase) unless site['loglocaltimerollover'].empty?
-    #   site_hash[:logformat]            = site['logformat']
-    #   site_hash[:logflags]             = site['logextfileflags']
-    #
-    #   new(site_hash)
-    # end
+      site_hash[:ensure] = site['state'].downcase
+      site_hash[:name]   = site['name']
+      site_hash[:state]   = site['state']
+      site_hash[:managedPipelineMode]   = site['managedPipelineMode']
+      site_hash[:managedRuntimeVersion]   = site['managedRuntimeVersion']
+
+      new(site_hash)
+    end
     []
   end
 end
