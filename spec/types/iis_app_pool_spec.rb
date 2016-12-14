@@ -6,6 +6,9 @@ describe 'iis_application_pool' do
   let :params do
     [
       :name,
+      :state,
+      :managedpipelinemode,
+      :managedruntimeversion,
     ]
   end
 

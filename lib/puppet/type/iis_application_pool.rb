@@ -9,4 +9,16 @@ Puppet::Type.newtype(:iis_application_pool) do
   newparam(:name, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
     desc "The name of the ApplicationPool."
   end
+  
+  newparam(:state, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "The state of the ApplicationPool."
+  end
+  
+  newparam(:managedpipelinemode, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "The managedPipelineMode of the ApplicationPool."
+  end
+  
+  newparam(:managedruntimeversion, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "The managedRuntimeVersion of the ApplicationPool."
+  end
 end
