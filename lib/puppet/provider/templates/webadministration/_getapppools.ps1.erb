@@ -4,7 +4,7 @@ Get-WebConfiguration -Filter '/system.applicationHost/applicationPools/add' | % 
   [PSCustomObject]@{
     name  = [string]$_.Name
     state = [string]$_.State
-    managedPipelineMode = [string]$_.ManagedPipelineMode
-    managedRuntimeVersion = [string]$_.ManagedRuntimeVersion
+    managedpipelinemode = [string]$_.ManagedPipelineMode
+    managedruntimeversion = [string]$_.ManagedRuntimeVersion
   }
 } | ConvertTo-Json -Depth 10
