@@ -19,6 +19,7 @@ Gemfile:
   optional:
     ':development':
       - gem: 'beaker-testmode_switcher'
+      - gem: 'rototiller'
 MAINTAINERS.md:
   maintainers:
     - "Puppet Windows Team `windows |at| puppet |dot| com`"
