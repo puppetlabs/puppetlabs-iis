@@ -2,6 +2,12 @@ require 'beaker-rspec/helpers/serverspec'
 require 'beaker-rspec/spec_helper'
 require 'beaker/puppet_install_helper'
 require 'beaker/testmode_switcher/dsl'
+require 'beaker-windows'
+
+include BeakerWindows::Path
+include BeakerWindows::Powershell
+include BeakerWindows::Registry
+include BeakerWindows::WindowsFeature
 
 # automatically load any shared examples or contexts
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
@@ -28,16 +34,10 @@ RSpec.configure do |c|
     unless ENV['BEAKER_TESTMODE'] == 'local'
       unless ENV['BEAKER_provision'] == 'no'
         shell("/bin/touch #{default['puppetpath']}/hiera.yaml")
-        # install iis
-        on(agents, puppet("module install puppet/windowsfeature"))
-        pp=<<-EOS
-    $iis_features = ['Web-WebServer','Web-Scripting-Tools']
 
-    windowsfeature { $iis_features:
-      ensure => present,
-    }
-        EOS
-        apply_manifest(pp)
+        # install iis
+        install_windows_feature_on(host, 'Web-WebServer')
+        install_windows_feature_on(host, 'Web-Scripting-Tools')
       end
     end
   end

@@ -19,6 +19,7 @@ Gemfile:
   optional:
     ':system_tests':
       - gem: 'beaker-testmode_switcher'
+      - gem: 'beaker-windows'
 MAINTAINERS.md:
   maintainers:
     - "Puppet Windows Team `windows |at| puppet |dot| com`"
