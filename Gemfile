@@ -58,6 +58,7 @@ group :development do
   gem 'pry',                                :require => false
   gem 'json_pure', '<= 2.0.1',              :require => false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
   gem 'beaker-testmode_switcher'
+  gem 'rototiller', '~> 1.0.0',             :require => false
 end
 
 group :system_tests do
@@ -70,7 +71,7 @@ group :system_tests do
   gem 'beaker-puppet_install_helper',                                            :require => false
   gem 'master_manipulator',                                                      :require => false
   gem 'beaker-hostgenerator', *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
-  gem 'beaker-abs', *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')        
+  gem 'beaker-abs', *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')
 end
 
 gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'])
