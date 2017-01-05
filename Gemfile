@@ -57,7 +57,9 @@ group :development do
   gem 'rubocop-rspec', '~> 1.6',            :require => false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0')
   gem 'pry',                                :require => false
   gem 'json_pure', '<= 2.0.1',              :require => false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
-  gem 'beaker-testmode_switcher'
+  gem 'fast_gettext', '1.1.0',              :require => false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.1.0')
+  gem 'fast_gettext',                       :require => false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1.0')
+  gem 'beaker-testmode_switcher',           :require => false
 end
 
 group :system_tests do
