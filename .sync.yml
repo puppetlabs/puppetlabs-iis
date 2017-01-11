@@ -17,7 +17,7 @@ appveyor.yml:
       RUBY_VER: 23-x64
 Gemfile:
   optional:
-    ':development':
+    ':system_tests':
       - gem: 'beaker-testmode_switcher'
 MAINTAINERS.md:
   maintainers:
