@@ -30,3 +30,7 @@ NOTICE:
       end: 2015
     - name: 'Puppet, Inc.'
       begin: 2015
+
+# already using master branch's version
+spec/spec_helper.rb:
+  unmanaged: true
