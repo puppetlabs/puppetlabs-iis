@@ -10,32 +10,44 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
   commands :powershell => PuppetX::IIS::PowerShellCommon.powershell_path
 
   mk_resource_methods
-  
+
+  def exists?
+    inst_cmd = "Get-WebConfiguration -Filter '/system.applicationHost/applicationPools/add' | ? { $_.Name -eq '#{@resource[:name]}' }"
+    result   = self.class.run(inst_cmd)
+    resp     = result[:stdout]
+    return resp.nil? ? false : true
+  end
+
   def create
+    Puppet.debug "Creating #{@resource[:name]}"
     inst_cmd = "New-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
     Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+    @resource[:ensure] = :present
   end
 
   def update
+    Puppet.debug "Updating #{@resource[:name]}"
     inst_cmd = []
-
     inst_cmd << self.class.ps_script_content('_setapppool', @resource)
-    
+
     @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state }.each do |property|
-      inst_cmd << "Invoke-AppCmd -ArgumentList 'set', 'apppool', #{@resource[:name]}, '/#{property.name.to_s}:#{property.value}';"
+      property_name = iis_properties[property.name.to_s]
+      Puppet.debug "Changing #{property_name} to #{property.value}"
+      inst_cmd << "Invoke-AppCmd -ArgumentList 'set', 'apppool', #{@resource[:name]}, '/#{property_name}:#{property.value}';"
     end
-    
+
     if !@resource[:state].nil?
-      case @resource[:state]
-      when 'Stopped'
+      Puppet.debug "Changing #{@resource[:name]} to #{@resource[:state]}"
+      case @resource[:state].downcase
+      when :stopped
         inst_cmd << "Stop-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
-      when 'Started'
+      when :started
         inst_cmd << "Start-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
       end
     end
-    
+
     inst_cmd = inst_cmd.join
     result   = self.class.run(inst_cmd)
     Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
@@ -43,10 +55,18 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
   end
 
   def destroy
+    Puppet.debug "Creating #{@resource[:name]}"
     inst_cmd = "Remove-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
     Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+    
+    @resource[:ensure]  = :absent
+  end
+
+  def initialize(value={})
+    super(value)
+    @property_flush = {}
   end
 
   def self.prefetch(resources)
@@ -69,13 +89,131 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     pool_json.collect do |pool|
       pool_hash = {}
 
-      pool_hash[:ensure]                = :present # pool['state'].downcase
-      pool_hash[:name]                  = pool['name']
-      pool_hash[:state]                 = pool['state']
-      pool_hash[:managedpipelinemode]   = pool['managedpipelinemode']
-      pool_hash[:managedruntimeversion] = pool['managedruntimeversion']
+      pool_hash[:ensure] = :present
+      pool_hash[:name]   = pool['name']
+      pool_hash[:state]  = pool['state']
+      
+      pool_hash[:auto_start]                    = pool['auto_start'].downcase
+      pool_hash[:clr_config_file]               = pool['clr_config_file']
+      pool_hash[:enable32_bit_app_on_win64]     = pool['enable32_bit_app_on_win64'].downcase
+      pool_hash[:enable_configuration_override] = pool['enable_configuration_override']
+      pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
+      pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
+      pool_hash[:managed_runtime_version]       = pool['managed_runtime_version']
+      pool_hash[:pass_anonymous_token]          = pool['pass_anonymous_token'].downcase
+      pool_hash[:start_mode]                    = pool['start_mode']
+      pool_hash[:queue_length]                  = pool['queue_length']
+
+      pool_hash[:cpu_action]                       = pool['cpu_action']
+      pool_hash[:cpu_limit]                        = pool['cpu_limit']
+      pool_hash[:cpu_reset_interval]               = pool['cpu_reset_interval']
+      pool_hash[:cpu_smp_affinitized]              = pool['cpu_smp_affinitized'].downcase
+      pool_hash[:cpu_smp_processor_affinity_mask]  = pool['cpu_smp_processor_affinity_mask']
+      pool_hash[:cpu_smp_processor_affinity_mask2] = pool['cpu_smp_processor_affinity_mask2']
+
+      pool_hash[:identity_type]              = pool['identity_type']
+      pool_hash[:idle_timeout]               = pool['idle_timeout']
+      pool_hash[:idle_timeout_action]        = pool['idle_timeout_action']
+      pool_hash[:load_user_profile]          = pool['load_user_profile'].downcase
+      pool_hash[:log_event_on_process_model] = pool['log_event_on_process_model']
+      pool_hash[:logon_type]                 = pool['logon_type']
+      pool_hash[:manual_group_membership]    = pool['manual_group_membership'].downcase
+      pool_hash[:max_processes]              = pool['max_processes']
+      pool_hash[:pinging_enabled]            = pool['pinging_enabled'].downcase
+      pool_hash[:ping_interval]              = pool['ping_interval']
+      pool_hash[:ping_response_time]         = pool['ping_response_time']
+      pool_hash[:set_profile_environment]    = pool['set_profile_environment'].downcase
+      pool_hash[:shutdown_time_limit]        = pool['shutdown_time_limit']
+      pool_hash[:startup_time_limit]         = pool['startup_time_limit']
+      pool_hash[:orphan_action_exe]          = pool['orphan_action_exe']
+      pool_hash[:orphan_action_params]       = pool['orphan_action_params']
+      pool_hash[:orphan_worker_process]      = pool['orphan_worker_process']
+
+      pool_hash[:load_balancer_capabilities]        = pool['load_balancer_capabilities']
+      pool_hash[:rapid_fail_protection]             = pool['rapid_fail_protection']
+      pool_hash[:rapid_fail_protection_interval]    = pool['rapid_fail_protection_interval']
+      pool_hash[:rapid_fail_protection_max_crashes] = pool['rapid_fail_protection_max_crashes']
+      pool_hash[:auto_shutdown_exe]                 = pool['auto_shutdown_exe']
+      pool_hash[:auto_shutdown_params]              = pool['auto_shutdown_params']
+
+      pool_hash[:disallow_overlapping_rotation]      = pool['disallow_overlapping_rotation']
+      pool_hash[:disallow_rotation_on_config_change] = pool['disallow_rotation_on_config_change']
+      pool_hash[:log_event_on_recycle]               = pool['log_event_on_recycle']
+      pool_hash[:restart_memory_limit]               = pool['restart_memory_limit']
+      pool_hash[:restart_private_memory_limit]       = pool['restart_private_memory_limit']
+      pool_hash[:restart_requests_limit]             = pool['restart_requests_limit']
+      pool_hash[:restart_time_limit]                 = pool['restart_time_limit']
+      pool_hash[:restart_schedule]                   = pool['restart_schedule']
 
       new(pool_hash)
     end
+  end
+  
+  private
+  def iis_properties
+    # most of these are found with appcmd list apppool /text:*
+    iis_properties = {
+      # misc
+      'auto_start'                    => 'autoStart',
+      'clr_config_file'               => 'CLRConfigFile',
+      'enable32_bit_app_on_win64'     => 'enable32BitAppOnWin64',
+      'enable_configuration_override' => 'enableConfigurationOverride',
+      'managed_pipeline_mode'         => 'managedPipelineMode',
+      'managed_runtime_loader'        => 'managedRuntimeLoader',
+      'managed_runtime_version'       => 'managedRuntimeVersion',
+      'pass_anonymous_token'          => 'passAnonymousToken',
+      'start_mode'                    => 'startMode',
+      'queue_length'                  => 'queueLength',
+
+      # cpu related
+      'cpu_action'                       => 'cpu.action',
+      'cpu_limit'                        => 'cpu.limit',
+      'cpu_reset_interval'               => 'cpu.resetInterval',
+      'cpu_smp_affinitized'              => 'cpu.smpAffinitized',
+      'cpu_smp_processor_affinity_mask'  => 'cpu.smpProcessorAffinityMask',
+      'cpu_smp_processor_affinity_mask2' => 'cpu.smpProcessorAffinityMask2',
+
+      # processmodel related
+      'identity_type'              => 'processModel.identityType',
+      'idle_timeout'               => 'processModel.idleTimeout',
+      'idle_timeout_action'        => 'processModel.idleTimeoutAction',
+      'load_user_profile'          => 'processModel.loadUserProfile',
+      'log_event_on_process_model' => 'processModel.logEventOnProcessModel',
+      'logon_type'                 => 'processModel.logonType',
+      'manual_group_membership'    => 'processModel.manualGroupMembership',
+      'max_processes'              => 'processModel.maxProcesses',
+      'pinging_enabled'            => 'processModel.pingingEnabled',
+      'ping_interval'              => 'processModel.pingInterval',
+      'ping_response_time'         => 'processModel.pingResponseTime',
+      'set_profile_environment'    => 'processModel.setProfileEnvironment',
+      'shutdown_time_limit'        => 'processModel.shutdownTimeLimit',
+      'startup_time_limit'         => 'processModel.startupTimeLimit',
+      'user_name'                  => 'processModel.userName',
+      'password'                   => 'processModel.password',
+      
+      'orphan_action_exe'          => 'failure.orphanActionExe',
+      'orphan_action_params'       => 'failure.orphanActionParams',
+      'orphan_worker_process'      => 'failure.orphanWorkerProcess',
+
+      # rapid-fail
+      'load_balancer_capabilities'        => 'failure.loadBalancerCapabilities',
+      'rapid_fail_protection'             => 'failure.rapidFailProtection',
+      'rapid_fail_protection_interval'    => 'failure.rapidFailProtectionInterval',
+      'rapid_fail_protection_max_crashes' => 'failure.rapidFailProtectionMaxCrashes',
+      'auto_shutdown_exe'                 => 'failure.autoShutdownExe',
+      'auto_shutdown_params'              => 'failure.autoShutdownParams',
+
+      # recycle
+      'disallow_overlapping_rotation'      => 'recycling.disallowOverlappingRotation',
+      'disallow_rotation_on_config_change' => 'recycling.disallowRotationOnConfigChange',
+      'log_event_on_recycle'               => 'recycling.logEventOnRecycle',
+      'restart_memory_limit'               => 'recycling.periodicRestart.memory',
+      'restart_private_memory_limit'       => 'recycling.periodicRestart.privateMemory',
+      'restart_requests_limit'             => 'recycling.periodicRestart.requests',
+      'restart_time_limit'                 => 'recycling.periodicRestart.time',
+      'restart_schedule'                   => 'recycling.periodicRestart.schedule'
+    }
+    
+    iis_properties
   end
 end

@@ -1,8 +1,58 @@
 Get-WebConfiguration -Filter '/system.applicationHost/applicationPools/add' | % {
   New-Object -TypeName PSObject -Property @{
-    name  = [string]$_.Name
-    state = [string]$_.State
-    managedpipelinemode = [string]$_.ManagedPipelineMode
-    managedruntimeversion = [string]$_.ManagedRuntimeVersion
+    name  = [string]$_.name
+    state = [string]$_.state
+    
+    auto_start                    = [string]$_.autostart
+    clr_config_file               = [string]$_.clrconfigfile
+    enable32_bit_app_on_win64     = [string]$_.enable32bitapponwin64
+    enable_configuration_override = [string]$_.enableconfigurationoverride
+    managed_pipeline_mode         = [string]$_.managedpipelinemode
+    managed_runtime_loader        = [string]$_.managedruntimeloader
+    managed_runtime_version       = [string]$_.managedruntimeversion
+    pass_anonymous_token          = [string]$_.passanonymoustoken
+    start_mode                    = [string]$_.startmode
+    queue_length                  = [string]$_.queuelength
+    
+    cpu_action                       = [string]$_.cpu.action
+    cpu_limit                        = [string]$_.cpu.limit
+    cpu_reset_interval               = [string]$_.cpu.resetinterval
+    cpu_smp_affinitized              = [string]$_.cpu.smpaffinitized
+    cpu_smp_processor_affinity_mask  = [string]$_.cpu.smpprocessoraffinitymask
+    cpu_smp_processor_affinity_mask2 = [string]$_.cpu.smpprocessoraffinitymask2
+
+    identity_type              = [string]$_.processmodel.identityType
+    idle_timeout               = [string]$_.processmodel.idleTimeout
+    idle_timeout_action        = [string]$_.processmodel.idleTimeoutAction
+    load_user_profile          = [string]$_.processmodel.loadUserProfile
+    log_event_on_process_model = [string]$_.processmodel.logEventOnProcessModel
+    logon_type                 = [string]$_.processmodel.logonType
+    manual_group_membership    = [string]$_.processmodel.manualGroupMembership
+    max_processes              = [string]$_.processmodel.maxProcesses
+    pinging_enabled            = [string]$_.processmodel.pingingEnabled
+    ping_interval              = [string]$_.processmodel.pingInterval
+    ping_response_time         = [string]$_.processmodel.pingResponseTime
+    set_profile_environment    = [string]$_.processmodel.setProfileEnvironment
+    shutdown_time_limit        = [string]$_.processmodel.shutdownTimeLimit
+    startup_time_limit         = [string]$_.processmodel.startupTimeLimit
+    orphan_action_exe          = [string]$_.processmodel.orphanactionexe
+    orphan_action_params       = [string]$_.processmodel.orphanactionparams
+    orphan_worker_process      = [string]$_.processmodel.orphanworkerprocess
+    
+    load_balancer_capabilities        = [string]$_.loadbalancercapabilities
+    rapid_fail_protection             = [string]$_.rapidfailprotection
+    rapid_fail_protection_interval    = [string]$_.rapidfailprotectioninterval
+    rapid_fail_protection_max_crashes = [string]$_.rapidfailprotectionmaxcrashes
+    auto_shutdown_exe                 = [string]$_.autoshutdownexe
+    auto_shutdown_params              = [string]$_.autoshutdownparams
+    
+    disallow_overlapping_rotation      = [string]$_.disallowoverlappingrotation
+    disallow_rotation_on_config_change = [string]$_.disallowrotationonconfigchange
+    log_event_on_recycle               = [string]$_.logeventonrecycle
+    restart_memory_limit               = [string]$_.restartmemorylimit
+    restart_private_memory_limit       = [string]$_.restartprivatememorylimit
+    restart_requests_limit             = [string]$_.restartrequestslimit
+    restart_time_limit                 = [string]$_.restarttimelimit
+    restart_schedule                   = [string]$_.restartschedule
   }
 } | ConvertTo-Json -Depth 10
