@@ -29,11 +29,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   end
 
   def flush
-    if @property_hash[:ensure] == :absent
-      destroy
-    elsif @original_values.empty?
-      create
-    else
+    if exists?
       update
     end
   end
@@ -50,7 +46,6 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
         er.each { |e| Puppet.debug "STDERR: #{e.chop}" } unless er.empty?
       end
     end
-
 
     Puppet.debug "STDOUT: #{result[:stdout]}" unless result[:stdout].nil?
     Puppet.debug "ERRMSG: #{result[:errormessage]}" unless result[:errormessage].nil?

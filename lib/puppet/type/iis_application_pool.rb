@@ -10,15 +10,39 @@ Puppet::Type.newtype(:iis_application_pool) do
     desc "The name of the ApplicationPool."
   end
   
-  newparam(:state, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+  newproperty(:state, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
     desc "The state of the ApplicationPool."
+    validate do |value|
+      unless value.kind_of?(String)
+        fail("Invalid value '#{value}'. Should be a string")
+      end
+      unless ['Started','started','Stopped','stopped'].include?(value)
+        fail("Invalid value '#{value}'. Valid values are Started or Stopped")
+      end
+    end
   end
   
-  newparam(:managedpipelinemode, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
-    desc "The managedPipelineMode of the ApplicationPool."
+  newproperty(:managedpipelinemode, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "The managedPipelineMode of the ApplicationPool. First letter has to be capitalized."
+    validate do |value|
+      unless value.kind_of?(String)
+        fail("Invalid value '#{value}'. Should be a string")
+      end
+      unless ['Integrated','Classic'].include?(value)
+        fail("Invalid value '#{value}'. Valid values are Integrated or Classic")
+      end
+    end
   end
   
-  newparam(:managedruntimeversion, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+  newproperty(:managedruntimeversion, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
     desc "The managedRuntimeVersion of the ApplicationPool."
+    validate do |value|
+      unless value.kind_of?(String)
+        fail("Invalid value '#{value}'. Should be a string")
+      end
+      unless ['v4.0','v2.0'].include?(value)
+        fail("Invalid value '#{value}'. Valid values are Integrated or Classic")
+      end
+    end
   end
 end
