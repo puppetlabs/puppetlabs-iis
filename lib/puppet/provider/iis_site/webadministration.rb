@@ -1,4 +1,4 @@
-require 'puppet/provider/iis_powershell'
+require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 # When writing IIS PowerShell code for any of the methods below
 # NEVER EVER use Get-Website without specifying -Name. As the number
