@@ -13,7 +13,7 @@ Get-WebSite | %{
       [PSCustomObject]@{
         protocol             = [string]$_.protocol
         bindinginformation   = [string]$_.bindingInformation
-        sslflags             = [string]$_.sslFlags
+        sslflags             = [int]$_.sslFlags
         certificatehash      = [string]$_.certificateHash
         certificatestorename = [string]$_.certificateStoreName
       }

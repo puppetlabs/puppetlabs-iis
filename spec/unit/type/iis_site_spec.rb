@@ -58,6 +58,52 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
+  context "property :bindings" do
+    it "requires a hash or array of hashes" do
+      expect {
+        resource[:bindings] = "hi"
+      }.to raise_error(Puppet::Error, /hash/)
+      expect {
+        resource[:bindings] = ["hi"]
+      }.to raise_error(Puppet::Error, /hash/)
+    end
+    it "requires protocol" do
+      expect {
+        resource[:bindings] = { 'bindinginformation' => 'a:80:c' }
+      }.to raise_error(Puppet::Error, /protocol/)
+    end
+    it "requires bindinginformation" do
+      expect {
+        resource[:bindings] = { 'protocol' => 'http' }
+      }.to raise_error(Puppet::Error, /bindinginformation/)
+    end
+    it "requires bindinginformation to be ip:port:hostname" do
+      resource[:bindings] = {
+        'protocol' => 'http',
+        'bindinginformation' => '127.0.0.1:80:hostname',
+      }
+    end
+    it "requires number port" do
+      expect {
+        resource[:bindings] = {
+          'protocol' => 'http',
+          'bindinginformation' => '*:a:',
+        }
+      }.to raise_error(Puppet::Error, /65535/)
+    end
+    it "allows * for ip" do
+      resource[:bindings] = {
+        'protocol' => 'http',
+        'bindinginformation' => '*:80:hostname',
+      }
+    end
+    it "allows empty hostname" do
+      resource[:bindings] = {
+        'protocol' => 'http',
+        'bindinginformation' => '*:80:',
+      }
+    end
+  end
   context "parameter :applicationpool" do
     it "should not allow nil" do
       expect {

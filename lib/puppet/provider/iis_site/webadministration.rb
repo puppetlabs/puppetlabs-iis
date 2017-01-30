@@ -41,6 +41,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('generalproperties', @resource)
 
+    cmd << self.class.ps_script_content('bindingproperty', @resource)
+
     cmd << self.class.ps_script_content('logproperties', @resource)
 
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
@@ -140,6 +142,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       site_hash[:applicationpool]      = site['applicationpool']
       site_hash[:serverautostart]      = to_bool(site['serverautostart'])
       site_hash[:enabledprotocols]     = site['enabledprotocols']
+      site_hash[:bindings]             = site['bindings']
       site_hash[:logpath]              = site['logpath']
       site_hash[:logperiod]            = site['logperiod']
       site_hash[:logtruncatesize]      = site['logtruncatesize']

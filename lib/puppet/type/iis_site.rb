@@ -74,6 +74,24 @@ Puppet::Type.newtype(:iis_site) do
     end
   end
 
+  newproperty(:bindings, :array_matching => :all) do
+    desc 'The protocol, address, port, and ssl certificate bindings for a web site.'
+    validate do |value|
+      unless value.is_a?(Hash)
+        fail("All bindings must be a hash")
+      end
+      unless (['protocol','bindinginformation'] - value.keys).empty?
+        fail("All bindings must specify protocol and bindinginformation values")
+      end
+      unless ["http","https"].include?(value['protocol'])
+        fail("Invalid value '#{value}'. Valid values are http, https")
+      end
+      unless value["bindinginformation"].match(%r{^.+:\d+:.*})
+        fail("bindinginformation must be of the format '(ip|*):1-65535:hostname'")
+      end
+    end
+  end
+
   newproperty(:serviceautostart, :boolean => true) do
     desc 'Enables autostart on the specified website'
     newvalue(:true)
