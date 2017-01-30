@@ -7,7 +7,7 @@ the "spec/integration" level.
 
 ## Acceptance Folder
 
-At Puppet Labs we define an "acceptance" test as:
+At Puppet Inc. we define an "acceptance" test as:
 
 > Validating the system state and/or side effects while completing a stated piece of functionality within a tool.
 > This type of test is contained within the boundaries of a tool in order to test a defined functional area within
@@ -16,11 +16,17 @@ At Puppet Labs we define an "acceptance" test as:
 What this means for this project is that we will install and configure some infrastructure needed for a "puppetlabs-iis"
 environment. (Puppet agent only.)
 
+### Nodesets Folder
+
+The "spec/acceptance/nodesets" folder contains Beaker host configuration files for the various test platforms used by the 
+"acceptance" test suite. Note: these configs are by default dynamically generated using [Beaker-HostGenerator](https://github.com/puppetlabs/beaker-hostgenerator)
+The default config can be overridden by setting the PLATFORM environment variable.
+
 ## Integration Folder
 
 These tests were originally written by the QA team at Puppet Labs and is actively maintained by the QA team.
-Feel free to contribute tests to this folder as long as they are written with [Beaker](https://github.com/puppetlabs/beaker)
-and follow the guidelines below.
+Feel free to contribute tests to this folder as long as they are written with [beaker-rspec](https://github.com/puppetlabs/beaker-rspec)
+and match the style of the [examples given](https://github.com/puppetlabs/beaker-rspec#create-spec-tests-for-your-module).
 
 The "puppetlabs-iis" project already contains RSpec and acceptance tests and you might be wondering why there
 is a need to have a set of tests separate from those tests. At Puppet Labs we define an "integration" test as:
@@ -31,12 +37,6 @@ is a need to have a set of tests separate from those tests. At Puppet Labs we de
 
 What this means for this project is that we will install and configure all infrastructure needed in a real-world
 "puppetlabs-iis" environment. (Puppet master and agent.)
-
-## Nodesets Folder
-
-The "acceptance/nodesets" folder contains Beaker host configuration files for the various test platforms used by the 
-"acceptance" test suite. Note: these configs are by default dynamically generated using [Beaker-HostGenerator](https://github.com/puppetlabs/beaker-hostgenerator)
-The default config can be overridden by setting the PLATFORM environment variable.
 
 ## Running Tests
 
@@ -57,15 +57,12 @@ bundle exec rake -T
 
 Option 2 - if not using Bundler, then install the dependent gems.
 
+Puppet's default is to use Bundler, as such the rest of this document will assume use thereof.
+
 ### Unit tests:
-To run tests using Beaker R-spec and Bundler example:
+To run tests using rspec-puppet and example:
 ```
 bundle exec rake spec/classes/init.rb
-```
-
-To run tests using Beaker R-spec example:
-```
-rspec spec/classes/init_spec.rb --format documentation
 ```
 
 ### To run integration and reference tests using Rototiller:
@@ -86,5 +83,8 @@ respectively.
 To start the the tests you'll need your keyfile setup in one of two ways:
 Option 1: Make sure the keyfile is in the default location of ~/.ssh/id_rsa-acceptance
 		
-Option 2: If your keyfile is in a different directory then override the default by setting the BEAKER-KEYFILE 
+Option 2: If your keyfile is in a different directory then override the default by setting the BEAKER_keyfile 
 environment variable to where your keyfile is located.
+
+**For Vagrant Cloud
+Use the [puppetlabs-packer](https://github.com/puppetlabs/puppetlabs-packer) repository to build images.

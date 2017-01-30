@@ -5,10 +5,14 @@ require 'puppet_blacksmith/rake_tasks' if Bundler.rubygems.find_name('puppet-bla
 PuppetLint.configuration.fail_on_warnings = true
 PuppetLint.configuration.send('relative')
 PuppetLint.configuration.send('disable_80chars')
-PuppetLint.configuration.send('disable_class_inherits_from_params_class')
-PuppetLint.configuration.send('disable_documentation')
-PuppetLint.configuration.send('disable_single_quote_string_with_variables')
-PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp", "vendor/**/*.pp"]
+
+rototiller_gem_message = 'Ensure Rototiller gem is installed before using this task.'
+
+desc "#{rototiller_gem_message}"
+task :host_config
+
+desc "#{rototiller_gem_message}"
+task :acceptance_tests
 
 begin
   require('rototiller')
@@ -36,7 +40,7 @@ begin
 
     t.add_env do|env|
       env.name = 'BEAKER_setfile'
-      env.default = 'spec/acceptance/nodesets/' + ENV['PLATFORM'] + '.yml'
+      env.default = "spec/acceptance/nodesets/#{ENV['PLATFORM']}.yml"
     end
 
     t.add_env do |env|
