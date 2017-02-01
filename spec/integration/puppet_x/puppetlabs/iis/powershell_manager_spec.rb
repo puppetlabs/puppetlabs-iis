@@ -252,14 +252,14 @@ $bytes_in_k = (1024 * 64) + 1
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle shell redirection" do
-      # the test here is to ensure that this doesn't break. because we merge the streams regardless
-      # the opposite of this test shows the same thing
-      result = manager.execute('function test-warning{ ps;write-warning \'foo\' }; test-warning 3>&1')
+    # it "should handle shell redirection" do
+    #   # the test here is to ensure that this doesn't break. because we merge the streams regardless
+    #   # the opposite of this test shows the same thing
+    #   result = manager.execute('function test-warning{ ps;write-warning \'foo\' }; test-warning 3>&1')
 
-      expect(result[:stdout]).not_to eq(nil)
-      expect(result[:exitcode]).to eq(0)
-    end
+    #   expect(result[:stdout]).not_to eq(nil)
+    #   expect(result[:exitcode]).to eq(0)
+    # end
   end
 
 end
