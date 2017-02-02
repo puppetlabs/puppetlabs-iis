@@ -47,7 +47,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   end
 
   def exists?
-    inst_cmd = "Get-Website -Name '\"#{@resource[:name]}\"'"
+    inst_cmd = "Get-Website -Name '#{@resource[:name]}'"
     result   = self.class.run(inst_cmd)
 
     resp = result[:stdout]
@@ -98,7 +98,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def self.prefetch(resources)
     sites = instances
     resources.keys.each do |site|
-      if provider = sites.find{ |s| s.name == site }
+      if !sites.nil? && provider = sites.find { |s| s.name == site }
         resources[site].provider = provider
       end
     end
@@ -107,33 +107,36 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def self.instances
     inst_cmd = ps_script_content('_getwebsites', @resource)
     result   = run(inst_cmd)
-    text     = result[:stdout]
 
-    site_json = JSON.parse(text)
+    return [] if result.nil? || result[:stdout].nil?
+
+    site_json = JSON.parse(result[:stdout])
+    return [] if site_json.nil?
+
     site_json = [site_json] if site_json.is_a?(Hash)
-    site_json.collect do |site|
+    return site_json.collect do |site|
       site_hash = {}
 
       site_hash[:ensure]               = site['state'].downcase
       site_hash[:name]                 = site['name']
       site_hash[:physicalpath]         = site['physicalpath']
       site_hash[:applicationpool]      = site['applicationpool']
-      site_hash[:serverautostart]      = to_bool(site['serverautostart'].downcase) unless site['serverautostart'].empty?
+      site_hash[:serverautostart]      = to_bool(site['serverautostart'])
       site_hash[:enabledprotocols]     = site['enabledprotocols']
       site_hash[:logpath]              = site['logpath']
       site_hash[:logperiod]            = site['logperiod']
       site_hash[:logtruncatesize]      = site['logtruncatesize']
-      site_hash[:loglocaltimerollover] = to_bool(site['loglocaltimerollover'].downcase) unless site['loglocaltimerollover'].empty?
+      site_hash[:loglocaltimerollover] = to_bool(site['loglocaltimerollover'])
       site_hash[:logformat]            = site['logformat']
-      site_hash[:logflags]             = site['logextfileflags']
+      site_hash[:logflags]             = site['logextfileflags'].split(/,\s*/).sort
 
       new(site_hash)
     end
   end
 
   def self.to_bool(value)
-    return true   if value == true   || value =~ (/(true|t|yes|y|1)$/i)
-    return false  if value == false  || value =~ (/(false|f|no|n|0)$/i)
+    return :true   if value == true   || value =~ (/(true|t|yes|y|1)$/i)
+    return :false  if value == false  || value =~ (/(^$|false|f|no|n|0)$/i)
     raise ArgumentError.new("invalid value for Boolean: \"#{value}\"")
   end
 end
