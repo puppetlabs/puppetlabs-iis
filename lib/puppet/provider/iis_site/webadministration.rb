@@ -22,6 +22,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('_newwebsite', @resource)
 
+    cmd << self.class.ps_script_content('trysetitemproperty', @resource)
+
     cmd << self.class.ps_script_content('generalproperties', @resource)
 
     cmd << self.class.ps_script_content('logproperties', @resource)
@@ -34,6 +36,29 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:errormessage].nil?
+
+    return exists?
+  end
+
+  def update
+    cmd = []
+
+    cmd << self.class.ps_script_content('_setwebsite', @resource)
+
+    cmd << self.class.ps_script_content('trysetitemproperty', @resource)
+
+    cmd << self.class.ps_script_content('generalproperties', @resource)
+
+    cmd << self.class.ps_script_content('logproperties', @resource)
+
+    cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
+
+    inst_cmd = cmd.join
+
+    result = self.class.run(inst_cmd)
+
+    Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
     return exists?
   end
