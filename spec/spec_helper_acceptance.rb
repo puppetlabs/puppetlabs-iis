@@ -29,13 +29,13 @@ RSpec.configure do |c|
       unless ENV['BEAKER_provision'] == 'no'
         shell("/bin/touch #{default['puppetpath']}/hiera.yaml")
         # install iis
-        on(agents, puppet("module install puppet/windowsfeature"))
+        on(agents, puppet("module install puppetlabs/dism"))
         pp=<<-EOS
-    $iis_features = ['Web-WebServer','Web-Scripting-Tools']
-
-    windowsfeature { $iis_features:
-      ensure => present,
-    }
+          $iis_features = ['IIS-WebServerRole','IIS-WebServer', 'IIS-WebServerManagementTools']
+          dism { $iis_features:
+            ensure    => present,
+            norestart => true
+          }
         EOS
         apply_manifest(pp)
       end
