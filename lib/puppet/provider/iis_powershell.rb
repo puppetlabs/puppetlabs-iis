@@ -58,6 +58,52 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     PuppetX::IIS::PowerShellManager.instance("#{command(:powershell)} #{PuppetX::IIS::PowerShellCommon.powershell_args.join(' ')}")
   end
 
+  # do_not_use_cached_value is typically only used for testing. In normal usage
+  # the PowerShell version does not suddenly change during a Puppet run.
+  def self.ps_major_version(do_not_use_cached_value = false)
+    if @powershell_major_version.nil? || do_not_use_cached_value
+      version = self.powershell_version
+      @powershell_major_version = version.nil? ? nil : version.split('.').first.to_i
+    end
+    @powershell_major_version
+  end
+
+  PS_ONE_REG_PATH   = 'SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'
+  PS_THREE_REG_PATH = 'SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine'
+  PS_REG_KEY        = 'PowerShellVersion'
+
+  def self.powershell_version
+    Puppet::Util::Platform.windows? ? self.powershell_three_version || self.powershell_one_version : nil
+  end
+
+  def self.powershell_one_version
+    version = nil
+    reg_access = Win32::Registry::KEY_READ | 0x100
+
+    begin
+      Win32::Registry::HKEY_LOCAL_MACHINE.open(PS_ONE_REG_PATH, reg_access) do |reg|
+        version = reg[PS_REG_KEY]
+      end
+    rescue
+      version = nil
+    end
+    version
+  end
+
+  def self.powershell_three_version
+    version = nil
+    reg_access = Win32::Registry::KEY_READ | 0x100
+
+    begin
+      Win32::Registry::HKEY_LOCAL_MACHINE.open(PS_THREE_REG_PATH, reg_access) do |reg|
+        version = reg[PS_REG_KEY]
+      end
+    rescue
+      version = nil
+    end
+    version
+  end
+
   def self.ps_script_content(template, resource)
     @param_hash = resource
     template_path = File.expand_path('../templates', __FILE__)
