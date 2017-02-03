@@ -22,14 +22,6 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('_newwebsite', @resource)
 
-    cmd << self.class.ps_script_content('trysetitemproperty', @resource)
-
-    cmd << self.class.ps_script_content('generalproperties', @resource)
-
-    cmd << self.class.ps_script_content('logproperties', @resource)
-
-    cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
-
     inst_cmd = cmd.join
 
     result = self.class.run(inst_cmd)
