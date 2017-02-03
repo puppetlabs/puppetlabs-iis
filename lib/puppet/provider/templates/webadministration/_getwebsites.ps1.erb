@@ -3,7 +3,7 @@
 Get-WebSite | %{
   [PSCustomObject]@{
     name             = [string]$_.Name
-    path             = [string]$_.PhysicalPath
+    physicalpath     = [string]$_.PhysicalPath
     applicationpool  = [string]$_.ApplicationPool
     hostheader       = [string]$_.HostHeader
     state            = [string]$_.State

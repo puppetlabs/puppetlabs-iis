@@ -29,7 +29,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   end
 
   def flush
-    if exists?
+    if ! @property_hash.empty?
       update
     end
   end

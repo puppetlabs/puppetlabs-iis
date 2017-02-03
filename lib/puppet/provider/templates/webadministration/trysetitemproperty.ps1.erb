@@ -1,0 +1,18 @@
+function Try-SetItemProperty
+{
+  param($Path, $Name, $Value)
+
+  $existing = Get-ItemProperty -Path $Path -Name $Name -ErrorAction 'Continue'
+
+  if(($existing -eq $null) -or ($existing.Value -ne $Value)){
+
+    try {
+      Set-ItemProperty -Path $Path -Name $Name -Value $Value
+    }catch{
+      throw "Error setting $($Name) to $($Value): $($_)"
+    }
+
+  }else{
+    # NOOP
+  }
+}

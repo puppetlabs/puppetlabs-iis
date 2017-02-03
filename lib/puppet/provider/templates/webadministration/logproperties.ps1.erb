@@ -24,8 +24,8 @@ $logParams = @{
 }
 Try-SetItemProperty @logParams
 
-$logParams.Name  = 'LogFile.LogExtFileFlags'
-$logParams.value = '<%= "#{resource[:logflags]}" %>'
+$logParams.Name  = 'LogFile.logExtFileFlags'
+$logParams.value = "<%= "#{resource[:logflags].is_a?(Array) ? resource[:logflags].join(',') : resource[:logflags]}" %>"
 Try-SetItemProperty @logParams
 <% end -%>
 

@@ -206,24 +206,25 @@ Puppet::Type.newtype(:iis_site) do
     desc 'Specifies what W3C fields are logged in the IIS log file. This is only
       valid when :logformat is set to W3C. '
     validate do |value|
-      # if value.nil? or value.empty?
-      #   raise ArgumentError, "A non-empty defaultpage must be specified."
-      # end
-      unless value.kind_of?(Array) || value.kind_of?(String)
-        fail("Invalid value '#{value}'. Should be a string")
+      unless value.kind_of?(String)
+        fail("Invalid logflags value '#{value}'. Should be a string")
       end
       unless [
         'Date','Time','ClientIP','UserName','SiteName','ComputerName','ServerIP',
         'Method','UriStem','UriQuery','HttpStatus','Win32Status','BytesSent',
         'BytesRecv','TimeTaken','ServerPort','UserAgent','Cookie','Referer',
         'ProtocolVersion','Host','HttpSubStatus'
-        ].include?(value)
+      ].include?(value)
         fail("Invalid value '#{value}'. Valid values are Date, Time, ClientIP,
              UserName, SiteName, ComputerName, ServerIP,
              Method, UriStem, UriQuery, HttpStatus, Win32Status, BytesSent,
              BytesRecv, TimeTaken, ServerPort, UserAgent, Cookie, Referer,
              ProtocolVersion, Host, HttpSubStatus")
       end
+    end
+
+    def insync?(is)
+      is.sort == should.sort
     end
   end
 
