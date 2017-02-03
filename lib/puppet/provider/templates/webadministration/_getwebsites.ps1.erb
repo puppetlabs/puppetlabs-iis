@@ -1,7 +1,5 @@
-# TODO: this is JSON, PS v2 doesnt support it
-# PSCustomObject isnt present in v2
 Get-WebSite | %{
-  [PSCustomObject]@{
+  New-Object -TypeName PSObject -Property @{
     name             = [string]$_.Name
     physicalpath     = [string]$_.PhysicalPath
     applicationpool  = [string]$_.ApplicationPool
@@ -10,7 +8,7 @@ Get-WebSite | %{
     serverautostart  = [string]$_.serverautostart
     enabledprotocols = [string]$_.enabledprotocols
     bindings         = @($_.Bindings.Collection | %{
-      [PSCustomObject]@{
+      New-Object -TypeName PSObject -Property @{
         protocol             = [string]$_.protocol
         bindinginformation   = [string]$_.bindingInformation
         sslflags             = [int]$_.sslFlags

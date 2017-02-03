@@ -1,7 +1,5 @@
-# TODO: this is JSON, PS v2 doesnt support it
-# PSCustomObject isnt present in v2
 Get-WebConfiguration -Filter '/system.applicationHost/applicationPools/add' | % {
-  [PSCustomObject]@{
+  New-Object -TypeName PSObject -Property @{
     name  = [string]$_.Name
     state = [string]$_.State
     managedpipelinemode = [string]$_.ManagedPipelineMode
