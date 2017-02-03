@@ -149,12 +149,12 @@ Param(
    [Parameter(Mandatory=$true,Position=1,ValueFromPipeline=$true)]$InputObject
 ,
    [Parameter(Mandatory=$false)][Int]$Depth=1
-,
-   [Switch]$NoTypeInformation
 )
 END { 
    ## You must output ALL the input at once 
    ## ConvertTo-Xml outputs differently if you just have one, so your results would be different
+   $NoTypeInformation = $true
+
    $input | ConvertTo-Xml -Depth:$Depth -NoTypeInformation:$NoTypeInformation -As Document | Convert-CliXmlToJson
 }
 }
