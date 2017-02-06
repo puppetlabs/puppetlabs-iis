@@ -67,10 +67,11 @@ group :system_tests do
   gem 'beaker-pe',                                                               :require => false
   gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'])                
   gem 'beaker-puppet_install_helper',                                            :require => false
-  gem 'beaker-module_install_helper',                                            :require => false
+  gem 'beaker-module_install_helper', :git => 'https://github.com/wilson208/beaker-module_install_helper', :branch => 'MODULES-4312'
   gem 'master_manipulator',                                                      :require => false
   gem 'beaker-hostgenerator', *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
-  gem 'beaker-abs', *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')        
+  gem 'beaker-abs', *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')
+  gem 'rototiller', '~> 1.0.0',             :require => false      
   gem 'beaker-testmode_switcher',                                                :require => false
 end
 

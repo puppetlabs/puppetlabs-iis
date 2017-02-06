@@ -1,0 +1,17 @@
+---
+HOSTS:
+  windows2012r2-64-1:
+    pe_dir: 
+    pe_ver: 
+    pe_upgrade_dir: 
+    pe_upgrade_ver: 
+    hypervisor: vmpooler
+    platform: windows-2012r2-64
+    ruby_arch: x64
+    template: win-2012r2-x86_64
+    roles:
+    - agent
+CONFIG:
+  nfs_server: none
+  consoleport: 443
+  pooling_api: http://vmpooler.delivery.puppetlabs.net/
