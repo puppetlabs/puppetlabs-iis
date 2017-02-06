@@ -33,8 +33,8 @@ end
 
 def beaker_opts
   @env ||= {
-      acceptable_exit_codes: (0...256),
-      debug: true,
-      trace: true,
+    acceptable_exit_codes: (0...256),
+    debug: true,
+    trace: true,
   }
 end
