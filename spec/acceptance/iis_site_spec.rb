@@ -48,7 +48,30 @@ describe 'iis_site' do
               ensure               => 'started',
               applicationpool      => 'DefaultAppPool',
               enabledprotocols     => 'https',
-              logflags             => ['Date','Time', 'ClientIP', 'UserName'],
+              bindings             => [
+                {
+                  'bindinginformation'   => '*:8080:',
+                  'certificatehash'      => '',
+                  'certificatestorename' => '',
+                  'protocol'             => 'http',
+                  'sslflags'             => 0,
+                },
+                {
+                  'bindinginformation'   => '*:8084:domain.test',
+                  'certificatehash'      => '',
+                  'certificatestorename' => '',
+                  'protocol'             => 'http',
+                  'sslflags'             => 0,
+                },
+              # {
+              #   'bindinginformation'   => '10.32.126.39:443:domain.test',
+              #   'certificatehash'      => '3598FAE5ADDB8BA32A061C5579829B359409856F',
+              #   'certificatestorename' => 'MY',
+              #   'protocol'             => 'https',
+              #   'sslflags'             => 1,
+              # },
+              ],
+              logflags             => ['ClientIP', 'Date', 'Time', 'UserName'],
               logformat            => 'W3C',
               loglocaltimerollover => false,
               logpath              => 'C:\\inetpub\\logs\\NewLogFiles',
@@ -69,7 +92,24 @@ describe 'iis_site' do
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
-          puppet_resource_should_show('logflags',             ['Date', 'Time', 'ClientIP', 'UserName'])
+          #puppet_resource_should_show('bindings',             [
+          #    {
+          #      'bindinginformation'   => '*:8080:',
+          #      'certificatehash'      => '',
+          #      'certificatestorename' => '',
+          #      'protocol'             => 'http',
+          #      'sslflags'             => '0',
+          #    },
+          #    {
+          #      'bindinginformation'   => '*:8084:domain.test',
+          #      'certificatehash'      => '',
+          #      'certificatestorename' => '',
+          #      'protocol'             => 'http',
+          #      'sslflags'             => '0',
+          #    }
+          #  ]
+          #)
+          puppet_resource_should_show('logflags',             ['ClientIP', 'Date', 'Time', 'UserName'])
           puppet_resource_should_show('logformat',            'W3C')
           puppet_resource_should_show('loglocaltimerollover', 'false')
           puppet_resource_should_show('logpath',              "C:\\inetpub\\logs\\NewLogFiles")
@@ -281,6 +321,79 @@ describe 'iis_site' do
 
           include_context 'with a puppet resource run'
           puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new')
+        end
+
+        after(:all) do
+          remove_all_sites
+        end
+      end
+
+      context 'bindings' do
+        before(:all) do
+          create_path('C:\inetpub\new')
+          @site_name = "#{SecureRandom.hex(10)}"
+          setup_manifest = <<-HERE
+          iis_site { '#{@site_name}':
+            ensure           => 'started',
+            physicalpath     => 'C:\\inetpub\\new',
+            enabledprotocols => 'http',
+            applicationpool  => 'DefaultAppPool',
+            bindings             => [
+              {
+                'bindinginformation'   => '*:8080:',
+                'certificatehash'      => '',
+                'certificatestorename' => '',
+                'protocol'             => 'http',
+                'sslflags'             => 0,
+              },
+              {
+                'bindinginformation'   => '*:8084:domain.test',
+                'certificatehash'      => '',
+                'certificatestorename' => '',
+                'protocol'             => 'http',
+                'sslflags'             => 0,
+              },
+            ],
+          }
+          HERE
+          apply_manifest(setup_manifest, :catch_failures => true)
+
+          @manifest = <<-HERE
+          iis_site { '#{@site_name}':
+            ensure           => 'started',
+            physicalpath     => 'C:\\inetpub\\new',
+            enabledprotocols => 'http',
+            applicationpool  => 'DefaultAppPool',
+            bindings             => [
+              {
+                'bindinginformation'   => '*:8081:',
+                'certificatehash'      => '',
+                'certificatestorename' => '',
+                'protocol'             => 'http',
+                'sslflags'             => 0,
+              },
+            ],
+          }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        context 'when puppet resource is run' do
+          before(:all) do
+            @result = on(default, puppet('resource', 'iis_site', @site_name))
+          end
+
+          include_context 'with a puppet resource run'
+          #puppet_resource_should_show('bindings', [
+          #  {
+          #    "protocol"             => "http",
+          #    "bindinginformation"   => "*:8081:",
+          #    "sslflags"             => 0,
+          #    "certificatehash"      => "",
+          #    "certificatestorename" => "",
+          #  }
+          #])
         end
 
         after(:all) do
