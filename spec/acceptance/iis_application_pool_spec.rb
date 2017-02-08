@@ -33,10 +33,10 @@ describe 'iis_application_pool' do
         @pool_name = "#{SecureRandom.hex(10)}"
         @manifest  = <<-HERE
           iis_application_pool { '#{@pool_name}':
-            ensure                => 'present',
-            managedpipelinemode   => 'Classic',
-            managedruntimeversion => 'v4.0',
-            state                 => 'Stopped'
+            ensure                  => 'present',
+            managed_pipeline_mode   => 'Classic',
+            managed_runtime_version => 'v4.0',
+            state                   => 'Stopped'
           }
         HERE
       end
@@ -50,9 +50,37 @@ describe 'iis_application_pool' do
         
         include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'present')
-        puppet_resource_should_show('managedpipelinemode', 'Classic')
-        puppet_resource_should_show('managedruntimeversion', 'v4.0')
+        puppet_resource_should_show('managed_pipeline_mode', 'Classic')
+        puppet_resource_should_show('managed_runtime_version', 'v4.0')
         puppet_resource_should_show('state', 'Stopped')
+        puppet_resource_should_show('auto_start', :true)
+        puppet_resource_should_show('enable32_bit_app_on_win64', :false)
+        puppet_resource_should_show('enable_configuration_override', :true)
+        puppet_resource_should_show('managed_pipeline_mode','Classic')
+        puppet_resource_should_show('managed_runtime_version','v4.0')
+        puppet_resource_should_show('pass_anonymous_token', :true)
+        puppet_resource_should_show('start_mode','OnDemand')
+        puppet_resource_should_show('queue_length','1000')
+        puppet_resource_should_show('cpu_action','NoAction')
+        puppet_resource_should_show('cpu_limit','0')
+        puppet_resource_should_show('cpu_reset_interval','00:05:00')
+        puppet_resource_should_show('cpu_smp_affinitized', :false)
+        puppet_resource_should_show('cpu_smp_processor_affinity_mask','4294967295')
+        puppet_resource_should_show('cpu_smp_processor_affinity_mask2','4294967295')
+        puppet_resource_should_show('identity_type','ApplicationPoolIdentity')
+        puppet_resource_should_show('idle_timeout','00:20:00')
+        puppet_resource_should_show('idle_timeout_action','Terminate')
+        puppet_resource_should_show('load_user_profile', :false)
+        puppet_resource_should_show('log_event_on_process_model','IdleTimeout')
+        puppet_resource_should_show('logon_type','LogonBatch')
+        puppet_resource_should_show('manual_group_membership', :false)
+        puppet_resource_should_show('max_processes','1')
+        puppet_resource_should_show('pinging_enabled', :true)
+        puppet_resource_should_show('ping_interval','00:00:30')
+        puppet_resource_should_show('ping_response_time','00:01:30')
+        puppet_resource_should_show('set_profile_environment', :true)
+        puppet_resource_should_show('shutdown_time_limit','00:01:30')
+        puppet_resource_should_show('startup_time_limit','00:01:30')
       end
 
       after(:all) do
@@ -87,13 +115,13 @@ describe 'iis_application_pool' do
         end
       end
 
-      context 'managedpipelinemode parameter defined' do
+      context 'managed_pipeline_mode parameter defined' do
         before(:all) do
           @pool_name = "#{SecureRandom.hex(10)}"
           @manifest  = <<-HERE
           iis_application_pool { '#{@pool_name}':
             ensure              => 'present',
-            managedpipelinemode => 'ClassicTypo'
+            managed_pipeline_mode => 'ClassicTypo'
           }
           HERE
         end
