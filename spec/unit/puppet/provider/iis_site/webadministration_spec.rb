@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Puppet::Type.type(:iis_site).provider(:webadministration) do
   let(:resource) {
     result = Puppet::Type.type(:iis_site).new(:name => "iis_site")
