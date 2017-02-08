@@ -1,5 +1,5 @@
 Get-IISSite | %{
-  [PSCustomObject]@{
+  New-Object -TypeName PSObject -Property @{
     name             = [string]$_.Name
     path             = [string]$_.PhysicalPath
     applicationpool  = [string]$_.ApplicationPool
@@ -8,7 +8,7 @@ Get-IISSite | %{
     serverautostart  = [string]$_.serverautostart
     enabledprotocols = [string]$_.enabledprotocols
     bindings         = @($_.Bindings.Collection | %{
-      [PSCustomObject]@{
+      New-Object -TypeName PSObject -Property @{
         protocol             = [string]$_.protocol
         bindinginformation   = [string]$_.bindingInformation
         sslflags             = [string]$_.sslFlags
