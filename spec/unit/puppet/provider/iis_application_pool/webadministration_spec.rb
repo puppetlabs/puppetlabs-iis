@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-provider_class = Puppet::Type.type(:iis_app_pool).provider(:webadministration)
+provider_class = Puppet::Type.type(:iis_application_pool).provider(:webadministration)
 
 describe provider_class do
   let(:facts) {{
@@ -8,16 +8,14 @@ describe provider_class do
     operatingsystem: 'Windows'
   }}
 
-  let(:resource) do
-    Puppet::Type.type(:iis_app_pool).new(
-      name: 'Test Pool',
-    )
-  end
-
-  let(:provider) { resource.provider }
+  let(:resource) {
+    result = Puppet::Type.type(:iis_application_pool).new(:name => "iis_application_pool")
+    result.provider = subject
+    result
+  }
 
   it 'should be an instance of the correct provider' do
-    expect(provider).to be_an_instance_of Puppet::Type::Iis_app_pool::ProviderWebadministration
+    expect(resource.provider).to be_an_instance_of Puppet::Type::Iis_application_pool::ProviderWebadministration
   end
 
   [:name].each do |method|
