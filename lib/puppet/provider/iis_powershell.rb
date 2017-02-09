@@ -47,7 +47,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     end
 
     Puppet.debug("COMMAND: #{command}")
-    result = ps_manager.execute(command)
+    result = ps_manager.execute(command, nil, nil)
 
     stdout      = result[:stdout]
     stderr      = result[:stderr]
