@@ -23,9 +23,9 @@ end
 RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
-    unless ENV['BEAKER_TESTMODE'] == 'local' || ENV['BEAKER_provision'] == 'o'
-      install_module_from_forge_on(agents, 'puppet/windowsfeature', '>= 2.0.0')
-      pp = "windowsfeature { ['Web-WebServer','Web-Scripting-Tools']: ensure => present }"
+    unless ENV['BEAKER_TESTMODE'] == 'local' || ENV['BEAKER_provision'] == 'no'
+      install_module_from_forge_on(agents, 'puppetlabs/dism', '>= 1.2.0')
+      pp = "dism { ['IIS-WebServerRole','IIS-WebServer', 'IIS-WebServerManagementTools']: ensure => present }"
       apply_manifest_on(agents, pp)
     end
   end
