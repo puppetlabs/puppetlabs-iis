@@ -28,13 +28,13 @@ describe 'iis_application_pool' do
       end
     end
 
-    context 'with valid parameters defined' do
+    context 'with valid parameters defined', :if => fact('kernelmajversion') != '6.1' do
       before(:all) do
         @pool_name = "#{SecureRandom.hex(10)}"
         @manifest  = <<-HERE
           iis_application_pool { '#{@pool_name}':
             ensure                  => 'present',
-            managed_pipeline_mode   => 'Classic',
+            managed_pipeline_mode   => 'Integrated',
             managed_runtime_version => 'v4.0',
             state                   => 'Stopped'
           }
@@ -50,14 +50,12 @@ describe 'iis_application_pool' do
         
         include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'present')
-        puppet_resource_should_show('managed_pipeline_mode', 'Classic')
+        puppet_resource_should_show('managed_pipeline_mode', 'Integrated')
         puppet_resource_should_show('managed_runtime_version', 'v4.0')
         puppet_resource_should_show('state', 'Stopped')
         puppet_resource_should_show('auto_start', :true)
         puppet_resource_should_show('enable32_bit_app_on_win64', :false)
         puppet_resource_should_show('enable_configuration_override', :true)
-        puppet_resource_should_show('managed_pipeline_mode','Classic')
-        puppet_resource_should_show('managed_runtime_version','v4.0')
         puppet_resource_should_show('pass_anonymous_token', :true)
         puppet_resource_should_show('start_mode','OnDemand')
         puppet_resource_should_show('queue_length','1000')

@@ -93,36 +93,36 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       pool_hash[:name]   = pool['name']
       pool_hash[:state]  = pool['state']
       
-      pool_hash[:auto_start]                    = pool['auto_start'].downcase
+      pool_hash[:auto_start]                    = pool['auto_start'].to_s.downcase
       pool_hash[:clr_config_file]               = pool['clr_config_file']
-      pool_hash[:enable32_bit_app_on_win64]     = pool['enable32_bit_app_on_win64'].downcase
+      pool_hash[:enable32_bit_app_on_win64]     = pool['enable32_bit_app_on_win64'].to_s.downcase
       pool_hash[:enable_configuration_override] = pool['enable_configuration_override']
       pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
       pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
       pool_hash[:managed_runtime_version]       = pool['managed_runtime_version']
-      pool_hash[:pass_anonymous_token]          = pool['pass_anonymous_token'].downcase
+      pool_hash[:pass_anonymous_token]          = pool['pass_anonymous_token'].to_s.downcase
       pool_hash[:start_mode]                    = pool['start_mode']
       pool_hash[:queue_length]                  = pool['queue_length']
 
       pool_hash[:cpu_action]                       = pool['cpu_action']
       pool_hash[:cpu_limit]                        = pool['cpu_limit']
       pool_hash[:cpu_reset_interval]               = pool['cpu_reset_interval']
-      pool_hash[:cpu_smp_affinitized]              = pool['cpu_smp_affinitized'].downcase
+      pool_hash[:cpu_smp_affinitized]              = pool['cpu_smp_affinitized'].to_s.downcase
       pool_hash[:cpu_smp_processor_affinity_mask]  = pool['cpu_smp_processor_affinity_mask']
       pool_hash[:cpu_smp_processor_affinity_mask2] = pool['cpu_smp_processor_affinity_mask2']
 
       pool_hash[:identity_type]              = pool['identity_type']
       pool_hash[:idle_timeout]               = pool['idle_timeout']
       pool_hash[:idle_timeout_action]        = pool['idle_timeout_action']
-      pool_hash[:load_user_profile]          = pool['load_user_profile'].downcase
+      pool_hash[:load_user_profile]          = pool['load_user_profile'].to_s.downcase
       pool_hash[:log_event_on_process_model] = pool['log_event_on_process_model']
       pool_hash[:logon_type]                 = pool['logon_type']
-      pool_hash[:manual_group_membership]    = pool['manual_group_membership'].downcase
+      pool_hash[:manual_group_membership]    = pool['manual_group_membership'].to_s.downcase
       pool_hash[:max_processes]              = pool['max_processes']
-      pool_hash[:pinging_enabled]            = pool['pinging_enabled'].downcase
+      pool_hash[:pinging_enabled]            = pool['pinging_enabled'].to_s.downcase
       pool_hash[:ping_interval]              = pool['ping_interval']
       pool_hash[:ping_response_time]         = pool['ping_response_time']
-      pool_hash[:set_profile_environment]    = pool['set_profile_environment'].downcase
+      pool_hash[:set_profile_environment]    = pool['set_profile_environment'].to_s.downcase
       pool_hash[:shutdown_time_limit]        = pool['shutdown_time_limit']
       pool_hash[:startup_time_limit]         = pool['startup_time_limit']
       pool_hash[:orphan_action_exe]          = pool['orphan_action_exe']
