@@ -28,6 +28,7 @@ describe 'iis_application_pool' do
       end
     end
 
+    # Disabled due to APPCMD behaving erratically when run under a PowerShell Runspace in PS2 (MODULES-4464)
     context 'with valid parameters defined', :if => fact('kernelmajversion') != '6.1' do
       before(:all) do
         @pool_name = "#{SecureRandom.hex(10)}"

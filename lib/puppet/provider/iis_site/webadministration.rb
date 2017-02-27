@@ -66,6 +66,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   end
 
   def exists?
+    # WARNING In Server 2008 `Get-Website -Name` does not work and returns ALL websites.  This will need to be filtered
+    # differently (MODULES-4463)
     inst_cmd = "Get-Website -Name '#{@resource[:name]}'"
     result   = self.class.run(inst_cmd)
 

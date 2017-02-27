@@ -6,7 +6,8 @@ describe 'iis_site' do
     remove_all_sites();
   end
 
-  context 'when configuring a website' do
+  # Disabled on 2008 due to bug in Get-Website behaviour (MODULES-4463)
+  context 'when configuring a website', :if => fact('kernelmajversion') != '6.1' do
     context 'with basic required parameters' do
       before (:all) do
         create_path('C:\inetpub\basic')
