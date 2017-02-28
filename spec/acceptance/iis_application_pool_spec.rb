@@ -51,6 +51,8 @@ describe 'iis_application_pool' do
         
         include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'present')
+
+        # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
         puppet_resource_should_show('managed_pipeline_mode', 'Integrated')
         puppet_resource_should_show('managed_runtime_version', 'v4.0')
         puppet_resource_should_show('state', 'Stopped')
@@ -68,7 +70,6 @@ describe 'iis_application_pool' do
         puppet_resource_should_show('cpu_smp_processor_affinity_mask2','4294967295')
         puppet_resource_should_show('identity_type','ApplicationPoolIdentity')
         puppet_resource_should_show('idle_timeout','00:20:00')
-        puppet_resource_should_show('idle_timeout_action','Terminate')
         puppet_resource_should_show('load_user_profile', :false)
         puppet_resource_should_show('log_event_on_process_model','IdleTimeout')
         puppet_resource_should_show('logon_type','LogonBatch')
@@ -80,6 +81,11 @@ describe 'iis_application_pool' do
         puppet_resource_should_show('set_profile_environment', :true)
         puppet_resource_should_show('shutdown_time_limit','00:01:30')
         puppet_resource_should_show('startup_time_limit','00:01:30')
+
+        # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
+        unless ['6.2','6.1'].include?(fact('kernelmajversion'))
+          puppet_resource_should_show('idle_timeout_action','Terminate')
+        end
       end
 
       after(:all) do
