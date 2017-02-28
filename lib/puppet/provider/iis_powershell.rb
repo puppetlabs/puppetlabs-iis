@@ -42,6 +42,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
       command = "Import-Module WebAdministration -ErrorAction Stop\n" +
                 "cd iis:\n" +
                 ps_script_content('json_1.7', @resource) + "\n" +
+                "$ConfirmPreference = 'high'" + "\n" +
                 command
     end
 
@@ -128,6 +129,8 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     # whereas under PowerShell 3.0+ this is not the case.  Detect the PowerShell 2.0 style and render it back
     # into a PowerShell 3.0+ format.
     if result.is_a?(Hash) && result.keys[0] == 'Objects'
+      return nil if result['Objects'].nil?
+      
       # If only a single object is returned then the result is Hash with a single 'Object' key
       # if multiple objects are returned then the result is an array of Hashes
       if result['Objects'].is_a?(Hash) && result['Objects'].keys[0] == 'Object'
