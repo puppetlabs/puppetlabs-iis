@@ -1,8 +1,22 @@
+[CmdletBinding()]
+param (
+  [Parameter(Mandatory = $true)]
+  [String]
+  $InitReadyEventName,
+
+  [Parameter(Mandatory = $false)]
+  [Switch]
+  $EmitDebugOutput = $False
+)
+
+$script:EmitDebugOutput = $EmitDebugOutput
+
 $hostSource = @"
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
@@ -128,10 +142,12 @@ namespace Puppet
   {
     private PuppetPSHostRawUserInterface _rawui;
     private StringBuilder _sb;
+    private StringWriter _errWriter;
 
     public PuppetPSHostUserInterface()
     {
       _sb = new StringBuilder();
+      _errWriter = new StringWriter(new StringBuilder());
     }
 
     public override PSHostRawUserInterface RawUI
@@ -143,6 +159,11 @@ namespace Puppet
         }
         return _rawui;
       }
+    }
+
+    public void ResetConsoleStreams()
+    {
+      System.Console.SetError(_errWriter);
     }
 
     public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
@@ -190,6 +211,17 @@ namespace Puppet
       {
         string text = _sb.ToString();
         _sb = new StringBuilder();
+        return text;
+      }
+    }
+
+    public string StdErr
+    {
+      get
+      {
+        _errWriter.Flush();
+        string text = _errWriter.GetStringBuilder().ToString();
+        _errWriter.GetStringBuilder().Length = 0; // Only .NET 4+ has .Clear()
         return text;
       }
     }
@@ -242,6 +274,10 @@ namespace Puppet
       this.exitCode = 0;
       this.shouldExit = false;
     }
+    public void ResetConsoleStreams()
+    {
+      _ui.ResetConsoleStreams();
+    }
 
     public override Guid InstanceId { get { return _hostId; } }
     public override string Name { get { return "PuppetPSHost"; } }
@@ -278,6 +314,7 @@ function New-XmlResult
   param(
     [Parameter()]$exitcode,
     [Parameter()]$output,
+    [Parameter()]$stderr,
     [Parameter()]$errormessage
   )
 
@@ -287,6 +324,7 @@ function New-XmlResult
 <ReturnResult>
   <Property Name='exitcode'>$($exitcode)</Property>
   <Property Name='errormessage'>$([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes([string]$errormessage)))</Property>
+  <Property Name='stderr'>$([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes([string]$stderr)))</Property>
   <Property Name='stdout'>$([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes([string]$output)))</Property>
 </ReturnResult>
 "@
@@ -294,23 +332,10 @@ function New-XmlResult
 }
 
 Add-Type -TypeDefinition $hostSource -Language CSharp
+$global:DefaultWorkingDirectory = (Get-Location -PSProvider FileSystem).Path
 
-function Invoke-PowerShellUserCode
-{
-  [CmdletBinding()]
-  param(
-    [String]
-    $Code,
-
-    [String]
-    $EventName,
-
-    [Int]
-    $TimeoutMilliseconds
-  )
-
-  #this is a string so we can import into our dynamic PS instance
-  $ourFunctions = @'
+#this is a string so we can import into our dynamic PS instance
+$global:ourFunctions = @'
 function Get-ProcessEnvironmentVariables
 {
   $processVars = [Environment]::GetEnvironmentVariables('Process').Keys |
@@ -362,7 +387,22 @@ function Reset-ProcessPowerShellVariables
 }
 '@
 
-  $event = [System.Threading.EventWaitHandle]::OpenExisting($EventName)
+function Invoke-PowerShellUserCode
+{
+  [CmdletBinding()]
+  param(
+    [String]
+    $Code,
+
+    [String]
+    $EventName,
+
+    [Int]
+    $TimeoutMilliseconds,
+
+    [String]
+    $WorkingDirectory
+  )
 
   if ($global:runspace -eq $null){
     # CreateDefault2 requires PS3
@@ -381,6 +421,7 @@ function Reset-ProcessPowerShellVariables
   {
     $ps = $null
     $global:puppetPSHost.ResetExitStatus()
+    $global:puppetPSHost.ResetConsoleStreams()
 
     if ($PSVersionTable.PSVersion -ge [Version]'3.0') {
       $global:runspace.ResetRunspaceState()
@@ -388,9 +429,15 @@ function Reset-ProcessPowerShellVariables
 
     $ps = [System.Management.Automation.PowerShell]::Create()
     $ps.Runspace = $global:runspace
-    [Void]$ps.AddScript($ourFunctions)
+    [Void]$ps.AddScript($global:ourFunctions)
     $ps.Invoke()
 
+    if ([string]::IsNullOrEmpty($WorkingDirectory)) {
+      [Void]$ps.Runspace.SessionStateProxy.Path.SetLocation($global:DefaultWorkingDirectory)
+    } else {
+      if (-not (Test-Path -Path $WorkingDirectory)) { Throw "Working directory `"$WorkingDirectory`" does not exist" }
+      [Void]$ps.Runspace.SessionStateProxy.Path.SetLocation($WorkingDirectory)
+    }
 
     if(!$global:environmentVariables){
       $ps.Commands.Clear()
@@ -424,6 +471,10 @@ function Reset-ProcessPowerShellVariables
     # and writes it to the PSHost we create
     # this needs to be the last thing executed
     [void]$ps.AddCommand("out-default");
+
+    # if the call operator & established an exit code, exit with it
+    [Void]$ps.AddScript('if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }')
+
     if($PSVersionTable.PSVersion -le [Version]'2.0'){
       $ps.Commands.Commands[0].MergeMyResults([System.Management.Automation.Runspaces.PipelineResultTypes]::Error, [System.Management.Automation.Runspaces.PipelineResultTypes]::Output);
     }else{
@@ -435,12 +486,26 @@ function Reset-ProcessPowerShellVariables
       throw "Catastrophic failure: PowerShell module timeout ($TimeoutMilliseconds ms) exceeded while executing"
     }
 
-    $ps.EndInvoke($asyncResult)
+    try
+    {
+      $ps.EndInvoke($asyncResult)
+    } catch [System.Management.Automation.IncompleteParseException] {
+      # https://msdn.microsoft.com/en-us/library/system.management.automation.incompleteparseexception%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+      throw $_.Exception.Message
+    } catch {
+      if ($_.Exception.InnerException -ne $null)
+      {
+        throw $_.Exception.InnerException
+      } else {
+        throw $_.Exception
+      }
+    }
 
     [Puppet.PuppetPSHostUserInterface]$ui = $global:puppetPSHost.UI
     [string]$text = $ui.Output
+    [string]$stderr = $ui.StdErr
 
-    New-XmlResult -exitcode $global:puppetPSHost.Exitcode -output $text -errormessage $null
+    New-XmlResult -exitcode $global:puppetPSHost.Exitcode -output $text -stderr $stderr -errormessage $null
   }
   catch
   {
@@ -461,24 +526,57 @@ function Reset-ProcessPowerShellVariables
       # is to return 1 so that we ensure Puppet reports this run as an error.
       $ec = 1
     }
-    $output = $_.Exception.Message | Out-String
-    New-XmlResult -exitcode $ec -output $null -errormessage $output
+
+    if ($_.Exception.ErrorRecord.InvocationInfo -ne $null)
+    {
+      $output = $_.Exception.Message + "`n`r" + $_.Exception.ErrorRecord.InvocationInfo.PositionMessage
+    } else {
+      $output = $_.Exception.Message | Out-String
+    }
+
+    # make an attempt to read StdErr as it may contain info about failures
+    try { $err = $global:puppetPSHost.UI.StdErr } catch { $err = $null }
+    New-XmlResult -exitcode $ec -output $null -stderr $err -errormessage $output
   }
   finally
   {
-    [Void]$event.Set()
-    [Void]$event.Close()
-    if ($PSVersionTable.CLRVersion.Major -ge 3) {
-      [Void]$event.Dispose()
-    }
+    Signal-Event -EventName $EventName
     if ($ps -ne $null) { [Void]$ps.Dispose() }
   }
 }
 
+function Write-SystemDebugMessage
+{
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory = $true)]
+    [String]
+    $Message
+  )
 
-$event = [Threading.EventWaitHandle]::OpenExisting('<%= init_ready_event_name %>')
-[Void]$event.Set()
-[Void]$event.Close()
-if ($PSVersionTable.CLRVersion.Major -ge 3) {
-  [Void]$event.Dispose()
+  if ($script:EmitDebugOutput -or ($DebugPreference -ne 'SilentlyContinue'))
+  {
+    [System.Diagnostics.Debug]::WriteLine($Message)
+  }
 }
+
+function Signal-Event
+{
+  [CmdletBinding()]
+  param(
+    [String]
+    $EventName
+  )
+
+  $event = [System.Threading.EventWaitHandle]::OpenExisting($EventName)
+
+  [Void]$event.Set()
+  [Void]$event.Close()
+  if ($PSVersionTable.CLRVersion.Major -ge 3) {
+    [Void]$event.Dispose()
+  }
+
+  Write-SystemDebugMessage -Message "Signaled event $EventName"
+}
+
+Signal-Event -EventName $InitReadyEventName
