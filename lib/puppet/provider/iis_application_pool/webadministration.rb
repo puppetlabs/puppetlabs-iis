@@ -24,6 +24,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     result   = self.class.run(inst_cmd)
     Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+    @resource.provider = self.class.instances.find{|prov| prov.name == @resource[:name]}
     @resource[:ensure] = :present
   end
 
@@ -32,7 +33,9 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     inst_cmd = []
     inst_cmd << self.class.ps_script_content('_setapppool', @resource)
 
-    @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state }.each do |property|
+    @resource.properties.each do |property|
+      next if property.name == :ensure or property.name == :state
+      next if property.value != @property_hash[property.name]
       property_name = iis_properties[property.name.to_s]
       Puppet.debug "Changing #{property_name} to #{property.value}"
       inst_cmd << "Invoke-AppCmd -ArgumentList 'set', 'apppool', #{@resource[:name]}, '/#{property_name}:#{property.value}';"
