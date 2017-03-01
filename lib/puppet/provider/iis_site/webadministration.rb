@@ -66,17 +66,11 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   end
 
   def exists?
-    # WARNING In Server 2008 `Get-Website -Name` does not work and returns ALL websites.  This will need to be filtered
-    # differently (MODULES-4463)
-    inst_cmd = "Get-Website -Name '#{@resource[:name]}'"
+    inst_cmd = "If (Test-Path -Path 'IIS:\\sites\\#{@resource[:name]}') { exit 0 } else { exit 255 }"
+
     result   = self.class.run(inst_cmd)
 
-    resp = result[:stdout]
-    if resp.nil?
-      return false
-    else
-      return true
-    end
+    return result[:exitcode] == 0
   end
 
   def start

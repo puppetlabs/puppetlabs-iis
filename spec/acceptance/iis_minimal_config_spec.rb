@@ -1,7 +1,6 @@
 require 'spec_helper_acceptance'
 
-# Disabled on 2008 due to bug in Get-Website behaviour (MODULES-4463)
-describe 'a minimal IIS config:', :if => fact('kernelmajversion') != '6.1' do
+describe 'a minimal IIS config:' do
   before(:all) do
     @manifest = <<-EOF
 file {'c:\\inetpub\\minimal':
