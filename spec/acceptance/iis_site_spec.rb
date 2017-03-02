@@ -26,8 +26,6 @@ describe 'iis_site' do
         before(:all) do
           @result = on(default, puppet('resource', 'iis_site', @site_name))
         end
-
-        include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'started')
         puppet_resource_should_show('physicalpath', 'C:\inetpub\basic')
         puppet_resource_should_show('applicationpool', 'DefaultAppPool')
@@ -88,8 +86,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
@@ -147,8 +143,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
@@ -186,8 +180,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure', 'started')
           puppet_resource_should_show('physicalpath', 'C:\inetpub\tmp')
           puppet_resource_should_show('applicationpool', 'DefaultAppPool')
@@ -218,8 +210,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure', 'stopped')
           puppet_resource_should_show('physicalpath', 'C:\inetpub\tmp')
           puppet_resource_should_show('applicationpool', 'DefaultAppPool')
@@ -247,8 +237,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure', 'absent')
         end
 
@@ -319,8 +307,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new')
         end
 
@@ -385,8 +371,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           #puppet_resource_should_show('bindings', [
           #  {
           #    "protocol"             => "http",
@@ -433,8 +417,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('enabledprotocols', 'https')
         end
 
@@ -475,8 +457,6 @@ describe 'iis_site' do
           before(:all) do
             @result = on(default, puppet('resource', 'iis_site', @site_name))
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('logflags', ['ClientIP', 'Date', 'Method'])
         end
 
