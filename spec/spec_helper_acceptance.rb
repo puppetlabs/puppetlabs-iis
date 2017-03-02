@@ -14,9 +14,11 @@ install_ca_certs unless ENV['PUPPET_INSTALL_TYPE'] =~ /pe/i
 unless ENV['MODULE_provision'] == 'no'
   if ENV.has_key?('BEAKER_FORGE_HOST') && ENV.has_key?('BEAKER_FORGE_API')
     module_version = ENV.has_key?('MODULE_VERSION') || '>= 0.1.0'
-    install_module_from_forge_on(agents, 'puppetlabs-iis', module_version)
+    install_module_from_forge_on(hosts, 'puppetlabs-iis', module_version)
   else
-    install_module_on(agents)
+    hosts.each do |host|
+      install_module_on(host)
+    end
   end
 end
 
@@ -24,9 +26,10 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     unless ENV['BEAKER_TESTMODE'] == 'local' || ENV['BEAKER_provision'] == 'no'
-      install_module_from_forge_on(agents, 'puppetlabs/dism', '>= 1.2.0')
+      windows_hosts = hosts.select { |host| host.platform =~ /windows/i }
+      install_module_from_forge_on(windows_hosts, 'puppetlabs/dism', '>= 1.2.0')
       pp = "dism { ['IIS-WebServerRole','IIS-WebServer', 'IIS-WebServerManagementTools']: ensure => present }"
-      apply_manifest_on(agents, pp)
+      apply_manifest_on(windows_hosts, pp)
     end
   end
 end
