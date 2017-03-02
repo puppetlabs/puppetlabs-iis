@@ -15,10 +15,9 @@ describe 'iis_feature' do
 
       context 'when puppet resource is run' do
         before(:all) do
-          @result = on(default, puppet('resource', 'iis_feature', "Web-Asp-Net45"))
+          @result = resource('iis_feature', 'Web-Asp-Net45')
         end
 
-        include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'present')
       end
     end
