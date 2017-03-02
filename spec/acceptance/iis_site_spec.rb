@@ -443,7 +443,7 @@ describe 'iis_site' do
         end
       end
 
-      context 'logflags', :focus => true do
+      context 'logflags' do
         before(:all) do
           create_path('C:\inetpub\new')
           @site_name = "#{SecureRandom.hex(10)}"
