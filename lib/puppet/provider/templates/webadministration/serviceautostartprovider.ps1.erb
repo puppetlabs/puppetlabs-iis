@@ -7,7 +7,12 @@ $provider = @(New-Object -TypeName PSObject -Property @{
   Type = $resource.serviceautostartprovidertype
 })
 
-$website = Get-Website -Name '<%= "#{resource[:name]}" %>' -ErrorAction 'Continue'
+$website = $null
+try {
+  $wesbite = Get-Item -Path 'IIS:\sites\<%= "#{resource[:name]}" %>'
+} catch {
+  $website = $null
+}
 
 if($website){
   $current = $website.applicationDefaults.ServiceAutoStartProvider

@@ -6,8 +6,7 @@ describe 'iis_site' do
     remove_all_sites();
   end
 
-  # Disabled on 2008 due to bug in Get-Website behaviour (MODULES-4463)
-  context 'when configuring a website', :if => fact('kernelmajversion') != '6.1' do
+  context 'when configuring a website' do
     context 'with basic required parameters' do
       before (:all) do
         create_path('C:\inetpub\basic')
@@ -40,7 +39,8 @@ describe 'iis_site' do
     end
 
     context 'with all parameters specified' do
-      context 'using W3C log format, logflags and logtruncatesize' do
+      # Disabled due bindings not working on Server 2008R2 - MODULES-4484
+      context 'using W3C log format, logflags and logtruncatesize', :if => fact('kernelmajversion') != '6.1' do
         before (:all) do
           create_path('C:\inetpub\new')
           @site_name = "#{SecureRandom.hex(10)}"
@@ -329,7 +329,8 @@ describe 'iis_site' do
         end
       end
 
-      context 'bindings' do
+      # Disabled due bindings not working on Server 2008R2 - MODULES-4484
+      context 'bindings', :if => fact('kernelmajversion') != '6.1' do
         before(:all) do
           create_path('C:\inetpub\new')
           @site_name = "#{SecureRandom.hex(10)}"

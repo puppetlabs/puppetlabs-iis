@@ -13,10 +13,10 @@ $createParams = @{
   ErrorAction     = 'Stop'
 }
 
-# If there are no other websites, specify the Id
-# if (-not (Get-Website)){
-#   $createParams['Id'] = 1
-# }
+# If there are no other websites, specify the Id, otherwise an Index Out of Range error can be thrown
+If ((Get-ChildItem 'IIS:\sites' | Measure-Object).Count -eq 0) {
+  $createParams['Id'] = 1
+}
 
 # create website
 # dont set applicationpool if it doesnt exist

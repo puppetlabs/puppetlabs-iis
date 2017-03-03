@@ -1,9 +1,48 @@
+$iis_version = '<%= Facter.value(:iis_version) %>'
+
+# Convert the string representation of an Enum value into an Int32 safely
+Function ConvertTo-EnumInt32 {
+  param(
+    [Type]$EnumType,
+    [String]$Name,
+    [String]$Value
+  )
+
+  $EnumValue = ([Enum]::GetNames($EnumType)) | ForEach-Object {
+    if ($_.ToUpper() -eq $Value.ToUpper()) {
+      return [Int32]($EnumType::$_)
+    }
+  }
+  if ($EnumValue -eq $null) {
+    Throw "$Value is not a valid value for $Name"
+  } else {
+    Return $EnumValue
+  }
+}
+
+if ($iis_version -eq '7.5') {
+  # In IIS 7.5 the Enums are saved using the Int32 value, whereas in later versions, the text value can be used
+  # Load the WebAdministration DLL so we can convert string values into their Int32 enum equivalent
+
+  # Microsoft.Web.Administration namespace - https://msdn.microsoft.com/en-us/library/microsoft.web.administration(v=vs.90).aspx
+  # Log Format - https://msdn.microsoft.com/en-us/library/microsoft.web.administration.logformat(v=vs.90).aspx
+  # LogExtFileFlags - https://msdn.microsoft.com/en-us/library/microsoft.web.administration.logextfileflags(v=vs.90).aspx
+  # LogPeriod - https://msdn.microsoft.com/en-us/library/microsoft.web.administration.loggingrolloverperiod(v=vs.90).aspx
+
+  [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.Web.Administration") | Out-Null
+}
+
 <% if !resource[:logformat].nil? -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'LogFile.logFormat'
   Value = '<%= "#{resource[:logformat]}" %>'
 }
+
+if ($iis_version -eq '7.5') {
+  $logParams.Value = ConvertTo-EnumInt32 -EnumType ([Microsoft.Web.Administration.LogFormat]) -Value $logParams.Value -Name 'logformat'
+}
+
 Try-SetItemProperty @logParams
 <% end -%>
 
@@ -17,15 +56,30 @@ Try-SetItemProperty @logParams
 <% end -%>
 
 <% if !resource[:logflags].nil? -%>
+$W3CValue = 'W3C'
+if ($iis_version -eq '7.5') {
+  $W3CValue = ConvertTo-EnumInt32 -EnumType ([Microsoft.Web.Administration.LogFormat]) -Value 'W3C' -Name 'logformat'
+}
+
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'LogFile.logFormat'
-  value = 'W3C'
+  value = $W3CValue
 }
 Try-SetItemProperty @logParams
 
 $logParams.Name  = 'LogFile.logExtFileFlags'
 $logParams.value = "<%= "#{resource[:logflags].is_a?(Array) ? resource[:logflags].join(',') : resource[:logflags]}" %>"
+
+if ($iis_version -eq '7.5') {
+  #  For each flag, convert the strings into Int32 bitwise mask
+  $flags = 0
+  $logParams.value -Split ',' | % {
+    $flags = $flags -bor (ConvertTo-EnumInt32 -EnumType ([Microsoft.Web.Administration.LogExtFileFlags]) -Value $_ -Name 'logflags')
+  }
+  $logParams.Value = $flags
+}
+
 Try-SetItemProperty @logParams
 <% end -%>
 
@@ -35,6 +89,11 @@ $logParams = @{
   Name  = 'LogFile.period'
   value = '<%= "#{resource[:logperiod]}" %>'
 }
+
+if ($iis_version -eq '7.5') {
+  $logParams.Value = ConvertTo-EnumInt32 -EnumType ([Microsoft.Web.Administration.LoggingRolloverPeriod]) -Value $logParams.Value -Name 'logperiod'
+}
+
 Try-SetItemProperty @logParams
 <% end -%>
 
@@ -46,8 +105,12 @@ $logParams = @{
 }
 Try-SetItemProperty @logParams
 
+$MaxSizeValue = 'MaxSize'
+if ($iis_version -eq '7.5') {
+  $MaxSizeValue = ConvertTo-EnumInt32 -EnumType ([Microsoft.Web.Administration.LoggingRolloverPeriod]) -Value 'MaxSize' -Name 'logperiod'
+}
 $logParams.Name  = 'LogFile.period'
-$logParams.value = 'MaxSize'
+$logParams.value = $MaxSizeValue
 Try-SetItemProperty @logParams
 <% end -%>
 
