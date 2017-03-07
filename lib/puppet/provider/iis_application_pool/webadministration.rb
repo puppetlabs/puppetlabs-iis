@@ -12,10 +12,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
   mk_resource_methods
 
   def exists?
-    inst_cmd = "Get-WebConfiguration -Filter '/system.applicationHost/applicationPools/add' | ? { $_.Name -eq '#{@resource[:name]}' }"
-    result   = self.class.run(inst_cmd)
-    resp     = result[:stdout]
-    return resp.nil? ? false : true
+    @resource[:ensure] == :present
   end
 
   def create
