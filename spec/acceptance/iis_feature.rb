@@ -21,15 +21,11 @@ describe 'iis_feature' do
         include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'present')
       end
-
-      after(:all) do
-      end
     end
 
     context 'with invalid' do
       context 'name parameter defined' do
         before(:all) do
-          @pool_name = "#{SecureRandom.hex(10)}"
           @manifest  = <<-HERE
           iis_feature { 'Foo':
             ensure => 'present'
@@ -38,9 +34,6 @@ describe 'iis_feature' do
         end
 
         it_behaves_like 'a failing manifest'
-
-        after(:all) do
-        end
       end
 
     end
