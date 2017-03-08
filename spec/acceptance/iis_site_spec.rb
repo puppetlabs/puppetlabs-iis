@@ -24,10 +24,8 @@ describe 'iis_site' do
 
       context 'when puppet resource is run' do
         before(:all) do
-          @result = on(default, puppet('resource', 'iis_site', @site_name))
+          @result = resource('iis_site', @site_name)
         end
-
-        include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'started')
         puppet_resource_should_show('physicalpath', 'C:\inetpub\basic')
         puppet_resource_should_show('applicationpool', 'DefaultAppPool')
@@ -86,10 +84,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
@@ -145,10 +141,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
@@ -184,10 +178,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure', 'started')
           puppet_resource_should_show('physicalpath', 'C:\inetpub\tmp')
           puppet_resource_should_show('applicationpool', 'DefaultAppPool')
@@ -216,10 +208,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure', 'stopped')
           puppet_resource_should_show('physicalpath', 'C:\inetpub\tmp')
           puppet_resource_should_show('applicationpool', 'DefaultAppPool')
@@ -245,10 +235,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('ensure', 'absent')
         end
 
@@ -317,10 +305,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new')
         end
 
@@ -358,7 +344,7 @@ describe 'iis_site' do
             ],
           }
           HERE
-          apply_manifest(setup_manifest, :catch_failures => true)
+          execute_manifest(setup_manifest, :catch_failures => true)
 
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
@@ -383,10 +369,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           #puppet_resource_should_show('bindings', [
           #  {
           #    "protocol"             => "http",
@@ -415,7 +399,7 @@ describe 'iis_site' do
             applicationpool  => 'DefaultAppPool',
           }
           HERE
-          apply_manifest(setup_manifest, :catch_failures => true)
+          execute_manifest(setup_manifest, :catch_failures => true)
 
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
@@ -431,10 +415,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('enabledprotocols', 'https')
         end
 
@@ -443,7 +425,7 @@ describe 'iis_site' do
         end
       end
 
-      context 'logflags', :focus => true do
+      context 'logflags' do
         before(:all) do
           create_path('C:\inetpub\new')
           @site_name = "#{SecureRandom.hex(10)}"
@@ -456,7 +438,7 @@ describe 'iis_site' do
             logflags         => ['ClientIP', 'Date', 'HttpStatus']
           }
           HERE
-          apply_manifest(setup_manifest, :catch_failures => true)
+          execute_manifest(setup_manifest, :catch_failures => true)
 
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
@@ -473,10 +455,8 @@ describe 'iis_site' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_site', @site_name))
+            @result = resource('iis_site', @site_name)
           end
-
-          include_context 'with a puppet resource run'
           puppet_resource_should_show('logflags', ['ClientIP', 'Date', 'Method'])
         end
 

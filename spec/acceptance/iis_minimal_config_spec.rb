@@ -14,7 +14,6 @@ iis_site { 'minimal':
   applicationpool => 'DefaultAppPool',
 }
     EOF
-    @result = apply_manifest(@manifest, acceptable_exit_codes: (0...256))
   end
 
   it_behaves_like 'an idempotent resource'

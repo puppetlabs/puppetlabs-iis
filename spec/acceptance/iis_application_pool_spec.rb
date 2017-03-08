@@ -16,10 +16,9 @@ describe 'iis_application_pool' do
 
       context 'when puppet resource is run' do
         before(:all) do
-          @result = on(default, puppet('resource', 'iis_application_pool', "#{@pool_name}"))
+          @result = resource('iis_application_pool', @pool_name)
         end
 
-        include_context 'with a puppet resource run'
         puppet_resource_should_show('ensure', 'present')
       end
 
@@ -46,10 +45,9 @@ describe 'iis_application_pool' do
 
       context 'when puppet resource is run' do
         before(:all) do
-          @result = on(default, puppet('resource', 'iis_application_pool', "#{@pool_name}"))
+          @result = resource('iis_application_pool', @pool_name)
         end
-        
-        include_context 'with a puppet resource run'
+
         puppet_resource_should_show('ensure', 'present')
 
         # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
@@ -109,9 +107,9 @@ describe 'iis_application_pool' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_application_pool', "#{@pool_name}"))
+            @result = resource('iis_application_pool', @pool_name)
           end
-          include_context 'with a puppet resource run'
+
           puppet_resource_should_show('ensure', 'absent')
         end
 
@@ -135,9 +133,9 @@ describe 'iis_application_pool' do
 
         context 'when puppet resource is run' do
           before(:all) do
-            @result = on(default, puppet('resource', 'iis_application_pool', "#{@pool_name}"))
+            @result = resource('iis_application_pool', @pool_name)
           end
-          include_context 'with a puppet resource run'
+
           puppet_resource_should_show('ensure', 'absent')
         end
 
@@ -165,10 +163,9 @@ describe 'iis_application_pool' do
 
     context 'when puppet resource is run' do
       before(:all) do
-        @result = on(default, puppet('resource', 'iis_application_pool', "#{@pool_name}"))
+        @result = resource('iis_application_pool', @pool_name)
       end
 
-      include_context 'with a puppet resource run'
       puppet_resource_should_show('ensure', 'present')
       puppet_resource_should_show('state', 'Started')
     end
@@ -195,10 +192,9 @@ describe 'iis_application_pool' do
 
     context 'when puppet resource is run' do
       before(:all) do
-        @result = on(default, puppet('resource', 'iis_application_pool', "#{@pool_name}"))
+        @result = resource('iis_application_pool', @pool_name)
       end
 
-      include_context 'with a puppet resource run'
       puppet_resource_should_show('ensure', 'absent')
     end
   end
