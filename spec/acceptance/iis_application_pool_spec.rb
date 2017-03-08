@@ -27,8 +27,7 @@ describe 'iis_application_pool' do
       end
     end
 
-    # Disabled due to APPCMD behaving erratically when run under a PowerShell Runspace in PS2 (MODULES-4464)
-    context 'with valid parameters defined', :if => fact('kernelmajversion') != '6.1' do
+    context 'with valid parameters defined' do
       before(:all) do
         @pool_name = "#{SecureRandom.hex(10)}"
         @manifest  = <<-HERE
@@ -52,7 +51,11 @@ describe 'iis_application_pool' do
 
         # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
         puppet_resource_should_show('managed_pipeline_mode', 'Integrated')
-        puppet_resource_should_show('managed_runtime_version', 'v4.0')
+        if ['6.2','6.1'].include?(fact('kernelmajversion'))
+          puppet_resource_should_show('managed_runtime_version', 'v2.0') # 2.0 on 7.5
+        else
+          puppet_resource_should_show('managed_runtime_version', 'v4.0')
+        end
         puppet_resource_should_show('state', 'Stopped')
         puppet_resource_should_show('auto_start', :true)
         puppet_resource_should_show('enable32_bit_app_on_win64', :false)
@@ -69,7 +72,6 @@ describe 'iis_application_pool' do
         puppet_resource_should_show('identity_type','ApplicationPoolIdentity')
         puppet_resource_should_show('idle_timeout','00:20:00')
         puppet_resource_should_show('load_user_profile', :false)
-        puppet_resource_should_show('log_event_on_process_model','IdleTimeout')
         puppet_resource_should_show('logon_type','LogonBatch')
         puppet_resource_should_show('manual_group_membership', :false)
         puppet_resource_should_show('max_processes','1')
@@ -83,6 +85,7 @@ describe 'iis_application_pool' do
         # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
         unless ['6.2','6.1'].include?(fact('kernelmajversion'))
           puppet_resource_should_show('idle_timeout_action','Terminate')
+          puppet_resource_should_show('log_event_on_process_model','IdleTimeout')
         end
       end
 

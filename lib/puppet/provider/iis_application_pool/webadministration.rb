@@ -26,27 +26,26 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
   def update
     Puppet.debug "Updating #{@resource[:name]}"
-    inst_cmd = []
-    inst_cmd << self.class.ps_script_content('_setapppool', @resource)
+    cmd = []
 
     @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state }.each do |property|
       property_name = iis_properties[property.name.to_s]
       Puppet.debug "Changing #{property_name} to #{property.value}"
-      inst_cmd << "Invoke-AppCmd -ArgumentList 'set', 'apppool', #{@resource[:name]}, '/#{property_name}:#{property.value}';"
+      cmd << "Set-ItemProperty -Path 'IIS:\AppPools\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value};"
     end
 
     if !@resource[:state].nil?
       Puppet.debug "Changing #{@resource[:name]} to #{@resource[:state]}"
       case @resource[:state].downcase
       when :stopped
-        inst_cmd << "Stop-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
+        cmd << "Stop-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
       when :started
-        inst_cmd << "Start-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
+        cmd << "Start-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
       end
     end
 
-    inst_cmd = inst_cmd.join
-    result   = self.class.run(inst_cmd)
+    cmd = cmd.join
+    result   = self.class.run(cmd)
     Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
   end
