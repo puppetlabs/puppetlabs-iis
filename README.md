@@ -10,6 +10,7 @@
     * [Types/Providers](#types/providers)
         * [iis_application_pool](#iis_application_pool)
         * [iis_site](#iis_site)
+        * [iis_feature](#iis_feature)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
@@ -21,16 +22,14 @@ This module adds a provider to manage IIS sites and application pools.
 
 ### Beginning with puppetlabs-iis
 
-This module requires that IIS is already installed on your server. This could be done using the [puppet/windowsfeature module](https://forge.puppet.com/puppet/windowsfeature) from Vox Pupuli by ensuring the `Web-WebServer` & `Web-Scripting-Tools` Windows Features are present.
+This module can both manage and install IIS on your server. For example, a minimal IIS install can be accomplished by ensuring the `Web-WebServer` & `Web-Scripting-Tools` Windows Features are present.
 
-**Note:** This module requires Powershell 2.
-
-Here is an example using the [puppet/windowsfeature module](https://forge.puppet.com/puppet/windowsfeature) to install IIS and setup a site using the default application pool.
+Here is an example that installs IIS and creates a web site using the default application pool.
 
 ```puppet
 $iis_features = ['Web-WebServer','Web-Scripting-Tools']
 
-windowsfeature { $iis_features:
+iis_feature { $iis_features:
   ensure => present,
 } ->
 
@@ -43,12 +42,12 @@ iis_site { 'minimal':
 
 ## Usage
 
-This example will setup an application pool named `minimal_site_app_pool` in the `Started` state and an IIS Site which makes use of that application pool, also in the `Started` state with the physical path set.
+This example will create and configure an IIS `web site` in the `Started` state with the physical path set, which makes use of an IIS `application pool` named `minimal_site_app_pool` in the `Started` state.
 
 ```puppet
 iis_application_pool { 'minimal_site_app_pool':
   ensure                => 'present',
-  managedpipelinemode   => 'Classic',
+  managedpipelinemode   => 'Integrated',
   managedruntimeversion => 'v4.0',
   state                 => 'Started'
 } ->
@@ -70,6 +69,7 @@ iis_site { 'minimal':
 
 * [iis_application_pool](#iis_application_pool)
 * [iis_site](#iis_site)
+* [iis_feature](#iis_feature)
 
 Here, include a complete list of your module's classes, types, providers, facts, along with the parameters for each. Users refer to this section (thus the name "Reference") to find specific details; most users don't read it per se.
 
@@ -191,6 +191,32 @@ Use the system's local time to determine for the log file name as well as when t
 
 Specifies what W3C fields are logged in the IIS log file. This is only valid when :logformat is set to W3C.
 
+### iis_site
+
+##### `ensure`
+
+Specifies whether an IIS feature should be present or absent
+
+##### `name`
+
+The name of the IIS feature to install
+
+##### `include_all_subfeatures`
+
+Indicates whether to install all sub features of a parent IIS feature. For instance, ASP.NET as well as the IIS Web Server
+
+##### `restart`
+
+Indicates whether to allow a restart if the IIS feature installationrequests one
+
+##### `include_management_tools`
+
+Indicates whether to automatically install all managment tools for a given IIS feature
+
+##### `source`
+
+Optionally include a source path for the installation media for an IIS feature
+
 ## Limitations
 
 ### Compatibility
@@ -199,10 +225,10 @@ Specifies what W3C fields are logged in the IIS log file. This is only valid whe
 This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2` & `Windows Server 2016`. 
 
 #### IIS Compatibility
-This module requires that either `IIS 8` or `IIS 8.5` is used.
+This module only supports `IIS 7.5`, `IIS 8` or `IIS 8.5`.
 
 #### Powershell Compatibility
-This module requires that a minimum of Powershell 2 is installed.
+This module requires Powershell v2 or greater. Works best with PowerShell v3 or above.
 
 ### Known Issues
 
