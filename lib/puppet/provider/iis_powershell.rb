@@ -132,6 +132,12 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     if result.is_a?(Hash) && result.keys[0] == 'Objects'
       return nil if result['Objects'].nil?
 
+      # Due to Convert-XML in PowerShell 2.0 converting elements with empty elements (<something />) into nulls,
+      # need to be careful how things are processed e.g.
+      # - An empty array comes in as nil
+      # - A blank string comes in as nil
+      # Only the provider will be able to determine what a nil value really means
+
       # If only a single object is returned then the result is Hash with a single 'Object' key
       # if multiple objects are returned then the result is an array of Hashes
       if result['Objects'].is_a?(Hash) && result['Objects'].keys[0] == 'Object'

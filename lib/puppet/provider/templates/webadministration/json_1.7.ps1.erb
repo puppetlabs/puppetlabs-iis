@@ -153,7 +153,9 @@ Param(
 END { 
    ## You must output ALL the input at once 
    ## ConvertTo-Xml outputs differently if you just have one, so your results would be different
-   $NoTypeInformation = $true
+   $NoTypeInformation = $false
+
+   if ($InputObject -eq $null) { return $null }
 
    $input | ConvertTo-Xml -Depth:$Depth -NoTypeInformation:$NoTypeInformation -As Document | Convert-CliXmlToJson
 }
@@ -332,13 +334,19 @@ BEGIN {
   </xsl:template>
 
   <!-- properties of objects -->
+<!--
+  It should not matter how many elements are in a child array.  Always process it.
   <xsl:template match="*[count(../*[name(../*)=name(.)])=count(../*) and count(../*)&gt;1]">
+-->
+  <xsl:template match="*[count(../*[name(../*)=name(.)])=count(../*)]">
     <xsl:variable name="inArray" select="translate(local-name(),'OBJECT','object')='object' or ../@Type[starts-with(.,'System.Collections') or contains(.,'[]') or (contains(.,'[') and contains(.,']'))]"/>
     <xsl:if test="not(preceding-sibling::*)">
        <xsl:choose>
          <xsl:when test="`$inArray"><xsl:text>[</xsl:text></xsl:when>
          <xsl:otherwise>
             <xsl:text>{</xsl:text>
+<!--
+Any type information should not be output
             <xsl:if test="../@Type">
                <xsl:text>"__type":</xsl:text>      
                <xsl:call-template name="escape-string">
@@ -346,6 +354,7 @@ BEGIN {
                </xsl:call-template>
                <xsl:text>,</xsl:text>      
              </xsl:if>
+-->
          </xsl:otherwise>
        </xsl:choose>
     </xsl:if>
