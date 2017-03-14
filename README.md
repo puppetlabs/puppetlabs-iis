@@ -9,8 +9,8 @@
     * [Facts](#facts)
     * [Types/Providers](#types/providers)
         * [iis_application_pool](#iis_application_pool)
-        * [iis_site](#iis_site)
         * [iis_feature](#iis_feature)
+        * [iis_site](#iis_site)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
@@ -68,8 +68,8 @@ iis_site { 'minimal':
 ### Types/Providers
 
 * [iis_application_pool](#iis_application_pool)
-* [iis_site](#iis_site)
 * [iis_feature](#iis_feature)
+* [iis_site](#iis_site)
 
 Here, include a complete list of your module's classes, types, providers, facts, along with the parameters for each. Users refer to this section (thus the name "Reference") to find specific details; most users don't read it per se.
 
@@ -222,10 +222,10 @@ Optionally include a source path for the installation media for an IIS feature
 ### Compatibility
 
 #### OS Compatibility
-This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2` & `Windows Server 2016`. 
+This module is compatible only with `Windows Server 2012` and `Windows Server 2012R2`.
 
 #### IIS Compatibility
-This module only supports `IIS 7.5`, `IIS 8` or `IIS 8.5`.
+This module only supports `IIS 8` or `IIS 8.5`.
 
 #### Powershell Compatibility
 This module requires Powershell v2 or greater. Works best with PowerShell v3 or above.
