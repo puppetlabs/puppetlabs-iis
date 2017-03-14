@@ -28,3 +28,7 @@ NOTICE:
 # already using master branch's version
 spec/spec_helper.rb:
   unmanaged: true
+
+# includes acceptance_tests rototiller rake task added with MODULES-3373
+Rakefile:
+  unmanaged: true
