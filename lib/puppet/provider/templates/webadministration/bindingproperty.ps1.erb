@@ -11,7 +11,7 @@ Add-WebConfiguration -Filter "$($website.ItemXPath)/bindings" `
   } `
   -Force `
   -ErrorAction Stop
-    <%- if bind['protocol'] == 'https' -%>
+    <%- if bind['protocol'] == 'https' and bind['sslflags'] -%>
 Set-WebConfigurationProperty -Filter "$($website.ItemXPath)/bindings/binding[last()]" `
   -Name sslFlags `
   -Value <%= bind['sslflags'] %> `
