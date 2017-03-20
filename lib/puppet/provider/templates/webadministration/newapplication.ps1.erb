@@ -1,0 +1,19 @@
+$resource = @{
+  name            = '<%= "#{resource[:applicationname]}" %>'
+  site            = '<%= "#{resource[:sitename]}" %>'
+  physicalpath    = '<%= "#{resource[:physicalpath]}" %>'
+  applicationpool = '<%= "#{resource[:applicationpool]}" %>'
+}
+
+$createParams = @{
+  Name            = $resource.name
+  Site            = $resource.site
+  PhysicalPath    = $resource.physicalpath
+  ApplicationPool = $resource.applicationpool
+  Force           = $true
+  ErrorAction     = 'Stop'
+}
+
+# create application
+# dont set applicationpool if it doesnt exist
+New-WebApplication @createParams
