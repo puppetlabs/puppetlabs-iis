@@ -37,8 +37,7 @@ describe 'iis_site' do
     end
 
     context 'with all parameters specified' do
-      # Disabled due bindings not working on Server 2008R2 - MODULES-4484
-      context 'using W3C log format, logflags and logtruncatesize', :if => fact('kernelmajversion') != '6.1' do
+      context 'using W3C log format, logflags and logtruncatesize' do
         before (:all) do
           create_path('C:\inetpub\new')
           @site_name = "#{SecureRandom.hex(10)}"
@@ -315,8 +314,7 @@ describe 'iis_site' do
         end
       end
 
-      # Disabled due bindings not working on Server 2008R2 - MODULES-4484
-      context 'bindings', :if => fact('kernelmajversion') != '6.1' do
+      context 'bindings' do
         before(:all) do
           create_path('C:\inetpub\new')
           @site_name = "#{SecureRandom.hex(10)}"
