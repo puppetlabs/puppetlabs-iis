@@ -20,6 +20,6 @@ end
 
 def create_selfsigned_cert(dnsname)
   command = format_powershell_iis_command("(New-SelfSignedCertificate -DnsName '#{dnsname}' -CertStoreLocation cert:Localmachine\\My).Thumbprint")
-  result = on(default, command) if has_app(app_name)
+  result = on(default, command)
   result.stdout.chomp
 end

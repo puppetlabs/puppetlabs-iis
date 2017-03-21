@@ -20,7 +20,7 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
           }
           iis_application { '#{@app_name}':
             ensure       => 'present',
-            site_name    => '#{@site_name}',
+            sitename     => '#{@site_name}',
             physicalpath => 'C:\\inetpub\\basic',
           }
         HERE
@@ -34,7 +34,7 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
         end
 
         include_context 'with a puppet resource run'
-        puppet_resource_should_show('site_name', @site_name)
+        puppet_resource_should_show('sitename', @site_name)
         puppet_resource_should_show('physicalpath', 'C:\inetpub\basic')
         puppet_resource_should_show('applicationpool', 'DefaultAppPool')
       end
