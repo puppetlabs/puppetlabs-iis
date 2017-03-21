@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
+describe 'iis_application' do
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
     remove_all_sites();
@@ -91,7 +91,8 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
         create_site(@site_name, true)
         create_path('C:\inetpub\wwwroot')
         create_path('C:\inetpub\modify')
-        thumbprint = create_selfsigned_cert('modify')
+        site_hostname = 'www.puppet.local'
+        thumbprint = create_selfsigned_cert(site_hostname)
         create_app(@site_name, @app_name, 'C:\inetpub\wwwroot')
         @manifest  = <<-HERE
           iis_site { '#{@site_name}':
@@ -100,11 +101,11 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
             applicationpool => 'DefaultAppPool',
             bindings        => [
               {
-                'bindinginformation'   => '*:80:modify',
+                'bindinginformation'   => '*:80:#{site_hostname}',
                 'protocol'             => 'http',
               },
               {
-                'bindinginformation'   => '*:443:modify',
+                'bindinginformation'   => '*:443:#{site_hostname}',
                 'protocol'             => 'https',
                 'certificatestorename' => 'MY',
                 'certificatehash'      => '#{thumbprint}',
