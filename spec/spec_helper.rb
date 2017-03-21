@@ -7,6 +7,10 @@ if Puppet::Util::Package.versioncmp(Puppet.version, '4.5.0') >= 0
       Puppet.settings[:strict] = :error
     end
   end
+else
+  RSpec.configure do |c|
+    c.mock_with :rspec
+  end
 end
 
 if Puppet.features.microsoft_windows?
