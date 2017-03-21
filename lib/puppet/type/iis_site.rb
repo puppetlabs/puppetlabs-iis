@@ -89,6 +89,9 @@ Puppet::Type.newtype(:iis_site) do
       unless value["bindinginformation"].match(%r{^.+:\d+:.*})
         fail("bindinginformation must be of the format '(ip|*):1-65535:hostname'")
       end
+      if value["sslflags"] and ! value["sslflags"].is_a?(Integer)
+        fail("sslflags must be an integer")
+      end
     end
   end
 

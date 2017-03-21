@@ -1,0 +1,19 @@
+Get-WebApplication | % {
+  $name = [string]$_.Path.replace("/","")
+  $site = [string]$_.ItemXPath.split("'")[1]
+
+  [PSCustomObject]@{
+    name               = $name
+    site               = $site
+    applicationpool    = [string]$_.ApplicationPool
+    physicalpath       = [string]$_.PhysicalPath
+    sslflags           = [array](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags -split ','
+    authenticationinfo = [PSCustomObject]@{
+      anonymous                   = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/anonymousAuthentication").enabled
+      basic                       = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/basicAuthentication").enabled
+      clientCertificateMapping    = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/clientCertificateMappingAuthentication").enabled
+      iisClientCertificateMapping = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/iisClientCertificateMappingAuthentication").enabled
+      windows                     = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/windowsAuthentication").enabled
+    }
+  }
+} | ConvertTo-Json -Depth 10
