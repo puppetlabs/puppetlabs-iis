@@ -31,7 +31,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state }.each do |property|
       property_name = iis_properties[property.name.to_s]
       Puppet.debug "Changing #{property_name} to #{property.value}"
-      cmd << "Set-ItemProperty -Path 'IIS:\AppPools\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value};"
+      cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value};"
     end
 
     if !@resource[:state].nil?

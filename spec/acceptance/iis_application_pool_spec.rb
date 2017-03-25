@@ -51,11 +51,7 @@ describe 'iis_application_pool' do
 
         # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
         puppet_resource_should_show('managed_pipeline_mode', 'Integrated')
-        if ['6.2','6.1'].include?(fact('kernelmajversion'))
-          puppet_resource_should_show('managed_runtime_version', 'v2.0') # 2.0 on 7.5
-        else
-          puppet_resource_should_show('managed_runtime_version', 'v4.0')
-        end
+        puppet_resource_should_show('managed_runtime_version', 'v4.0')
         puppet_resource_should_show('state', 'Stopped')
         puppet_resource_should_show('auto_start', :true)
         puppet_resource_should_show('enable32_bit_app_on_win64', :false)
