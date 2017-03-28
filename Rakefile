@@ -48,8 +48,9 @@ begin
       env.default = "#{ENV['HOME']}/.ssh/id_rsa-acceptance"
     end
   end
-rescue LoadError
-  #Do nothing, rototiller only installed with system_tests group
+rescue LoadError => e
+  STDERR.puts "Unable to load rototiller:"
+  raise e
 end
 
 desc 'Generate pooler nodesets'
