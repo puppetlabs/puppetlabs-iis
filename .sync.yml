@@ -11,7 +11,7 @@ appveyor.yml:
       RUBY_VER: 23-x64
 Gemfile:
   optional:
-    'development':
+    ':development':
       - gem: 'rototiller'
         version: '~> 1.0'
     ':system_tests':
