@@ -28,6 +28,7 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
 
       it_behaves_like 'an idempotent resource'
 
+      # TestRail ID: C100060
       context 'when puppet resource is run' do
         before(:all) do
           @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\#{@app_name}"))
@@ -45,6 +46,7 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
       end
     end
 
+    # TestRail ID: C100061
     context 'with virtual_directory' do
       before(:all) do
         @site_name = SecureRandom.hex(10)
@@ -80,6 +82,7 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
     end
   end
 
+  # TestRail ID: C100062
   context 'when setting' do
     describe 'sslflags' do
       before(:all) do
@@ -149,6 +152,7 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
     end
   end
 
+  # TestRail ID: C100063
   context 'when removing an application' do
     before(:all) do
       @site_name = SecureRandom.hex(10)

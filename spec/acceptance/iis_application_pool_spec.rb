@@ -2,6 +2,7 @@ require 'spec_helper_acceptance'
 
 describe 'iis_application_pool' do
   context 'when configuring an application pool' do
+    # TestRail ID: C99574
     context 'with default parameters' do
       before(:all) do
         @pool_name = "#{SecureRandom.hex(10)}"
@@ -28,6 +29,7 @@ describe 'iis_application_pool' do
     end
 
     context 'with valid parameters defined' do
+    # TestRail ID: C100018
       before(:all) do
         @pool_name = "#{SecureRandom.hex(10)}"
         @manifest  = <<-HERE
@@ -95,6 +97,7 @@ describe 'iis_application_pool' do
     end
 
     context 'with invalid' do
+      # TestRail ID: C100019
       context 'state parameter defined' do
         before(:all) do
           @pool_name = "#{SecureRandom.hex(10)}"
@@ -121,6 +124,7 @@ describe 'iis_application_pool' do
         end
       end
 
+      # TestRail ID: C100020
       context 'managed_pipeline_mode parameter defined' do
         before(:all) do
           @pool_name = "#{SecureRandom.hex(10)}"
@@ -149,6 +153,7 @@ describe 'iis_application_pool' do
     end
   end
 
+  # TestRail ID: C100021
   context 'when starting a stopped application pool' do
     before(:all) do
       @pool_name = "#{SecureRandom.hex(10)}"
@@ -178,6 +183,7 @@ describe 'iis_application_pool' do
     }
   end
 
+  # TestRail ID: C99576
   context 'when removing an application pool' do
     before(:all) do
       @pool_name = "#{SecureRandom.hex(10)}"
