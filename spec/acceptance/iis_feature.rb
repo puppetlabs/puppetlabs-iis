@@ -2,6 +2,7 @@ require 'spec_helper_acceptance'
 
 describe 'iis_feature' do
   context 'when managing features' do
+    # TestRail ID: C100065
     context 'with default parameters' do
       before(:all) do
         @manifest  = <<-HERE
@@ -22,6 +23,7 @@ describe 'iis_feature' do
       end
     end
 
+    # TestRail ID: C100066
     context 'with invalid' do
       context 'name parameter defined' do
         before(:all) do
