@@ -15,7 +15,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   end
 
   def create
-    if iis_installable_features.includes?(@resource[:name])
+    if iis_installable_features.include?(@resource[:name])
       raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature"
     end
 
@@ -37,7 +37,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   end
 
   def destroy
-    if iis_installable_features.includes?(@resource[:name])
+    if iis_installable_features.include?(@resource[:name])
       raise Puppet::Error, "iis_feature can only be used to uninstall IIS features. '#{resource[:name]}' is not an IIS feature"
     end
 
