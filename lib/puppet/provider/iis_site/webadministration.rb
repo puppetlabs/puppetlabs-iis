@@ -138,9 +138,14 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       end
       site['bindings'] = [] if site['bindings'].nil?
       site['bindings'].each do |binding|
-        ['protocol','bindinginformation','certificatehash','certificatestorename'].each do |setting|
-          binding[setting] = '' if binding[setting].nil?
-        end
+        # "The sslFlags attribute is only set when the protocol is https."
+        binding.delete('sslflags') unless binding['protocol'] == 'https'
+        # "The CertificateHash property is available only when the protocol
+        # identifier defined by the Protocol property is "https". An attempt to
+        # get or set the CertificateHash property for a binding with a protocol
+        # of "http" will raise an error."
+        binding.delete('certificatehash') unless binding['protocol'] == 'https'
+        binding.delete('certificatestorename') unless binding['protocol'] == 'https'
       end
 
       site_hash[:ensure]               = site['state'].downcase

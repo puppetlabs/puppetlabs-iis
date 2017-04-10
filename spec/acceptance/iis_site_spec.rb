@@ -51,17 +51,11 @@ describe 'iis_site' do
               bindings             => [
                 {
                   'bindinginformation'   => '*:8080:',
-                  'certificatehash'      => '',
-                  'certificatestorename' => '',
                   'protocol'             => 'http',
-                  'sslflags'             => 0,
                 },
                 {
                   'bindinginformation'   => '*:8084:domain.test',
-                  'certificatehash'      => '',
-                  'certificatestorename' => '',
                   'protocol'             => 'http',
-                  'sslflags'             => 0,
                 },
               # {
               #   'bindinginformation'   => '10.32.126.39:443:domain.test',
@@ -337,17 +331,11 @@ describe 'iis_site' do
             bindings             => [
               {
                 'bindinginformation'   => '*:8080:',
-                'certificatehash'      => '',
-                'certificatestorename' => '',
                 'protocol'             => 'http',
-                'sslflags'             => 0,
               },
               {
                 'bindinginformation'   => '*:8084:domain.test',
-                'certificatehash'      => '',
-                'certificatestorename' => '',
                 'protocol'             => 'http',
-                'sslflags'             => 0,
               },
             ],
           }
@@ -363,10 +351,7 @@ describe 'iis_site' do
             bindings             => [
               {
                 'bindinginformation'   => '*:8081:',
-                'certificatehash'      => '',
-                'certificatestorename' => '',
                 'protocol'             => 'http',
-                'sslflags'             => 0,
               },
             ],
           }

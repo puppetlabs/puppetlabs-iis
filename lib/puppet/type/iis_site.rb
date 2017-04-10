@@ -75,7 +75,23 @@ Puppet::Type.newtype(:iis_site) do
   end
 
   newproperty(:bindings, :array_matching => :all) do
-    desc 'The protocol, address, port, and ssl certificate bindings for a web site.'
+    desc 'The protocol, address, port, and ssl certificate bindings for a web site.
+
+The bindinginformation value should be in the form of the IPv4/IPv6 address or wildcard *, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
+
+A protocol value of "http" indicates a binding that uses the HTTP protocol. A value of "https" indicates a binding that uses HTTP over SSL.
+
+The sslflags parameter accepts integer values from 0 to 3 inclusive.
+- A value of "0" specifies that the secure connection be made using an IP/Port
+  combination. Only one certificate can be bound to a combination of IP address
+  and the port.
+- A value of "1" specifies that the secure connection be made using the port
+  number and the host name obtained by using Server Name Indication (SNI).
+- A value of "2" specifies that the secure connection be made using the
+  centralized SSL certificate store without requiring a Server Name Indicator.
+- A value of "3" specifies that the secure connection be made using the
+  centralized SSL certificate store while requiring Server Name Indicator'
+
     validate do |value|
       unless value.is_a?(Hash)
         fail("All bindings must be a hash")
@@ -89,8 +105,16 @@ Puppet::Type.newtype(:iis_site) do
       unless value["bindinginformation"].match(%r{^.+:\d+:.*})
         fail("bindinginformation must be of the format '(ip|*):1-65535:hostname'")
       end
-      if value["sslflags"] and ! value["sslflags"].is_a?(Integer)
-        fail("sslflags must be an integer")
+      if value["protocol"] == "http" and (value["sslflags"] or value["certificatehash"] or value["certificatestorename"])
+        fail("#{value["bindinginformation"]}: sslflags, certificatehash, and certificatestorename are valid for http bindings")
+      end
+      if value["protocol"] == "https"
+        if ! [0,1,2,3].include?(value["sslflags"])
+          fail("#{value["bindinginformation"]}: sslflags must be an integer 0, 1, 2, or 3")
+        end
+        if ! value["certificatehash"] or ! value["certificatestorename"]
+          fail("#{value["bindinginformation"]}: certificatehash and certificatestorename are required for https bindings")
+        end
       end
     end
   end

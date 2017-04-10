@@ -102,9 +102,6 @@ describe 'iis_application', :if => fact('kernelmajversion') == '6.3' do
               {
                 'bindinginformation'   => '*:80:modify',
                 'protocol'             => 'http',
-                'certificatestorename' => '',
-                'certificatehash'      => '',
-                'sslflags'             => 0,
               },
               {
                 'bindinginformation'   => '*:443:modify',
