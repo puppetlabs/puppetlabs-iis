@@ -1,0 +1,24 @@
+Get-WebVirtualDirectory | % {
+  $path         = $_.Path
+  $physicalpath =  [string]$_.PhysicalPath
+
+  if($path -match "\/.*\/.*"){
+    $application = $_.Path.Split("/")[1]
+    $name        = $_.Path.Split("/")[2]
+  }else{
+    $name        = $_.Path.Trim("/")
+    $application = "/"
+  }
+
+  if($_.ItemXPath -match ".*name\=(.*) and @id=(.*)"){
+    $site = $matches[1].Replace("'","")
+  }
+
+  New-Object -TypeName PSObject -Property @{
+    name         = $name
+    physicalpath = $physicalpath
+    application  = $application
+    sitename     = $site
+  }
+
+} | ConvertTo-Json -Depth 10
