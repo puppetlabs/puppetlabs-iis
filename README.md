@@ -46,10 +46,10 @@ This example will create and configure an IIS `web site` in the `Started` state 
 
 ```puppet
 iis_application_pool { 'minimal_site_app_pool':
-  ensure                => 'present',
-  managedpipelinemode   => 'Integrated',
-  managedruntimeversion => 'v4.0',
-  state                 => 'Started'
+  ensure                  => 'present',
+  managed_pipeline_mode   => 'Integrated',
+  managed_runtime_version => 'v4.0',
+  state                   => 'Started'
 } ->
 
 iis_site { 'minimal':
@@ -89,11 +89,11 @@ Name of the application pool.
 
 The state of the ApplicationPool. Must be either `Started` or `Stopped`
 
-#### `managedpipelinemode`
+#### `managed_pipeline_mode`
 
 The managedpipelinemode of the ApplicationPool. Must be either `Integrated` or `Classic`
 
-#### `managedruntimeversion`
+#### `managed_runtime_version`
 
 The managedruntimeversion of the ApplicationPool.
 
