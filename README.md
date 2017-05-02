@@ -9,8 +9,8 @@
     * [Facts](#facts)
     * [Types/Providers](#types/providers)
         * [iis_application_pool](#iis_application_pool)
-        * [iis_site](#iis_site)
         * [iis_feature](#iis_feature)
+        * [iis_site](#iis_site)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
@@ -68,8 +68,8 @@ iis_site { 'minimal':
 ### Types/Providers
 
 * [iis_application_pool](#iis_application_pool)
-* [iis_site](#iis_site)
 * [iis_feature](#iis_feature)
+* [iis_site](#iis_site)
 
 Here, include a complete list of your module's classes, types, providers, facts, along with the parameters for each. Users refer to this section (thus the name "Reference") to find specific details; most users don't read it per se.
 
@@ -96,6 +96,34 @@ The managedpipelinemode of the ApplicationPool. Must be either `Integrated` or `
 #### `managed_runtime_version`
 
 The managedruntimeversion of the ApplicationPool.
+
+
+### iis_feature
+
+##### `ensure`
+
+Specifies whether an IIS feature should be present or absent
+
+##### `name`
+
+The name of the IIS feature to install
+
+##### `include_all_subfeatures`
+
+Indicates whether to install all sub features of a parent IIS feature. For instance, ASP.NET as well as the IIS Web Server
+
+##### `restart`
+
+Indicates whether to allow a restart if the IIS feature installationrequests one
+
+##### `include_management_tools`
+
+Indicates whether to automatically install all managment tools for a given IIS feature
+
+##### `source`
+
+Optionally include a source path for the installation media for an IIS feature
+
 
 ### iis_site
 
@@ -125,6 +153,130 @@ The name of an ApplicationPool for this IIS Web Site
 ##### `enabledprotocols`
 
 The protocols enabled for this site. If https is specified, http is implied. If no value is provided, then this setting is disabled
+
+##### `bindings`
+
+Specifies one or more bindings (The protocol, address, port, and ssl certificate) for a web site
+
+###### Examples:
+
+Use the default HTTP port
+
+```puppet
+iis_site { 'mysite':
+  ensure               => 'started',
+  applicationpool      => 'DefaultAppPool',
+  enabledprotocols     => 'https',
+  bindings             => [
+    {
+      'bindinginformation'   => '*:80:',
+      'protocol'             => 'http',
+    },
+  ],
+}
+```
+
+Use the default HTTPS port
+
+```puppet
+iis_site { 'mysite':
+  ensure               => 'started',
+  applicationpool      => 'DefaultAppPool',
+  enabledprotocols     => 'https',
+  bindings             => [
+    {
+      'bindinginformation'   => '*:443:',
+      'protocol'             => 'https',
+      'certificatehash'      => '3598FAE5ADDB8BA32A061C5579829B359409856F',
+      'certificatestorename' => 'MY',
+      'protocol'             => 'https',
+      'sslflags'             => 1,
+    },
+  ],
+}
+```
+
+Multiple bindings, one for HTTP and another for HTTPS on non-default port
+
+```puppet
+iis_site { 'mysite':
+  ensure               => 'started',
+  applicationpool      => 'DefaultAppPool',
+  enabledprotocols     => 'https',
+  bindings             => [
+    {
+      'bindinginformation'   => '*:80:insecure.website.com',
+      'protocol'             => 'http',
+    },
+    {
+      'bindinginformation'   => '*:8443:',
+      'protocol'             => 'https',
+      'certificatehash'      => '3598FAE5ADDB8BA32A061C5579829B359409856F',
+      'certificatestorename' => 'MY',
+      'protocol'             => 'https',
+      'sslflags'             => 1,
+    },
+  ],
+}
+```
+
+Each binding is a hash with the following keys:
+
+###### `bindinginformation`
+
+The `bindinginformation` value should be in the form of the IPv4/IPv6 address or wildcard *, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)`
+
+###### `certificatehash`
+
+**Only valid with a protocol of https**
+
+Specifies the thumbprint, also known as the certificatehash, of the certificate used by the IIS site. You can retrieve the thumbprint for a certificate using PowerShell, for example:
+
+```powershell
+PS> Get-ChildItem -Path Cert:\LocalMachine\My
+
+   PSParentPath: Microsoft.PowerShell.Security\Certificate::LocalMachine\My
+
+Thumbprint                                Subject
+----------                                -------
+D4765AA1CE1F25EC29677F87C95D818CE734C2E5  CN=www.webserver.local
+```
+
+###### `certificatestorename`
+
+**Only valid with a protocol of https**
+
+Specifies the certificate store to search for the relevant `certificatehash`.  Typically this is `MY` which is the Personal certificate store for the Local Machine.  You can retrieve the list of stores using PowerShell:
+
+```powershell
+PS> Get-ChildItem -Path Cert:\LocalMachine
+
+Name : TrustedPublisher
+
+Name : ClientAuthIssuer
+
+Name : My
+
+...
+```
+
+###### `protocol`
+
+A value of `http` indicates a binding that uses the HTTP protocol. A value of `https` indicates a binding that uses HTTP over SSL
+
+###### `sslflags`
+
+**Only valid with a protocol of https**
+
+The `sslflags` parameter accepts integer values from 0 to 3.
+
+* A value of 0 specifies that the secure connection be made using an IP/Port combination. Only one certificate can be bound to a combination of IP address and the port.
+
+* A value of 1 specifies that the secure connection be made using the port number and the host name obtained by using Server Name Indication (SNI).
+
+* A value of 2 specifies that the secure connection be made using the centralized SSL certificate store without requiring a Server Name Indicator.
+
+* A value of 3 specifies that the secure connection be made using the centralized SSL certificate store while requiring Server Name Indicator.
 
 ##### `serviceautostart`
 
@@ -191,31 +343,6 @@ Use the system's local time to determine for the log file name as well as when t
 
 Specifies what W3C fields are logged in the IIS log file. This is only valid when :logformat is set to W3C.
 
-### iis_site
-
-##### `ensure`
-
-Specifies whether an IIS feature should be present or absent
-
-##### `name`
-
-The name of the IIS feature to install
-
-##### `include_all_subfeatures`
-
-Indicates whether to install all sub features of a parent IIS feature. For instance, ASP.NET as well as the IIS Web Server
-
-##### `restart`
-
-Indicates whether to allow a restart if the IIS feature installationrequests one
-
-##### `include_management_tools`
-
-Indicates whether to automatically install all managment tools for a given IIS feature
-
-##### `source`
-
-Optionally include a source path for the installation media for an IIS feature
 
 ## Limitations
 
