@@ -106,7 +106,7 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
         fail("bindinginformation must be of the format '(ip|*):1-65535:hostname'")
       end
       if value["protocol"] == "http" and (value["sslflags"] or value["certificatehash"] or value["certificatestorename"])
-        fail("#{value["bindinginformation"]}: sslflags, certificatehash, and certificatestorename are valid for http bindings")
+        fail("#{value["bindinginformation"]}: sslflags, certificatehash, and certificatestorename are not valid when protocol is http")
       end
       if value["protocol"] == "https"
         if ! [0,1,2,3].include?(value["sslflags"])
