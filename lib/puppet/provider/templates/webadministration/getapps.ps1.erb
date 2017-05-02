@@ -2,13 +2,17 @@ Get-WebApplication | % {
   $name = [string]$_.Path.replace("/","")
   $site = [string]$_.ItemXPath.split("'")[1]
 
-  [PSCustomObject]@{
+  $sslFlags = @()
+  $sslFlags_raw = [String](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags
+  if ($sslFlags_raw -ne '') { $sslFlags = $sslFlags_raw -split ',' }
+
+  New-Object -TypeName PSObject -Property @{
     name               = $name
     site               = $site
     applicationpool    = [string]$_.ApplicationPool
     physicalpath       = [string]$_.PhysicalPath
-    sslflags           = [array](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags -split ','
-    authenticationinfo = [PSCustomObject]@{
+    sslflags           = $sslFlags
+    authenticationinfo = New-Object -TypeName PSObject -Property @{
       anonymous                   = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/anonymousAuthentication").enabled
       basic                       = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/basicAuthentication").enabled
       clientCertificateMapping    = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/clientCertificateMappingAuthentication").enabled

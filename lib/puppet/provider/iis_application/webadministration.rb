@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
   desc "IIS Application provider using the PowerShell WebAdministration module"
 
-  confine    :iis_version     => ['8.0', '8.5']
+  confine    :iis_version     => ['7.5', '8.0', '8.5']
   confine    :operatingsystem => [ :windows ]
   defaultfor :operatingsystem => :windows
 
@@ -95,10 +95,11 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   def self.instances
     inst_cmd = ps_script_content('getapps', @resource)
     result   = run(inst_cmd)
-    text     = result[:stdout]
-    return [] if text.nil?
+    return [] if result.nil?
 
-    app_json = JSON.parse(text)
+    app_json = self.parse_json_result(result[:stdout])
+    return [] if app_json.nil?
+
     app_json = [app_json] if app_json.is_a?(Hash)
     app_json.collect do |app|
       app_hash = {}
