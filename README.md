@@ -364,7 +364,7 @@ The physical path to the IIS web site folder
 
 ##### `applicationpool`
 
-The name of an ApplicationPool for this IIS Web Site
+The name of an application pool for this IIS Web Site
 
 ##### `enabledprotocols`
 
@@ -374,7 +374,7 @@ The protocols enabled for this site. If https is specified, http is implied. If 
 
 Specifies one or more bindings (The protocol, address, port, and ssl certificate) for a web site
 
-###### Examples:
+###### Examples
 
 Use the default HTTP port
 
@@ -503,7 +503,7 @@ Enables autostart on the specified website
 Specifies the provider used for service auto start. Used with :serviceautostartprovidertype.
 The `<serviceAutoStartProviders>` element specifies a collection of managed assemblies that Windows Process Activation Service (WAS) will load automatically when the startMode property of an application pool is set to AlwaysRunning. This collection allows developers to specify assemblies that perform initialization tasks before any HTTP requests are serviced.
 
-###### Example:
+###### Example
 
 ```puppet
 iis_site { 'mysite'
@@ -517,7 +517,7 @@ iis_site { 'mysite'
 
 Specifies the application type for the provider used for service auto start. Used with :serviceautostartprovider
 
-###### Example:
+###### Example
 
 ```puppet
 iis_site { 'mysite'
@@ -565,13 +565,16 @@ Specifies what W3C fields are logged in the IIS log file. This is only valid whe
 ### Compatibility
 
 #### OS Compatibility
-This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2` & `Windows Server 2016`. 
+
+This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2` & `Windows Server 2016`.
 
 #### IIS Compatibility
+
 This module only supports `IIS 7.5`, `IIS 8` or `IIS 8.5`.
 
-#### Powershell Compatibility
-This module requires Powershell v2 or greater. Works best with PowerShell v3 or above.
+#### PowerShell Compatibility
+
+This module requires PowerShell v2 or greater. Works best with PowerShell v3 or above.
 
 ### Known Issues
 
