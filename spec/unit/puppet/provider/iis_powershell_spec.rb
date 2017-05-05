@@ -6,6 +6,63 @@ require 'puppet/provider/iis_powershell'
 describe Puppet::Provider::IIS_PowerShell do
   let (:subject) { Puppet::Provider::IIS_PowerShell }
 
+  describe "run" do
+    let(:ps_manager) { double("PSManager") }
+    let(:command) { 'command' }
+    let(:execute_response) {{
+      :stdout => nil, :stderr => nil, :exitcode => 0
+    }}
+
+    before(:each) do
+      allow(subject).to receive(:ps_manager).and_return(ps_manager)
+      allow(ps_manager).to receive(:execute).and_return(execute_response)
+    end
+
+    describe "When on PowerShell 2.0" do
+      before(:each) do
+        expect(subject).to receive(:ps_major_version).and_return(2)
+      end
+
+      it 'should append Importing the WebAdministration module' do
+        expect(ps_manager).to receive(:execute).with(/Import-Module WebAdministration/,nil,nil).and_return(execute_response)
+        subject.run(command)
+      end
+
+      it 'should append changing the working directory to IIS' do
+        expect(ps_manager).to receive(:execute).with(/cd iis:/,nil,nil).and_return(execute_response)
+        subject.run(command)
+      end
+
+      it 'should append a JSON converter' do
+        expect(ps_manager).to receive(:execute).with(/ConvertTo\-JSON/,nil,nil).and_return(execute_response)
+        subject.run(command)
+      end
+
+      it 'should set Confirmation Preference' do
+        expect(ps_manager).to receive(:execute).with(/\$ConfirmPreference = 'high'/,nil,nil).and_return(execute_response)
+        subject.run(command)
+      end
+
+      it 'should append the original command at the end' do
+        expect(ps_manager).to receive(:execute).with(/#{command}$/,nil,nil).and_return(execute_response)
+        subject.run(command)
+      end
+    end
+
+    [3,4,5,6].each do |testcase|
+      describe "When on PowerShell #{testcase}.0" do
+        before(:each) do
+          expect(subject).to receive(:ps_major_version).and_return(testcase)
+        end
+
+        it 'should not modify the command' do
+          expect(ps_manager).to receive(:execute).with(command,nil,nil).and_return(execute_response)
+          subject.run(command)
+        end
+      end
+    end
+  end
+
   describe "parse_json_result" do
 
     # Single Object text
