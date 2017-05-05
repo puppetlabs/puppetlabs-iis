@@ -273,6 +273,8 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
     end
   end
 
+  autorequire(:iis_application_pool) { self[:applicationpool] }
+
   validate do
     # TODO: These need validation
     # logperiod and logtruncatesize
