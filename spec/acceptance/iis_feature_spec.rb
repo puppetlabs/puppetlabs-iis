@@ -5,8 +5,9 @@ describe 'iis_feature' do
     # TestRail ID: C100065
     context 'with default parameters' do
       before(:all) do
+        @feature = 'Web-Mgmt-Console'
         @manifest  = <<-HERE
-          iis_feature { 'Web-Asp-Net45':
+          iis_feature { '#{@feature}':
             ensure => 'present'
           }
         HERE
@@ -16,7 +17,7 @@ describe 'iis_feature' do
 
       context 'when puppet resource is run' do
         before(:all) do
-          @result = resource('iis_feature', 'Web-Asp-Net45')
+          @result = resource('iis_feature', @feature)
         end
 
         puppet_resource_should_show('ensure', 'present')
