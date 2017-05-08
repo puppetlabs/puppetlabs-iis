@@ -8,6 +8,7 @@
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Facts](#facts)
     * [Types/Providers](#types/providers)
+        * [iis_application](#iis_application)
         * [iis_application_pool](#iis_application_pool)
         * [iis_feature](#iis_feature)
         * [iis_site](#iis_site)
@@ -67,11 +68,75 @@ iis_site { 'minimal':
 
 ### Types/Providers
 
+* [iis_application](#iis_application)
 * [iis_application_pool](#iis_application_pool)
 * [iis_feature](#iis_feature)
 * [iis_site](#iis_site)
 
-Here, include a complete list of your module's classes, types, providers, facts, along with the parameters for each. Users refer to this section (thus the name "Reference") to find specific details; most users don't read it per se.
+### iis_application
+
+Allows creation of a new IIS application.
+
+#### `ensure`
+
+Must be either 'present' or 'absent'. Present will ensure the application pool is created.
+
+#### `applicationname`
+
+The name of the Application. The virtual path of an application is '/<applicationname>'.
+
+#### `sitename`
+
+The name of the site for this IIS Web Application.
+
+#### `physicalpath`
+
+The physical path to the IIS web application folder.  This path must be fully qualified.
+
+#### `applicationpool`
+
+The name of an application pool for this IIS Web Application.
+
+#### `virtual_directory`
+
+The Web Virtual Directory to convert to a Web Application on create.
+
+#### `sslflags`
+
+The SSL settings for the application.  Valid options are an array of 'Ssl, 'SslRequireCert', 'SslNegotiateCert', 'Ssl128'.
+
+##### Example
+
+Require the use of SSL
+
+```puppet
+iis_application { 'myapp':
+  ensure       => 'present',
+  sitename     => 'mysite',
+  physicalpath => 'C:\\inetpub\\app',
+  sslflags     => ['Ssl','SslRequireCert'],
+}
+```
+
+#### `authenticationinfo`
+
+Enable and disable IIS authentication schemas.
+
+##### Example
+
+Turn on basic authentication and disable anonymous.
+
+```puppet
+iis_application { 'myapp':
+  ensure              => 'present',
+  sitename           => 'mysite',
+  physicalpath       => 'C:\\inetpub\\app',
+  authenticationinfo => {
+    'basic'     => true,
+    'anonymous' => false,
+  },
+}
+```
 
 ### iis_application_pool
 
