@@ -60,6 +60,65 @@ iis_site { 'minimal':
 }
 ```
 
+This complete example will create and configure an IIS Site called 'complete' in the `Started` state with the physical path set, which makes use of an IIS Application Pool named 'complete_site_app_pool' in the `Started` state. This example also uses HTTPS, sets the certificate information and creates a virtual directory called 'vdir' in the site.
+
+```puppet
+# Create Directory Structure
+file { 'c:\\inetpub\\complete':
+  ensure => 'directory'
+} ->
+file { 'c:\\inetpub\\complete_vdir':
+  ensure => 'directory'
+}
+
+# This example makes use of the puppetlabs-acl module to set the permissions on the
+# the web site directories
+acl { 'c:\\inetpub\\complete':
+  permissions                => [
+    {'identity' => 'IISCompleteGroup', 'rights' => ['read', 'execute']},
+  ],
+  require => File['c:\\inetpub\\complete'],
+}
+acl { 'c:\\inetpub\\complete_vdir':
+  permissions                => [
+    {'identity' => 'IISCompleteGroup', 'rights' => ['read', 'execute']},
+  ],
+  require => File['c:\\inetpub\\complete_vdir'],
+}
+
+# IIS Configuration
+iis_application_pool { 'complete_site_app_pool':
+  ensure                  => 'present',
+  managed_pipeline_mode   => 'Integrated',
+  managed_runtime_version => 'v4.0',
+  state                   => 'Started'
+}
+
+iis_site { 'complete':
+  ensure          => 'started',
+  physicalpath    => 'c:\\inetpub\\complete',
+  applicationpool => 'complete_site_app_pool',
+  enabledprotocols     => 'https',
+  bindings             => [
+    {
+      'bindinginformation'   => '*:443:',
+      'protocol'             => 'https',
+      'certificatehash'      => '3598FAE5ADDB8BA32A061C5579829B359409856F',
+      'certificatestorename' => 'MY',
+      'sslflags'             => 1,
+    },
+  ],
+  require => File['c:\\inetpub\\complete'],
+}
+
+iis_virtual_directory { 'vdir':
+  ensure       => 'present',
+  sitename     => 'complete',
+  physicalpath => 'c:\\inetpub\\complete_vdir',
+  require => File['c:\\inetpub\\complete_vdir'],
+}
+```
+
 ## Reference
 
 ### Facts
@@ -470,7 +529,6 @@ iis_site { 'mysite':
       'protocol'             => 'https',
       'certificatehash'      => '3598FAE5ADDB8BA32A061C5579829B359409856F',
       'certificatestorename' => 'MY',
-      'protocol'             => 'https',
       'sslflags'             => 1,
     },
   ],
@@ -494,7 +552,6 @@ iis_site { 'mysite':
       'protocol'             => 'https',
       'certificatehash'      => '3598FAE5ADDB8BA32A061C5579829B359409856F',
       'certificatestorename' => 'MY',
-      'protocol'             => 'https',
       'sslflags'             => 1,
     },
   ],
