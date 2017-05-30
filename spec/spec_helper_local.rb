@@ -27,12 +27,6 @@ RSpec.configure do |config|
   oldtmpdir = Dir.tmpdir()
   ENV['TMPDIR'] = tmpdir
 
-  if Puppet::Util::Platform.windows?
-    config.output_stream = $stdout
-    config.error_stream = $stderr
-    config.formatters.each { |f| f.instance_variable_set(:@output, $stdout) }
-  end
-
   config.after :suite do
     # return to original tmpdir
     ENV['TMPDIR'] = oldtmpdir
