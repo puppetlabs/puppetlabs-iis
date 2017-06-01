@@ -21,11 +21,8 @@ MAINTAINERS.md:
     - "Puppet Windows Team `windows |at| puppet |dot| com`"
 NOTICE:
   copyright_holders:
-    - name: 'OpenTable'
-      begin: 2012
-      end: 2015
     - name: 'Puppet, Inc.'
-      begin: 2015
+      begin: 2017
 
 # already using master branch's version
 spec/spec_helper.rb:
