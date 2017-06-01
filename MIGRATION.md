@@ -104,24 +104,9 @@ app_pool   | applicationpool
 
 \* `site` is a reserved word in puppet 4 and will cause failures, so `sitename` is the new name.
 
-## Unmapped functionality
-
-### Class iis
-
-Declares six groups of features via `iis::features::*` to allow them to be easily installed. This functionality is available via `iis_feature` but must be explicitly declared.
-
-The list of feature groups are:
-- application deployment
-- common http
-- health and diagnostics
-- management tools
-- performance
-- security
-
-
 ### `iis_virtualdirectory`
 
-The puppetlabs-iis module is missing this resource. This is the proposed map for when the resource is created:
+This type is now called `iis_virtual_directory`
 
 #### Parameter mapping:
 
@@ -130,4 +115,21 @@ puppet-iis | puppetlabs-iis
 ensure     | identical
 name       | identical
 path       | physicalpath
-site       | sitename
+site       | sitename *
+app_pool   | applicationpool
+
+\* `site` is a reserved word in puppet 4 and will cause failures, so `sitename` is the new name.
+
+## Unmapped functionality
+
+### Class iis
+
+Declares six groups of features via `iis::features::*` to allow them to be easily installed. This functionality is available via `iis_feature` but must be explicitly declared. Please see README.md for information.
+
+The list of feature groups are:
+- application deployment
+- common http
+- health and diagnostics
+- management tools
+- performance
+- security
