@@ -199,7 +199,7 @@ iis_application { 'myapp':
 
 ### iis_application_pool
 
-Allows creation of a new IIS application pool
+Allows creation of a new IIS application pool.
 
 #### `ensure`
 
@@ -231,7 +231,7 @@ When `true`, indicates that delegated settings in Web.config files will processe
 
 #### `managed_pipeline_mode`
 
-Specifies the request-processing mode that is used to process requests for managed content. Must be either 'Integrated' or 'Classic'
+Specifies the request-processing mode that is used to process requests for managed content. Must be either 'Integrated' or 'Classic'.
 
 #### `managed_runtime_loader`
 
@@ -247,7 +247,7 @@ When `true`, the Windows Process Activation Service (WAS) creates and passes a t
 
 #### `start_mode`
 
-Specifies the startup type for the application pool. Valid options 'OnDemand' or 'AlwaysRunning'
+Specifies the startup type for the application pool. Valid options 'OnDemand' or 'AlwaysRunning'.
 
 #### `queue_length`
 
@@ -287,7 +287,7 @@ Note: Do not set this property to 0. Doing so disables symmetric multiprocessing
 
 Specifies the high-order DWORD hexadecimal processor mask for 64-bit multi-processor computers, which indicates to which CPU the worker processes in an application pool should be bound. Before this property takes effect, the `cpu_smp_affinitized` property must be set to `true` for the application pool.
 
-Note: On 64-bit computers, the `cpu_smp_processor_affinity_mask` property contains the low-order DWORD for the processor mask, and the `cpu_smp_processor_affinity_mask2` property contains the high-order DWORD for the processor mask. On 32-bit computers, the `cpu_smp_processor_affinity_mask2` property has no effect
+Note: On 64-bit computers, the `cpu_smp_processor_affinity_mask` property contains the low-order DWORD for the processor mask, and the `cpu_smp_processor_affinity_mask2` property contains the high-order DWORD for the processor mask. On 32-bit computers, the `cpu_smp_processor_affinity_mask2` property has no effect.
 
 #### `identity_type`
 
@@ -299,7 +299,7 @@ Specifies how long (in minutes) a worker process should run idle if no new reque
 
 #### `idle_timeout_action`
 
-Specifies the action to perform when the `idle_timeout` duration has been reached. Before IIS 8.5, a worker process that was idle for the duration of the `idle_timeout` property would be terminated. After IIS 8.5, you have the choice of terminating a worker process that reaches the `idle_timeout` limit, or suspending it by moving it from memory to disk. Suspending a process will likely take less time and consume less memory than terminating it. Valid options 'Terminate' or 'Suspend'
+Specifies the action to perform when the `idle_timeout` duration has been reached. Before IIS 8.5, a worker process that was idle for the duration of the `idle_timeout` property would be terminated. After IIS 8.5, you have the choice of terminating a worker process that reaches the `idle_timeout` limit, or suspending it by moving it from memory to disk. Suspending a process will likely take less time and consume less memory than terminating it. Valid options 'Terminate' or 'Suspend'.
 
 #### `load_user_profile`
 
@@ -442,27 +442,27 @@ Specifies the time intervals between restarts of worker processes in an applicat
 
 ##### `ensure`
 
-Specifies whether an IIS feature should be present or absent
+Specifies whether an IIS feature should be present or absent.
 
 ##### `name`
 
-The name of the IIS feature to install
+The name of the IIS feature to install.
 
 ##### `include_all_subfeatures`
 
-Indicates whether to install all sub features of a parent IIS feature. For instance, ASP.NET as well as the IIS Web Server
+Indicates whether to install all sub features of a parent IIS feature. For instance, ASP.NET as well as the IIS Web Server.
 
 ##### `restart`
 
-Indicates whether to allow a restart if the IIS feature installationrequests one
+Indicates whether to allow a restart if the IIS feature installationrequests one.
 
 ##### `include_management_tools`
 
-Indicates whether to automatically install all managment tools for a given IIS feature
+Indicates whether to automatically install all managment tools for a given IIS feature.
 
 ##### `source`
 
-Optionally include a source path for the installation media for an IIS feature
+Optionally include a source path for the installation media for an IIS feature.
 
 
 ### iis_site
@@ -484,19 +484,19 @@ The Name of the IIS site. Used for uniqueness. Will set the target to this value
 
 ##### `physicalpath`
 
-The physical path to the IIS web site folder
+The physical path to the IIS web site folder.
 
 ##### `applicationpool`
 
-The name of an application pool for this IIS Web Site
+The name of an application pool for this IIS Web Site.
 
 ##### `enabledprotocols`
 
-The protocols enabled for this site. If https is specified, http is implied. If no value is provided, then this setting is disabled
+The protocols enabled for this site. If https is specified, http is implied. If no value is provided, then this setting is disabled.
 
 ##### `bindings`
 
-Specifies one or more bindings (The protocol, address, port, and ssl certificate) for a web site
+Specifies one or more bindings (The protocol, address, port, and ssl certificate) for a web site.
 
 ###### Examples
 
@@ -562,7 +562,7 @@ Each binding is a hash with the following keys:
 
 ###### `bindinginformation`
 
-The `bindinginformation` value should be in the form of the IPv4/IPv6 address or wildcard *, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)`
+The `bindinginformation` value should be in the form of the IPv4/IPv6 address or wildcard *, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)`.
 
 ###### `certificatehash`
 
@@ -600,7 +600,7 @@ Name : My
 
 ###### `protocol`
 
-A value of `http` indicates a binding that uses the HTTP protocol. A value of `https` indicates a binding that uses HTTP over SSL
+A value of `http` indicates a binding that uses the HTTP protocol. A value of `https` indicates a binding that uses HTTP over SSL.
 
 ###### `sslflags`
 
@@ -618,12 +618,11 @@ The `sslflags` parameter accepts integer values from 0 to 3.
 
 ##### `serviceautostart`
 
-Enables autostart on the specified website
+Enables autostart on the specified website.
 
 ##### `serviceautostartprovidername`
 
-Specifies the provider used for service auto start. Used with :serviceautostartprovidertype.
-The `<serviceAutoStartProviders>` element specifies a collection of managed assemblies that Windows Process Activation Service (WAS) will load automatically when the startMode property of an application pool is set to AlwaysRunning. This collection allows developers to specify assemblies that perform initialization tasks before any HTTP requests are serviced.
+Specifies the provider used for service auto start. Used with :serviceautostartprovidertype. The `<serviceAutoStartProviders>` element specifies a collection of managed assemblies that Windows Process Activation Service (WAS) will load automatically when the startMode property of an application pool is set to AlwaysRunning. This collection allows developers to specify assemblies that perform initialization tasks before any HTTP requests are serviced.
 
 ###### Example
 
@@ -637,7 +636,7 @@ iis_site { 'mysite'
 
 ##### `serviceautostartprovidertype`
 
-Specifies the application type for the provider used for service auto start. Used with :serviceautostartprovider
+Specifies the application type for the provider used for service auto start. Used with :serviceautostartprovider.
 
 ###### Example
 
@@ -651,23 +650,23 @@ iis_site { 'mysite'
 
 ##### `preloadenabled`
 
-Enables loading website automatically without a client request first
+Enables loading website automatically without a client request first.
 
 ##### `defaultpage`
 
-Specifies the default page of the site
+Specifies the default page of the site.
 
 ##### `logformat`
 
-Specifies the format for the log file. When set to WSC, it can be used in conjunction with :logflags
+Specifies the format for the log file. When set to WSC, it can be used in conjunction with :logflags.
 
 ##### `logpath`
 
-Specifies the physical path to place the log file
+Specifies the physical path to place the log file.
 
 ##### `logperiod`
 
-Specifies how often the log file should rollover
+Specifies how often the log file should rollover.
 
 ##### `logtruncatesize`
 
@@ -675,7 +674,7 @@ Specifies how large the log file should be before truncating it. The value must 
 
 ##### `loglocaltimerollover`
 
-Use the system's local time to determine for the log file name as well as when the log file is rolled over
+Use the system's local time to determine for the log file name as well as when the log file is rolled over.
 
 ##### `logflags`
 
