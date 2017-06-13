@@ -37,7 +37,7 @@ Puppet::Type.newtype(:iis_site) do
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty name must be specified."
       end
-      fail("#{name} is not a valid web site name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
+      fail("#{name} is not a valid web site name") unless value =~ /^[a-zA-Z0-9\-\_'\s\.]+$/
     end
   end
 
