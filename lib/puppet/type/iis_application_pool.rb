@@ -30,7 +30,7 @@ Puppet::Type.newtype(:iis_application_pool) do
         raise ArgumentError, "A non-empty #{self.name.to_s} must be specified."
       end
       fail("#{self.name.to_s} should be less than 64 characters") unless value.length < 64
-      fail("#{self.name.to_s} is not a valid web site name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
+      fail("#{self.name.to_s} is not a valid web site name") unless value =~ /^[a-zA-Z0-9\-\_'\s\.]+$/
     end
   end
 
