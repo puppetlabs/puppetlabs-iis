@@ -1,6 +1,7 @@
 Facter.add("iis_version") do
  confine :kernel => :windows
   setcode do
+    iis_ver = nil
     begin
       require 'win32/registry'
       ACCESS_TYPE = Win32::Registry::KEY_READ | 0x100
@@ -8,13 +9,15 @@ Facter.add("iis_version") do
       REG_PATH    = 'SOFTWARE\Microsoft\InetStp'
       REG_KEY     = 'VersionString'
       
-      iis_ver = nil
+      iis_version_text = ''
       HKLM.open(REG_PATH, ACCESS_TYPE) do |reg|
-        iis_ver = reg[REG_KEY]
+        iis_version_text = reg[REG_KEY]
       end
-      iis_ver = iis_ver[8,3]
+      if iis_version_text.match(/^Version (\d+\.\d+)$/)
+        iis_ver = $1
+      end
     rescue
-      iis_ver = ""
+      iis_ver = nil
     end
     iis_ver
   end
