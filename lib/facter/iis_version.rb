@@ -12,7 +12,12 @@ Facter.add("iis_version") do
       HKLM.open(REG_PATH, ACCESS_TYPE) do |reg|
         iis_ver = reg[REG_KEY]
       end
-      iis_ver = iis_ver[8,3]
+     
+      if iis_ver.match(/^Version (\d+\.\d+)$/) then
+        iis_ver = $1
+      else
+        iis_ver = iis_ver[8,3] # Incorrectly reads 10.0 as 10.
+      end
     rescue
       iis_ver = ""
     end
