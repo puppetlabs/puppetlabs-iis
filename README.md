@@ -66,7 +66,7 @@ This complete example will create and configure an IIS Site called 'complete' in
 # Create Directory Structure
 file { 'c:\\inetpub\\complete':
   ensure => 'directory'
-} ->
+}
 file { 'c:\\inetpub\\complete_vdir':
   ensure => 'directory'
 }
@@ -77,13 +77,11 @@ acl { 'c:\\inetpub\\complete':
   permissions                => [
     {'identity' => 'IISCompleteGroup', 'rights' => ['read', 'execute']},
   ],
-  require => File['c:\\inetpub\\complete'],
 }
 acl { 'c:\\inetpub\\complete_vdir':
   permissions                => [
     {'identity' => 'IISCompleteGroup', 'rights' => ['read', 'execute']},
   ],
-  require => File['c:\\inetpub\\complete_vdir'],
 }
 
 # IIS Configuration
