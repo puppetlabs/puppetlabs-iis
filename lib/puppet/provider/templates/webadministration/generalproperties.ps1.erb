@@ -1,3 +1,30 @@
+<% if !resource[:name].nil? -%>
+$nameParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'name'
+  Value = '<%= "#{resource[:name]}" %>'
+}
+Try-SetItemProperty @nameParams
+<% end -%>
+
+<% if !resource[:physicalpath].nil? -%>
+$pathParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'physicalpath'
+  Value = '<%= "#{resource[:physicalpath]}" %>'
+}
+Try-SetItemProperty @pathParams
+<% end -%>
+
+<% if !resource[:applicationpool].nil? -%>
+$poolParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'applicationpool'
+  Value = '<%= "#{resource[:applicationpool]}" %>'
+}
+Try-SetItemProperty @poolParams
+<% end -%>
+
 <% if !resource[:defaultpage].nil? -%>
 $resource.defaultpage = @('<%= "#{resource[:defaultpage].join("','")}" %>')
 $AllDefaultPages = @(
