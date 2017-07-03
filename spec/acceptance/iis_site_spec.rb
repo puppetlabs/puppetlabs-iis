@@ -327,7 +327,7 @@ describe 'iis_site' do
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
-            applicationpool => #{@pool_name},
+            applicationpool => '#{@pool_name}',
           }
           HERE
         end
