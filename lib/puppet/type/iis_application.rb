@@ -1,6 +1,6 @@
 require 'puppet/parameter/boolean'
-require_relative '../../puppet_x/puppetlabs/iis/property/string'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
+require_relative '../../puppet_x/puppetlabs/iis/property/path'
 
 Puppet::Type.newtype(:iis_application) do
   @doc = "Manage an IIS applications."
@@ -33,24 +33,8 @@ Puppet::Type.newtype(:iis_application) do
     desc 'The name of the site for this IIS Web Application'
   end
 
-  newproperty(:physicalpath) do
-    desc 'The physical path to the IIS web application folder'
-    validate do |value|
-      if value.nil? or value.empty?
-        raise ArgumentError, "A non-empty physicalpath must be specified."
-      end
-      fail("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ or value =~ /^\/\/[^\/]+\/[^\/]+/
-    end
-  end
-
-  newproperty(:applicationpool) do
-    desc 'The name of an ApplicationPool for this IIS Web Application'
-    validate do |value|
-      if value.nil? or value.empty?
-        raise ArgumentError, "A non-empty applicationpool name must be specified."
-      end
-      fail("#{name} is not a valid applicationpool name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
-    end
+  newproperty(:physicalpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
+    desc 'The physical path to the IIS virtual directory folder'
   end
 
   newparam(:virtual_directory) do
