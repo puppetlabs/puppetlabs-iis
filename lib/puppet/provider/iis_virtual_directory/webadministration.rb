@@ -18,64 +18,77 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   def create
     Puppet.debug "Creating #{@resource[:name]}"
 
-    if @resource[:physicalpath].nil?
-      fail "physicalpath is a required paramter to create a iis virtual directory"
-    end
-
-    if @resource[:physicalpath] and ! File.exists?(@resource[:physicalpath])
-      fail "physicalpath doesn't exist: #{@resource[:physicalpath]}"
-    end
+    verify_physicalpath
 
     cmd = []
     cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
     cmd << "-Site \"#{@resource[:sitename]}\" " if @resource[:sitename]
     cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
-    cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
+    cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if is_drive_path(@resource[:physicalpath])
     cmd << "-ErrorAction Stop"
     cmd = cmd.join
+    result = self.class.run(cmd)
+    Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
 
-    result   = self.class.run(cmd)
-    Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
+    # "New-WebVirtualDirectory fails when PhysicalPath is a UNC path that is not available:
+    #   "Parameter 'PhysicalPath' should point to existing path."
+    # Since networks paths are inherently not always available, use New-Item -Force for PhysicalPath when it is a UNC path.
+
+    if is_unc_path(@resource[:physicalpath])
+      cmd = "New-Item 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -type VirtualDirectory -physicalPath '#{@resource[:physicalpath]}' -Force"
+      result = self.class.run(cmd)
+      Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
+    end
+
     @resource[:ensure] = :present
   end
 
   def update
+    # update() is called after destroy() by flush() in ../iis_powershell.rb
+    # New-Item -Force recreates the VirtualDirectory unless we return early.
+    return if (@resource[:ensure] == :absent)
+    
     Puppet.debug "Updating #{@resource[:name]}"
 
-    if @resource[:physicalpath] and ! File.exists?(@resource[:physicalpath])
-      fail "physicalpath doesn't exist: #{@resource[:physicalpath]}"
+    verify_physicalpath
+
+    # Set-ItemProperty VirtualDirectory when PhysicalPath is a UNC path that is not available:
+    #   "Parameter 'PhysicalPath' should point to existing path."
+    # Since networks paths are inherently not always available, use New-Item -Force for PhysicalPath when it is a UNC path.
+
+    if is_drive_path(@resource[:physicalpath])
+      cmd = "Set-ItemProperty 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'physicalpath' -Value '#{@resource[:physicalpath]}'"
+      result = self.class.run(cmd)
+      Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
     end
-
+    if is_unc_path(@resource[:physicalpath])
+      cmd = "New-Item 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -type VirtualDirectory -physicalPath '#{@resource[:physicalpath]}' -Force"
+      result = self.class.run(cmd)
+      Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
+    end
     cmd = []
-
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'site' -Value '#{@resource[:sitename]}';" if @resource[:sitename]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'physicalpath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'application' -Value '#{@resource[:application]}';" if @resource[:application]
-
     cmd = cmd.join
-    result   = self.class.run(cmd)
-    Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
+    result = self.class.run(cmd)
+    Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
   end
 
   def destroy
-    Puppet.debug "Creating #{@resource[:name]}"
+    Puppet.debug "Destroying #{@resource[:name]}"
+
     cmd = []
     cmd << "Remove-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
     cmd << "-Site \"#{@resource[:sitename]}\" " if @resource[:sitename]
-    
     if @resource[:application]
       cmd << "-Application \"#{@resource[:application]}\" "
     else
       cmd << "-Application \"/\" "
     end
-    
     cmd << "-ErrorAction Stop"
     cmd = cmd.join
-
-    result   = self.class.run(cmd)
-    Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
-    
-    @resource[:ensure]  = :absent
+    result = self.class.run(cmd)
+    Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
   end
 
   def initialize(value={})
@@ -94,23 +107,42 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
   def self.instances
     cmd = ps_script_content('_getvirtualdirectories', @resource)
-    result   = run(cmd)
+    result = run(cmd)
     return [] if result.nil?
 
     virt_dir_json = self.parse_json_result(result[:stdout])
     return [] if virt_dir_json.nil?
 
-    virt_dir_json.collect do |virt_dir|
+    virt_dir_json = [virt_dir_json] if virt_dir_json.is_a?(Hash)
+    return virt_dir_json.collect do |virt_dir|
       virt_dir_hash = {}
 
       virt_dir_hash[:ensure]       = :present
       virt_dir_hash[:name]         = virt_dir['name']
+      virt_dir_hash[:application]  = virt_dir['application']
       virt_dir_hash[:physicalpath] = virt_dir['physicalpath']
-      virt_dir_hash[:applicaiton]  = virt_dir['applicaiton']
       virt_dir_hash[:sitename]     = virt_dir['sitename']
 
       new(virt_dir_hash)
     end
   end
-  
+
+  private
+
+  def verify_physicalpath
+    if is_drive_path(@resource[:physicalpath])
+      if ! File.exists?(@resource[:physicalpath])
+        fail "physicalpath doesn't exist: #{@resource[:physicalpath]}"
+      end
+    end
+  end
+
+  def is_drive_path(path)
+    return (path and path =~ /^.:(\/|\\)/)
+  end
+
+  def is_unc_path(path)
+    return (path and path =~ /^\\\\[^\\]+\\[^\\]+/)
+  end
+
 end
