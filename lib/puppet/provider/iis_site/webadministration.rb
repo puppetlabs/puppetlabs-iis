@@ -17,72 +17,65 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
   mk_resource_methods
 
+  def exists?
+    cmd = "If (Test-Path -Path 'IIS:\\sites\\#{@resource[:name]}') { exit 0 } else { exit 255 }"
+    result = self.class.run(cmd)
+    return result[:exitcode] == 0
+  end
+
   def create
+    Puppet.debug "Creating #{@resource[:name]}"
+
+    verify_physicalpath
+
     cmd = []
-
     cmd << self.class.ps_script_content('_newwebsite', @resource)
-
-    inst_cmd = cmd.join
-
-    result = self.class.run(inst_cmd)
-
-    Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:exitcode] == 0
-    Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:errormessage].nil?
+    cmd = cmd.join
+    result = self.class.run(cmd)
+    Puppet.err "Error creating website: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
 
     return exists?
   end
 
   def update
+    Puppet.debug "Updating #{@resource[:name]}"
+
+    verify_physicalpath
+
     cmd = []
-
     cmd << self.class.ps_script_content('_setwebsite', @resource)
-
     cmd << self.class.ps_script_content('trysetitemproperty', @resource)
-
     cmd << self.class.ps_script_content('generalproperties', @resource)
-
     cmd << self.class.ps_script_content('bindingproperty', @resource)
-
     cmd << self.class.ps_script_content('logproperties', @resource)
-
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
-
-    inst_cmd = cmd.join
-
-    result = self.class.run(inst_cmd)
-
-    Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:exitcode] == 0
-    Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:errormessage].nil?
+    cmd = cmd.join
+    result = self.class.run(cmd)
+    Puppet.err "Error updating website: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
 
     return exists?
   end
 
   def destroy
-    inst_cmd = "Remove-Website -Name \"#{@resource[:name]}\" -ErrorAction Stop"
-    result   = self.class.run(inst_cmd)
-    Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:exitcode] == 0
-    Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:errormessage].nil?
-    return exists?
-  end
+    Puppet.debug "Destroying #{@resource[:name]}"
 
-  def exists?
-    inst_cmd = "If (Test-Path -Path 'IIS:\\sites\\#{@resource[:name]}') { exit 0 } else { exit 255 }"
+    cmd = "Remove-Website -Name \"#{@resource[:name]}\" -ErrorAction Stop"
+    result = self.class.run(cmd)
+    Puppet.err "Error destroying website: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
 
-    result   = self.class.run(inst_cmd)
-
-    return result[:exitcode] == 0
+    @resource[:ensure] = :absent
   end
 
   def start
     create if ! exists?
-    @resource[:ensure]  = 'started'
 
-    inst_cmd = "Start-Website -Name \"#{@resource[:name]}\""
-    result   = self.class.run(inst_cmd)
-    Puppet.err "Error starting website: #{result[:errormessage]}" unless result[:errormessage].nil?
+    cmd = "Start-Website -Name \"#{@resource[:name]}\""
+    result   = self.class.run(cmd)
+    Puppet.err "Error starting website: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
 
-    resp     = result[:stdout]
+    resp = result[:stdout]
     if resp.nil?
+      @resource[:ensure] = 'started'
       return true
     else
       return false
@@ -91,14 +84,14 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
   def stop
     create if ! exists?
-    @resource[:ensure] = 'stopped'
 
-    inst_cmd = "Stop-Website -Name \"#{@resource[:name]}\""
-    result   = self.class.run(inst_cmd)
-    Puppet.err "Error stopping website: #{result[:errormessage]}" unless result[:errormessage].nil?
+    cmd = "Stop-Website -Name \"#{@resource[:name]}\""
+    result = self.class.run(cmd)
+    Puppet.err "Error stopping website: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
 
     resp = result[:stdout]
     if resp.nil?
+    @resource[:ensure] = 'stopped'
       return true
     else
       return false
@@ -127,13 +120,15 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     site_json = self.parse_json_result(result[:stdout])
     return [] if site_json.nil?
 
+    site_json = [site_json] if site_json.is_a?(Hash)
     return site_json.collect do |site|
       site_hash = {}
 
       # In PowerShell 2.0, empty strings come in as nil which then fail insync? tests.
       # Convert nil's to empty strings for all properties which we know are String types
-      ['name','physicalpath','applicationpool','hostheader','state','serverautostart','enabledprotocols',
-       'logformat','logpath','logperiod','logtruncatesize','loglocaltimerollover','logextfileflags'].each do |setting|
+      ['applicationpool','enabledprotocols','hostheader','logextfileflags',
+      'logformat','loglocaltimerollover','logpath','logperiod','logtruncatesize',       
+      'name','physicalpath','serverautostart','state'].each do |setting|
         site[setting] = '' if site[setting].nil?
       end
       site['bindings'] = [] if site['bindings'].nil?
@@ -148,19 +143,24 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
         binding.delete('certificatestorename') unless binding['protocol'] == 'https'
       end
 
-      site_hash[:ensure]               = site['state'].downcase
+      if site['state'] == ''
+        site_hash[:ensure]             = :present
+      else
+        site_hash[:ensure]             = site['state'].downcase
+      end
+      
       site_hash[:name]                 = site['name']
-      site_hash[:physicalpath]         = site['physicalpath']
       site_hash[:applicationpool]      = site['applicationpool']
-      site_hash[:serverautostart]      = to_bool(site['serverautostart'])
-      site_hash[:enabledprotocols]     = site['enabledprotocols']
       site_hash[:bindings]             = site['bindings']
+      site_hash[:enabledprotocols]     = site['enabledprotocols']
+      site_hash[:logflags]             = site['logextfileflags'].split(/,\s*/).sort
+      site_hash[:logformat]            = site['logformat']
+      site_hash[:loglocaltimerollover] = to_bool(site['loglocaltimerollover'])
       site_hash[:logpath]              = site['logpath']
       site_hash[:logperiod]            = site['logperiod']
       site_hash[:logtruncatesize]      = site['logtruncatesize']
-      site_hash[:loglocaltimerollover] = to_bool(site['loglocaltimerollover'])
-      site_hash[:logformat]            = site['logformat']
-      site_hash[:logflags]             = site['logextfileflags'].split(/,\s*/).sort
+      site_hash[:physicalpath]         = site['physicalpath']
+      site_hash[:serverautostart]      = to_bool(site['serverautostart'])
 
       new(site_hash)
     end
@@ -171,4 +171,19 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     return :false  if value == false  || value =~ (/(^$|false|f|no|n|0)$/i)
     raise ArgumentError.new("invalid value for Boolean: \"#{value}\"")
   end
+
+  private
+
+  def verify_physicalpath
+    if is_drive_path(@resource[:physicalpath])
+      if ! File.exists?(@resource[:physicalpath])
+        fail "physicalpath doesn't exist: #{@resource[:physicalpath]}"
+      end
+    end
+  end
+
+  def is_drive_path(path)
+    return (path and path =~ /^.:(\/|\\)/)
+  end
+
 end

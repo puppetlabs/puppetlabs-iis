@@ -17,24 +17,24 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
   def create
     Puppet.debug "Creating #{@resource[:name]}"
+
     inst_cmd = "New-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
-    Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
-    Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+    Puppet.err "Error creating apppool: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
+
     @resource[:ensure] = :present
   end
 
   def update
     Puppet.debug "Updating #{@resource[:name]}"
+ 
     cmd = []
-
     @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state }.each do |property|
       property_name = iis_properties[property.name.to_s]
       Puppet.debug "Changing #{property_name} to #{property.value}"
       cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value};"
     end
-
-    if !@resource[:state].nil?
+    if ! @resource[:state].nil?
       Puppet.debug "Changing #{@resource[:name]} to #{@resource[:state]}"
       case @resource[:state].downcase
       when :stopped
@@ -43,21 +43,19 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
         cmd << "Start-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
       end
     end
-
     cmd = cmd.join
-    result   = self.class.run(cmd)
-    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
-    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+    result = self.class.run(cmd)
+    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
   end
 
   def destroy
     Puppet.debug "Creating #{@resource[:name]}"
-    inst_cmd = "Remove-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
-    result   = self.class.run(inst_cmd)
-    Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
-    Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+
+    cmd = "Remove-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
+    result   = self.class.run(cmd)
+    Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless (result[:exitcode] == 0 && result[:errormessage].nil?)
     
-    @resource[:ensure]  = :absent
+    @resource[:ensure] = :absent
   end
 
   def initialize(value={})
