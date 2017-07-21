@@ -108,7 +108,7 @@ describe 'iis_application' do
                 'bindinginformation'   => '*:443:#{site_hostname}',
                 'protocol'             => 'https',
                 'certificatestorename' => 'MY',
-                'certificatehash'      => '#{thumbprint}',
+                'certificatehash'      => '#{thumbprint.downcase}',
                 'sslflags'             => 0,
               },
             ],
