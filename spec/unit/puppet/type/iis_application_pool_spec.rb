@@ -160,7 +160,6 @@ describe 'iis_application_pool' do
     {:startup_time_limit => "00:00:00"},
     {:rapid_fail_protection_interval => "00:00:00"},
     {:restart_time_limit => "00:00:00"},
-    {:restart_schedule => "00:00:00"},
   ].each do |property|
     prop = property.keys[0]
     upper_limit = property[property.keys[0]]
@@ -210,6 +209,41 @@ describe 'iis_application_pool' do
       end
     end
 
+  end
+
+  context 'parameter :restart_schedule' do
+    it 'should accept a formatted time' do
+      pool = type_class.new(
+        name: 'foo',
+        restart_schedule: '00:00:00',
+      )
+      expect(pool[:restart_schedule]).to eq(['00:00:00'])
+    end
+    it 'should accept an array of formatted times' do
+      pool = type_class.new(
+        name: 'foo',
+        restart_schedule: ['00:00:00'],
+      )
+      expect(pool[:restart_schedule]).to eq(['00:00:00'])
+    end
+    it 'should reject a value that is not a formatted time' do
+      expect do
+        config = {
+          name: 'foo',
+          restart_schedule: 'bottle',
+        }
+        type_class.new(config)
+      end.to raise_error(Puppet::Error, /Parameter restart_schedule failed/)
+    end
+    it 'should reject a formatted time with a granularity of less than 60 seconds' do
+      expect do
+        config = {
+          name: 'foo',
+          restart_schedule: '00:00:45',
+        }
+        type_class.new(config)
+      end.to raise_error(Puppet::Error, /Parameter restart_schedule failed/)
+    end
   end
 
   # [

@@ -28,10 +28,18 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     Puppet.debug "Updating #{@resource[:name]}"
     cmd = []
 
-    @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state }.each do |property|
+    @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state && rp.name != :restart_schedule }.each do |property|
       property_name = iis_properties[property.name.to_s]
       Puppet.debug "Changing #{property_name} to #{property.value}"
       cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value};"
+    end
+
+    # TODO: Update not called when restart_schedule is changed to [].
+    property_name = iis_properties['restart_schedule']
+    Puppet.debug "Changing #{property_name} to #{@resource[:restart_schedule]}"
+    cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}';"
+    @resource[:restart_schedule].each do |restart_time|
+      cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @\{value=\"#{restart_time}\"\};"
     end
 
     if !@resource[:state].nil?
@@ -92,7 +100,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       pool_hash[:auto_start]                    = pool['auto_start'].to_s.downcase
       pool_hash[:clr_config_file]               = pool['clr_config_file']
       pool_hash[:enable32_bit_app_on_win64]     = pool['enable32_bit_app_on_win64'].to_s.downcase
-      pool_hash[:enable_configuration_override] = pool['enable_configuration_override']
+      pool_hash[:enable_configuration_override] = pool['enable_configuration_override'].to_s.downcase
       pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
       pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
       pool_hash[:managed_runtime_version]       = pool['managed_runtime_version']
@@ -121,19 +129,21 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       pool_hash[:set_profile_environment]    = pool['set_profile_environment'].to_s.downcase
       pool_hash[:shutdown_time_limit]        = pool['shutdown_time_limit']
       pool_hash[:startup_time_limit]         = pool['startup_time_limit']
-      pool_hash[:orphan_action_exe]          = pool['orphan_action_exe']
-      pool_hash[:orphan_action_params]       = pool['orphan_action_params']
-      pool_hash[:orphan_worker_process]      = pool['orphan_worker_process']
+      pool_hash[:user_name]                  = pool['user_name']
+      pool_hash[:password]                   = pool['password']
 
+      pool_hash[:orphan_action_exe]                 = pool['orphan_action_exe']
+      pool_hash[:orphan_action_params]              = pool['orphan_action_params']
+      pool_hash[:orphan_worker_process]             = pool['orphan_worker_process'].to_s.downcase
       pool_hash[:load_balancer_capabilities]        = pool['load_balancer_capabilities']
-      pool_hash[:rapid_fail_protection]             = pool['rapid_fail_protection']
+      pool_hash[:rapid_fail_protection]             = pool['rapid_fail_protection'].to_s.downcase
       pool_hash[:rapid_fail_protection_interval]    = pool['rapid_fail_protection_interval']
       pool_hash[:rapid_fail_protection_max_crashes] = pool['rapid_fail_protection_max_crashes']
       pool_hash[:auto_shutdown_exe]                 = pool['auto_shutdown_exe']
       pool_hash[:auto_shutdown_params]              = pool['auto_shutdown_params']
 
-      pool_hash[:disallow_overlapping_rotation]      = pool['disallow_overlapping_rotation']
-      pool_hash[:disallow_rotation_on_config_change] = pool['disallow_rotation_on_config_change']
+      pool_hash[:disallow_overlapping_rotation]      = pool['disallow_overlapping_rotation'].to_s.downcase
+      pool_hash[:disallow_rotation_on_config_change] = pool['disallow_rotation_on_config_change'].to_s.downcase
       pool_hash[:log_event_on_recycle]               = pool['log_event_on_recycle']
       pool_hash[:restart_memory_limit]               = pool['restart_memory_limit']
       pool_hash[:restart_private_memory_limit]       = pool['restart_private_memory_limit']
