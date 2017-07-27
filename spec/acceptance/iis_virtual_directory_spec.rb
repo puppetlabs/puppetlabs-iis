@@ -97,6 +97,48 @@ describe 'iis_virtual_directory' do
           remove_vdir(@virt_dir_name)
         end
       end
+
+      context 'name allows slashes' do
+        before(:all) do
+          @virt_dir_name = "#{SecureRandom.hex(10)}"
+          @manifest  = <<-HERE
+          file { 'c:\\inetpub\\test_site':
+            ensure          => 'present',
+          }->
+          iis_site { "test_site":
+            name            => "test_site",
+            ensure          => 'present',
+            physicalpath    => 'c:\\inetpub\\test_site',
+            applicationpool => 'DefaultApplicationPool',
+          }
+
+          file { 'c:\\inetpub\\test_vdir':
+            ensure       => 'present',
+          }->
+          iis_virtual_directory{ "test_vdir":
+            ensure       => 'present',
+            sitename     => "test_site",
+            physicalpath => 'c:\\inetpub\\test_vdir',
+          }
+
+          file { 'c:\\inetpub\\deeper':
+            ensure       => 'present',
+          }->
+          iis_virtual_directory { 'test_vdir\deeper':
+            name         => 'test_vdir\deeper',
+            ensure	     => 'present',
+            sitename     => 'test_site',
+            physicalpath => 'c:\\inetpub\\deeper',
+          }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        after(:all) do
+          remove_vdir(@virt_dir_name)
+        end
+      end
     end
   end
 end

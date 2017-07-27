@@ -1,32 +1,70 @@
 require 'spec_helper'
+require 'puppet/type'
+require 'puppet/type/iis_virtual_directory'
 
-provider_class = Puppet::Type.type(:iis_virtual_directory).provider(:webadministration)
+describe Puppet::Type.type(:iis_virtual_directory) do
+  let(:resource) { described_class.new(:name => "iis_virtual_directory") }
+  subject { resource }
 
-describe provider_class do
-  let(:facts) {{
-    iis_version: '8.0',
-    operatingsystem: 'Windows'
-  }}
+  it { is_expected.to be_a_kind_of Puppet::Type::Iis_virtual_directory }
 
-  let(:resource) {
-    result = Puppet::Type.type(:iis_virtual_directory).new(:name => "iis_virtual_directory")
-    result.provider = subject
-    result
-  }
+  describe "parameter :name" do
+    subject { resource.parameters[:name] }
 
-  it 'should be an instance of the correct provider' do
-    expect(resource.provider).to be_an_instance_of Puppet::Type::Iis_virtual_directory::ProviderWebadministration
-  end
+    it { is_expected.to be_isnamevar }
 
-  [:name].each do |method|
-    it "should respond to the class method #{method}" do
-      expect(provider_class).to respond_to(method)
+    [ 'value', 'value\with\slashes', '0123456789_-' ].each do |value|
+      it "should accept '#{value}'" do
+        expect { resource[:name] = value }.not_to raise_error
+      end
     end
   end
 
-  [:exists?, :create, :destroy, :update].each do |method|
-    it "should respond to the instance method #{method}" do
-      expect(provider_class.new).to respond_to(method)
+  context "parameter :sitename" do
+    it "should not allow nil" do
+      expect {
+        resource[:sitename] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for sitename/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        resource[:sitename] = ''
+      }.to raise_error(Puppet::Error, /A non-empty sitename must be specified/)
     end
   end
+
+  context "parameter :application" do
+    it "should not allow nil" do
+      expect {
+        resource[:application] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for application/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        resource[:application] = ''
+      }.to raise_error(Puppet::Error, /A non-empty application must be specified/)
+    end
+  end
+
+  context "parameter :physicalpath" do
+    it "should not allow nil" do
+      expect {
+        resource[:physicalpath] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for physicalpath/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        resource[:physicalpath] = ''
+      }.to raise_error(Puppet::Error, /A non-empty physicalpath must be specified/)
+    end
+
+    it "should accept forward and back slashes" do
+      resource[:physicalpath] = "c:/thisstring-location/value/somefile.txt"
+      resource[:physicalpath] = "c:\\thisstring-location\\value\\somefile.txt"
+    end
+  end
+
 end
