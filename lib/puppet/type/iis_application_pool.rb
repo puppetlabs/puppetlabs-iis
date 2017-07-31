@@ -36,7 +36,10 @@ Puppet::Type.newtype(:iis_application_pool) do
 
   newproperty(:state) do
     desc "The state of the ApplicationPool. By default, a newly created application pool will be started"
-    newvalues(:Started,:Stopped,:started,:stopped)
+    newvalues(:started, :stopped)
+
+    aliasvalue(:Stopped, :stopped)
+    aliasvalue(:Started, :started)
   end
 
   newproperty(:auto_start, :boolean => true) do

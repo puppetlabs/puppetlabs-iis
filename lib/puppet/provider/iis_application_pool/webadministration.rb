@@ -28,18 +28,17 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     Puppet.debug "Updating #{@resource[:name]}"
     cmd = []
 
-    @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state && rp.name != :restart_schedule }.each do |property|
+    @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state}.each do |property|
       property_name = iis_properties[property.name.to_s]
       Puppet.debug "Changing #{property_name} to #{property.value}"
-      cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value};"
-    end
-
-    # TODO: Update not called when restart_schedule is changed to [].
-    property_name = iis_properties['restart_schedule']
-    Puppet.debug "Changing #{property_name} to #{@resource[:restart_schedule]}"
-    cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}';"
-    @resource[:restart_schedule].each do |restart_time|
-      cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @\{value=\"#{restart_time}\"\};"
+      if property.value.is_a?(Array)
+        cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}'"
+        property.value.each do |item|
+          cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @\{value=\"#{item}\"\}"
+        end
+      else
+        cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value}"
+      end
     end
 
     if !@resource[:state].nil?
@@ -52,7 +51,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       end
     end
 
-    cmd = cmd.join
+    cmd = cmd.join("\n")
     result   = self.class.run(cmd)
     Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
@@ -95,13 +94,12 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
       pool_hash[:ensure] = :present
       pool_hash[:name]   = pool['name']
-      pool_hash[:state]  = pool['state']
+      pool_hash[:state]  = pool['state'].to_s.downcase
       
       pool_hash[:auto_start]                    = pool['auto_start'].to_s.downcase
       pool_hash[:clr_config_file]               = pool['clr_config_file']
       pool_hash[:enable32_bit_app_on_win64]     = pool['enable32_bit_app_on_win64'].to_s.downcase
       pool_hash[:enable_configuration_override] = pool['enable_configuration_override'].to_s.downcase
-      pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
       pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
       pool_hash[:managed_runtime_version]       = pool['managed_runtime_version']
       pool_hash[:pass_anonymous_token]          = pool['pass_anonymous_token'].to_s.downcase
@@ -149,7 +147,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       pool_hash[:restart_private_memory_limit]       = pool['restart_private_memory_limit']
       pool_hash[:restart_requests_limit]             = pool['restart_requests_limit']
       pool_hash[:restart_time_limit]                 = pool['restart_time_limit']
-      pool_hash[:restart_schedule]                   = pool['restart_schedule']
+      pool_hash[:restart_schedule]                   = pool['restart_schedule'].to_s.split(' ')
 
       new(pool_hash)
     end

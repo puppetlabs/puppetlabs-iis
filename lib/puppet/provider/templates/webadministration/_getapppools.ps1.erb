@@ -55,6 +55,6 @@ Get-WebConfiguration -Filter '/system.applicationHost/applicationPools/add' | % 
     restart_private_memory_limit       = [string]$_.recycling.periodicrestart.privatememory
     restart_requests_limit             = [string]$_.recycling.periodicrestart.requests
     restart_time_limit                 = [string]$_.recycling.periodicrestart.time
-    restart_schedule                   = [string]$_.recycling.periodicrestart.schedule.collection.value -split ' '
+    restart_schedule                   = [string]$_.recycling.periodicrestart.schedule.collection.value
   }
 } | ConvertTo-Json -Depth 10
