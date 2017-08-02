@@ -6,8 +6,6 @@ describe Puppet::Type.type(:iis_site) do
   let(:resource) { described_class.new(:name => "iis_site") }
   subject { resource }
 
-  it { is_expected.to be_a_kind_of Puppet::Type::Iis_site }
-
   describe "parameter :name" do
     subject { resource.parameters[:name] }
 
@@ -38,7 +36,6 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  # TODO: fix tests below
   context "parameter :physicalpath" do
     it "should not allow nil" do
       expect {
@@ -49,12 +46,12 @@ describe Puppet::Type.type(:iis_site) do
     it "should not allow empty" do
       expect {
         resource[:physicalpath] = ''
-      }.to raise_error(Puppet::Error, /A non-empty physicalpath must be specified./)
+      }.to raise_error(Puppet::Error, /A non-empty physicalpath must be specified/)
     end
 
-    it "should accept any string value" do
-      resource[:physicalpath] = "c:/thisstring-location/value/somefile.txt"
-      resource[:physicalpath] = "c:\\thisstring-location\\value\\somefile.txt"
+    it "should accept forward-slash and backslash paths" do
+      resource[:physicalpath] = "c:/directory/subdirectory"
+      resource[:physicalpath] = "c:\\directory\\subdirectory"
     end
   end
 
@@ -300,7 +297,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /Invalid value 'woot'. Valid values are W3C, IIS, NCSA/)
     end
   end
-
+  
   context "parameter :logpath" do
     it "should not allow nil" do
       expect {
@@ -311,12 +308,12 @@ describe Puppet::Type.type(:iis_site) do
     it "should not allow empty" do
       expect {
         resource[:logpath] = ''
-      }.to raise_error(Puppet::Error, /A non-empty logpath must be specified./)
+      }.to raise_error(Puppet::Error, /A non-empty logpath must be specified/)
     end
 
-    it "should accept any string value" do
-      resource[:logpath] = "c:/thisstring-location/value/somefile.txt"
-      resource[:logpath] = "c:\\thisstring-location\\value\\somefile.txt"
+    it "should accept forward-slash and backslash paths" do
+      resource[:logpath] = "c:/directory/subdirectory"
+      resource[:logpath] = "c:\\directory\\subdirectory"
     end
   end
 

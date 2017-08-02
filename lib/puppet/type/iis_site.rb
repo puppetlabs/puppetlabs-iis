@@ -1,4 +1,6 @@
 require 'puppet/parameter/boolean'
+require_relative '../../puppet_x/puppetlabs/iis/property/path'
+require_relative '../../puppet_x/puppetlabs/iis/property/string'
 
 Puppet::Type.newtype(:iis_site) do
   @doc = "Create a new IIS website."
@@ -41,13 +43,12 @@ Puppet::Type.newtype(:iis_site) do
     end
   end
 
-  newproperty(:physicalpath) do
+  newproperty(:physicalpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
     desc 'The physical path to the IIS web site folder'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty physicalpath must be specified."
       end
-      fail("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ or value =~ /^\/\/[^\/]+\/[^\/]+/
     end
   end
 
@@ -199,13 +200,12 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
     end
   end
 
-  newproperty(:logpath) do
-    desc 'Specifies the physical path to place the log file'
+  newproperty(:logpath, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc 'Specifies the path to the log files'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty logpath must be specified."
       end
-      fail("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ or value =~ /^\/\/[^\/]+\/[^\/]+/
     end
   end
 
