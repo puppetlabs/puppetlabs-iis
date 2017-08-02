@@ -1,5 +1,6 @@
 require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
+require_relative '../../puppet_x/puppetlabs/iis/property/path'
 require_relative '../../puppet_x/puppetlabs/iis/property/positive_integer'
 require_relative '../../puppet_x/puppetlabs/iis/property/timeformat'
 
@@ -48,7 +49,7 @@ Puppet::Type.newtype(:iis_application_pool) do
     end
   end
 
-  newproperty(:clr_config_file, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+  newproperty(:clr_config_file, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
     desc "Specifies the .NET configuration file for the application pool"
   end
 
