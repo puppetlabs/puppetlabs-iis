@@ -118,7 +118,9 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
       end
     end
     munge do |value|
-      value["certificatehash"] = value["certificatehash"].upcase if value["certificatehash"]
+      if ! value.nil? and value["certificatehash"]
+        value["certificatehash"] = value["certificatehash"].upcase
+      end
     end
   end
 
