@@ -121,6 +121,7 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
       if ! value.nil? and value["certificatehash"]
         value["certificatehash"] = value["certificatehash"].upcase
       end
+      value
     end
   end
 
