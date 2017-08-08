@@ -17,16 +17,15 @@ Puppet::Type.newtype(:iis_site) do
       provider.start
     end
 
-    newvalue(:present) do
-      provider.create
-    end
-
     newvalue(:absent) do
       provider.destroy
     end
 
+    aliasvalue(:present, :stopped)
     aliasvalue(:false, :stopped)
     aliasvalue(:true, :started)
+    aliasvalue(:Stopped, :stopped)
+    aliasvalue(:Started, :started)
   end
 
   newparam(:name, :namevar => true) do
