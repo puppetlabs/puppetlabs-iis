@@ -54,7 +54,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
-    return exists?
+    return result[:exitcode] == 0
   end
 
   def destroy
@@ -62,7 +62,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     result   = self.class.run(inst_cmd)
     Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:exitcode] == 0
     Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:errormessage].nil?
-    return exists?
+    return exists? == false
   end
 
   def exists?
