@@ -7,11 +7,12 @@
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Facts](#facts)
-    * [Types/Providers](#types/providers)
+    * [Types and Providers](#types-and-providers)
         * [iis_application](#iis_application)
         * [iis_application_pool](#iis_application_pool)
         * [iis_feature](#iis_feature)
         * [iis_site](#iis_site)
+        * [iis_virtual_directory](#iis_virtual_directory)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
@@ -23,7 +24,7 @@ This module adds a provider to manage IIS sites and application pools.
 
 ### Beginning with puppetlabs-iis
 
-This module can both manage and install IIS on your server. For example, a minimal IIS install can be accomplished by ensuring the `Web-WebServer` & `Web-Scripting-Tools` Windows Features are present.
+This module can both manage and install IIS on your server. For example, a minimal IIS install can be accomplished by ensuring the `Web-WebServer` and `Web-Scripting-Tools` Windows Features are present.
 
 Here is an example that installs IIS and creates a web site using the default application pool.
 
@@ -31,73 +32,89 @@ Here is an example that installs IIS and creates a web site using the default ap
 $iis_features = ['Web-WebServer','Web-Scripting-Tools']
 
 iis_feature { $iis_features:
-  ensure => present,
+  ensure => 'present',
 } ->
 
 iis_site { 'minimal':
   ensure          => 'started',
   physicalpath    => 'c:\\inetpub\\minimal',
-  applicationpool => 'DefaultApplicationPool',
+  applicationpool => 'DefaultAppPool',
+  require         => File['minimal'],
+}
+
+file { 'minimal':
+  ensure => 'directory',
+  path   => 'c:\\inetpub\\minimal',
 }
 ```
 
 ## Usage
 
-This example will create and configure an IIS `web site` in the `Started` state with the physical path set, which makes use of an IIS `application pool` named `minimal_site_app_pool` in the `Started` state.
+This minimal example will create a web site named 'complete' using an application pool named 'minimal_site_app_pool'.
 
 ```puppet
 iis_application_pool { 'minimal_site_app_pool':
   ensure                  => 'present',
+  state                   => 'started'
   managed_pipeline_mode   => 'Integrated',
   managed_runtime_version => 'v4.0',
-  state                   => 'Started'
 } ->
 
 iis_site { 'minimal':
   ensure          => 'started',
   physicalpath    => 'c:\\inetpub\\minimal',
   applicationpool => 'minimal_site_app_pool',
+  require         => File['minimal'],
+}
+
+file { 'minimal':
+  ensure => 'directory',
+  path   => 'c:\\inetpub\\minimal',
 }
 ```
 
-This complete example will create and configure an IIS Site called 'complete' in the `Started` state with the physical path set, which makes use of an IIS Application Pool named 'complete_site_app_pool' in the `Started` state. This example also uses HTTPS, sets the certificate information and creates a virtual directory called 'vdir' in the site.
+This complete example will create a web site named 'complete' using an application pool named 'complete_site_app_pool', with a virtual directory named 'vdir'. This example uses the `puppetlabs-acl module` to set permissions on directories.
 
 ```puppet
-# Create Directory Structure
+# Create Directories
+
 file { 'c:\\inetpub\\complete':
   ensure => 'directory'
 }
+
 file { 'c:\\inetpub\\complete_vdir':
   ensure => 'directory'
 }
 
-# This example makes use of the puppetlabs-acl module to set the permissions on the
-# the web site directories
+# Set Permissions
+
 acl { 'c:\\inetpub\\complete':
-  permissions                => [
-    {'identity' => 'IISCompleteGroup', 'rights' => ['read', 'execute']},
-  ],
-}
-acl { 'c:\\inetpub\\complete_vdir':
-  permissions                => [
+  permissions => [
     {'identity' => 'IISCompleteGroup', 'rights' => ['read', 'execute']},
   ],
 }
 
-# IIS Configuration
+acl { 'c:\\inetpub\\complete_vdir':
+  permissions => [
+    {'identity' => 'IISCompleteGroup', 'rights' => ['read', 'execute']},
+  ],
+}
+
+# Configure IIS
+
 iis_application_pool { 'complete_site_app_pool':
   ensure                  => 'present',
+  state                   => 'started'
   managed_pipeline_mode   => 'Integrated',
   managed_runtime_version => 'v4.0',
-  state                   => 'Started'
 }
 
 iis_site { 'complete':
-  ensure          => 'started',
-  physicalpath    => 'c:\\inetpub\\complete',
-  applicationpool => 'complete_site_app_pool',
-  enabledprotocols     => 'https',
-  bindings             => [
+  ensure           => 'started',
+  physicalpath     => 'c:\\inetpub\\complete',
+  applicationpool  => 'complete_site_app_pool',
+  enabledprotocols => 'https',
+  bindings         => [
     {
       'bindinginformation'   => '*:443:',
       'protocol'             => 'https',
@@ -113,7 +130,7 @@ iis_virtual_directory { 'vdir':
   ensure       => 'present',
   sitename     => 'complete',
   physicalpath => 'c:\\inetpub\\complete_vdir',
-  require => File['c:\\inetpub\\complete_vdir'],
+  require      => File['c:\\inetpub\\complete_vdir'],
 }
 ```
 
@@ -121,46 +138,51 @@ iis_virtual_directory { 'vdir':
 
 ### Facts
 
-* `iis_version` - The version of the installed IIS. Empty string if not installed.
+* `iis_version` - The version of IIS that is installed. Empty string if not installed.
 
-### Types/Providers
+
+### Types and Providers
 
 * [iis_application](#iis_application)
 * [iis_application_pool](#iis_application_pool)
 * [iis_feature](#iis_feature)
 * [iis_site](#iis_site)
+* [iis_virtual_directory](#iis_virtual_directory)
+
 
 ### iis_application
 
-Allows creation of a new IIS application.
+Allows creation of a new IIS Application and configuration of application parameters.
+
+#### Properties/Parameters
 
 #### `ensure`
 
-Must be either 'present' or 'absent'. Present will ensure the application pool is created.
+Must be either 'present' or 'absent'. Present will ensure the application is created.
 
 #### `applicationname`
 
-The name of the Application. The virtual path of an application is '/<applicationname>'.
+The name of the application. The virtual path of the application is '/<applicationname>'.
 
 #### `sitename`
 
-The name of the site for this IIS Web Application.
+The name of the site for the application.
 
 #### `physicalpath`
 
-The physical path to the IIS web application folder.  This path must be fully qualified.
+The physical path to the application directory. This path must be fully qualified.
 
 #### `applicationpool`
 
-The name of an application pool for this IIS Web Application.
+The name of the application pool for the application.
 
 #### `virtual_directory`
 
-The Web Virtual Directory to convert to a Web Application on create.
+The IIS Virtual Directory to convert to an application on create.
 
 #### `sslflags`
 
-The SSL settings for the application.  Valid options are an array of 'Ssl, 'SslRequireCert', 'SslNegotiateCert', 'Ssl128'.
+The SSL settings for the application. Valid options are an array of flags, with the following names: 'Ssl', 'SslRequireCert', 'SslNegotiateCert', 'Ssl128'.
 
 ##### Example
 
@@ -185,7 +207,7 @@ Turn on basic authentication and disable anonymous.
 
 ```puppet
 iis_application { 'myapp':
-  ensure              => 'present',
+  ensure             => 'present',
   sitename           => 'mysite',
   physicalpath       => 'C:\\inetpub\\app',
   authenticationinfo => {
@@ -195,13 +217,16 @@ iis_application { 'myapp':
 }
 ```
 
+
 ### iis_application_pool
 
-Allows creation of a new IIS application pool.
+Allows creation of a new IIS Application Pool and configuration of application pool parameters.
+
+#### Properties/Parameters
 
 #### `ensure`
 
-Must be either `present` or `absent`. Present will ensure the application pool is created.
+Must be either 'present' or 'absent'. Present will ensure the application pool is created.
 
 #### `name`
 
@@ -209,7 +234,7 @@ Name of the application pool.
 
 #### `state`
 
-The state of the application pool. Must be either `Started` or `Stopped`.
+The state of the application pool. Must be either 'started' or 'stopped'.
 
 #### `auto_start`
 
@@ -229,11 +254,11 @@ When `true`, indicates that delegated settings in Web.config files will processe
 
 #### `managed_pipeline_mode`
 
-Specifies the request-processing mode that is used to process requests for managed content. Must be either 'Integrated' or 'Classic'.
+Specifies the request-processing mode that is used to process requests for managed content. Valid options 'Integrated' or 'Classic'.
 
 #### `managed_runtime_loader`
 
-Specifies the managed loader to use for pre-loading the the application pool.Note: This property was added in IIS 7.5. The default value is 'webengine4.dll'.
+Specifies the managed loader to use for pre-loading the the application pool. Note: This property was added in IIS 7.5. The default value is 'webengine4.dll'.
 
 #### `managed_runtime_version`
 
@@ -365,13 +390,13 @@ Specifies an executable to run when the WWW service orphans a worker process (if
 
 #### `orphan_action_params`
 
-Indicates command-line parameters for the executable named by the `orphan_action_exe` property. To specify the process ID of the orphaned process use `%1%`.
+Indicates command-line parameters for the executable named by the `orphan_action_exe` property. To specify the process ID of the orphaned process, use '%1%'.
 
 #### `orphan_worker_process`
 
 Specifies whether to assign a worker process to an orphan state instead of terminating it when an application pool fails. Valid options `true` or `false`.
 
-#### `load_balancer_capabilities` do
+#### `load_balancer_capabilities`
 
 Specifies behavior when a worker process cannot be started, such as when the request queue is full or an application pool is in rapid-fail protection. Valid options 'HttpLevel' or 'TcpLevel'.
 
@@ -439,65 +464,69 @@ Accepts an array of formatted times: `['06:30:00', '12:30:00', '18:30:00']`
 
 Times should be between 00:00:00 and 23:59:59 seconds inclusive, with a granularity of 60 seconds.
 
+
 ### iis_feature
 
-##### `ensure`
-
-Specifies whether an IIS feature should be present or absent.
-
-##### `name`
-
-The name of the IIS feature to install.
-
-##### `include_all_subfeatures`
-
-Indicates whether to install all sub features of a parent IIS feature. For instance, ASP.NET as well as the IIS Web Server.
-
-##### `restart`
-
-Indicates whether to allow a restart if the IIS feature installationrequests one.
-
-##### `include_management_tools`
-
-Indicates whether to automatically install all managment tools for a given IIS feature.
-
-##### `source`
-
-Optionally include a source path for the installation media for an IIS feature.
-
-
-### iis_site
-
-Allows creation of a new IIS website and configuration of various parameters.
+Allows installation and removal of IIS Features.
 
 #### Properties/Parameters
 
 ##### `ensure`
 
-Specifies whether a site should be present or absent.
-If present is specified, the site will be created but left in the default stopped state.
-If started is specified, then the site will be created as well as started.
-If stopped is specified, then the site will be created and kept stopped.
+Must be either 'present' or 'absent'.
 
 ##### `name`
 
-The Name of the IIS site. Used for uniqueness. Will set the target to this value if target is unset.
+The name of the feature.
+
+##### `include_all_subfeatures`
+
+Indicates whether to install all subfeatures of the feature. For instance, ASP.NET as well as IIS Web Server.
+
+##### `restart`
+
+Indicates whether to allow a restart if the feature installation requests one.
+
+##### `include_management_tools`
+
+Indicates whether to automatically install all management tools for the feature.
+
+##### `source`
+
+Optionally include a source path for the installation media for the feature.
+
+
+### iis_site
+
+Allows creation of a new IIS Web Site and configuration of site parameters.
+
+#### Properties/Parameters
+
+##### `ensure`
+
+If 'present' is specified, the site will be created but left in the default stopped state.
+If 'started' is specified, then the site will be created as well as started.
+If 'stopped' is specified, then the site will be created and stopped.
+
+##### `name`
+
+The name of the site.
 
 ##### `physicalpath`
 
-The physical path to the IIS web site folder.
+The physical path to the site directory. This path must be fully qualified.
 
 ##### `applicationpool`
 
-The name of an application pool for this IIS Web Site.
+The name of the application pool for the site.
 
 ##### `enabledprotocols`
 
-The protocols enabled for this site. If https is specified, http is implied. If no value is provided, then this setting is disabled.
+The protocols enabled for the site. If 'https' is specified, 'http' is implied. If no value is provided, then this setting is disabled.
 
 ##### `bindings`
 
-Specifies one or more bindings (The protocol, address, port, and ssl certificate) for a web site.
+Specifies one or more bindings (protocol, address, port, and ssl certificate) for the site.
 
 ###### Examples
 
@@ -569,7 +598,7 @@ The `bindinginformation` value should be in the form of the IPv4/IPv6 address or
 
 **Only valid with a protocol of https**
 
-Specifies the thumbprint, also known as the certificatehash, of the certificate used by the IIS site. You can retrieve the thumbprint for a certificate using PowerShell, for example:
+Specifies the thumbprint, also known as the certificatehash, of the certificate used by the site. You can retrieve the thumbprint for a certificate using PowerShell, for example:
 
 ```powershell
 PS> Get-ChildItem -Path Cert:\LocalMachine\My
@@ -585,7 +614,7 @@ D4765AA1CE1F25EC29677F87C95D818CE734C2E5  CN=www.webserver.local
 
 **Only valid with a protocol of https**
 
-Specifies the certificate store to search for the relevant `certificatehash`.  Typically this is `MY` which is the Personal certificate store for the Local Machine.  You can retrieve the list of stores using PowerShell:
+Specifies the certificate store to search for the relevant `certificatehash`.  Typically this is 'MY' which is the Personal certificate store for the Local Machine.  You can retrieve the list of stores using PowerShell:
 
 ```powershell
 PS> Get-ChildItem -Path Cert:\LocalMachine
@@ -601,7 +630,7 @@ Name : My
 
 ###### `protocol`
 
-A value of `http` indicates a binding that uses the HTTP protocol. A value of `https` indicates a binding that uses HTTP over SSL.
+A value of 'http' indicates a binding that uses the HTTP protocol. A value of 'https' indicates a binding that uses HTTP over SSL.
 
 ###### `sslflags`
 
@@ -619,11 +648,13 @@ The `sslflags` parameter accepts integer values from 0 to 3.
 
 ##### `serviceautostart`
 
-Enables autostart on the specified website.
+Enables autostart of the site.
 
 ##### `serviceautostartprovidername`
 
-Specifies the provider used for service auto start. Used with :serviceautostartprovidertype. The `<serviceAutoStartProviders>` element specifies a collection of managed assemblies that Windows Process Activation Service (WAS) will load automatically when the startMode property of an application pool is set to AlwaysRunning. This collection allows developers to specify assemblies that perform initialization tasks before any HTTP requests are serviced.
+Specifies the provider used for service auto start. Used with `serviceautostartprovidertype`.
+
+The `<serviceAutoStartProviders>` element specifies a collection of managed assemblies that Windows Process Activation Service (WAS) will load automatically when the startMode property of an application pool is set to AlwaysRunning. This collection allows developers to specify assemblies that perform initialization tasks before any HTTP requests are serviced.
 
 ###### Example
 
@@ -637,7 +668,7 @@ iis_site { 'mysite'
 
 ##### `serviceautostartprovidertype`
 
-Specifies the application type for the provider used for service auto start. Used with :serviceautostartprovider.
+Specifies the application type for the provider used for service autostart. Used with `serviceautostartprovider`.
 
 ###### Example
 
@@ -651,7 +682,7 @@ iis_site { 'mysite'
 
 ##### `preloadenabled`
 
-Enables loading website automatically without a client request first.
+Enables loading the site automatically without a client request first.
 
 ##### `defaultpage`
 
@@ -659,11 +690,11 @@ Specifies the default page of the site.
 
 ##### `logformat`
 
-Specifies the format for the log file. When set to WSC, it can be used in conjunction with :logflags.
+Specifies the format for the log file. When set to 'WSC', used with `logflags`.
 
 ##### `logpath`
 
-Specifies the physical path to place the log file.
+Specifies the physical path to the log files.
 
 ##### `logperiod`
 
@@ -671,15 +702,42 @@ Specifies how often the log file should rollover.
 
 ##### `logtruncatesize`
 
-Specifies how large the log file should be before truncating it. The value must be in bytes. The value can be any size between '1048576 (1MB)' and '4294967295 (4GB)'.
+Specifies how large the log file should be before truncating it. The value must be in bytes. The value can be any size between '1048576' (1MB) and '4294967295' (4GB).
 
 ##### `loglocaltimerollover`
 
-Use the system's local time to determine for the log file name as well as when the log file is rolled over.
+Use the system's local time to determine the log file name as well as when the log file is rolled over.
 
 ##### `logflags`
 
-Specifies what W3C fields are logged in the IIS log file. This is only valid when :logformat is set to W3C.
+Specifies what W3C fields are logged in the log file. This is only valid when `logformat` is set to 'W3C'.
+
+
+### iis_virtual_directory
+
+Allows creation of a new IIS Virtual Directory and configuration of virtual directory parameters.
+
+#### Properties/Parameters
+
+##### `ensure`
+
+Must be either 'present' or 'absent'. Present will ensure the virtual directory is created.
+
+##### `name`
+
+The name of the virtual directory.
+
+##### `sitename`
+
+The site under which the virtual directory is created.
+
+##### `physicalpath`
+
+The physical path to the virtual directory. This path must be fully qualified.
+
+##### `application`
+
+The application under which the virtual directory is created.
 
 
 ## Limitations
@@ -688,7 +746,7 @@ Specifies what W3C fields are logged in the IIS log file. This is only valid whe
 
 #### OS Compatibility
 
-This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2` & `Windows Server 2016`.
+This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2` and `Windows Server 2016`.
 
 #### IIS Compatibility
 
@@ -708,4 +766,4 @@ Puppet Labs modules on the Puppet Forge are open projects, and community contrib
 
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
-Check out our the complete [module contribution guide](https://docs.puppetlabs.com/forge/contributing.html) or [CONTRIBUTING.md](CONTRIBUTING.md).
+Check out our complete [module contribution guide](https://docs.puppetlabs.com/forge/contributing.html) or [CONTRIBUTING.md](CONTRIBUTING.md).
