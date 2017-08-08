@@ -203,4 +203,35 @@ describe 'iis_application_pool' do
       puppet_resource_should_show('ensure', 'absent')
     end
   end
+
+  context 'when application pool restart_memory_limit set' do
+    before(:all) do
+      @pool_name = "#{SecureRandom.hex(10)}"
+      create_app_pool(@pool_name)
+      stop_app_pool(@pool_name)
+      @manifest = <<-HERE
+          iis_application_pool { '#{@pool_name}':
+            ensure               => 'present',
+            state                => 'Started',
+            restart_memory_limit => '3500000',
+          }
+      HERE
+    end
+
+    it_behaves_like 'an idempotent resource'
+
+    context 'when puppet resource is run' do
+      before(:all) do
+        @result = resource('iis_application_pool', @pool_name)
+      end
+
+      puppet_resource_should_show('ensure', 'present')
+      puppet_resource_should_show('state', 'Started')
+      puppet_resource_should_show('restart_memory_limit', '3500000')
+    end
+
+    after(:all){
+      remove_app_pool(@pool_name)
+    }
+  end
 end
