@@ -1,6 +1,7 @@
 require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
+require_relative '../../puppet_x/puppetlabs/iis/property/name'
 
 Puppet::Type.newtype(:iis_application) do
   @doc = "Manage an IIS applications."
@@ -25,11 +26,12 @@ Puppet::Type.newtype(:iis_application) do
     ]
   end
 
+  # TODO: Implement virtual path character validation, since applicationname is used in the virtual path.
   newparam(:applicationname, :namevar => true) do
     desc "The name of the Application. The virtual path of an application is /<applicationname>"
   end
 
-  newproperty(:sitename, :namevar => true) do
+  newproperty(:sitename, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of the site for this IIS Web Application'
   end
 
@@ -43,13 +45,14 @@ Puppet::Type.newtype(:iis_application) do
     end
   end
 
-  newproperty(:applicationpool) do
+  newproperty(:applicationpool, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of an ApplicationPool for this IIS Web Application'
     validate do |value|
       if value.nil? or value.empty?
-        raise ArgumentError, "A non-empty applicationpool name must be specified."
+        raise ArgumentError, "A non-empty applicationpool must be specified."
       end
-      fail("#{name} is not a valid applicationpool name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
+      super value
+      fail("The applicationpool must be less than 64 characters") unless value.length < 64
     end
   end
 
