@@ -489,5 +489,27 @@ describe 'iis_site' do
         end
       end
     end
+
+    context 'with an existing website' do
+      before (:all) do
+        @site_name_one = "#{SecureRandom.hex(10)}"
+        @site_name_two = "#{SecureRandom.hex(10)}"
+        create_site(@site_name_one, false)
+        create_path('C:\inetpub\basic')
+        @manifest = <<-HERE
+          iis_site { '#{@site_name_two}':
+            ensure          => 'started',
+            physicalpath    => 'C:\\inetpub\\basic',
+            applicationpool => 'DefaultAppPool',
+          }
+        HERE
+      end
+
+      it_behaves_like 'a failing manifest'
+
+      after(:all) do
+        remove_all_sites
+      end
+    end
   end
 end
