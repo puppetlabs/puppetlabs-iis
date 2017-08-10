@@ -494,7 +494,7 @@ describe 'iis_site' do
       before (:all) do
         @site_name_one = "#{SecureRandom.hex(10)}"
         @site_name_two = "#{SecureRandom.hex(10)}"
-        create_site(@site_name_one, false)
+        create_site(@site_name_one, true)
         create_path('C:\inetpub\basic')
         @manifest = <<-HERE
           iis_site { '#{@site_name_two}':

@@ -47,6 +47,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
 
+
+
     inst_cmd = cmd.join
 
     result = self.class.run(inst_cmd)
@@ -75,34 +77,24 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
   def start
     create if ! exists?
-    @resource[:ensure]  = 'started'
 
-    inst_cmd = "Start-Website -Name \"#{@resource[:name]}\""
+    inst_cmd = "Start-Website -Name \"#{@resource[:name]}\" -ErrorVariable errvar;if($errvar){ throw \"$($errvar). Perhaps there is another website with this port or configuration setting\" }"
     result   = self.class.run(inst_cmd)
-    Puppet.err "Error starting website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
-    resp     = result[:stdout]
-    if resp.nil?
-      return true
-    else
-      return false
-    end
+    fail "Error starting website: #{result[:errormessage]}" unless result[:errormessage].nil? || result[:exitcode] == 0
+
+    return true
   end
 
   def stop
     create if ! exists?
-    @resource[:ensure] = 'stopped'
 
-    inst_cmd = "Stop-Website -Name \"#{@resource[:name]}\""
+    inst_cmd = "Stop-Website -Name \"#{@resource[:name]}\" -ErrorVariable errvar;if($errvar){ throw \"$($errvar).\" }"
     result   = self.class.run(inst_cmd)
-    Puppet.err "Error stopping website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
-    resp = result[:stdout]
-    if resp.nil?
-      return true
-    else
-      return false
-    end
+    fail "Error stopping website: #{result[:errormessage]}" unless result[:errormessage].nil? || result[:exitcode] == 0
+
+    return true
   end
 
   def initialize(value={})
