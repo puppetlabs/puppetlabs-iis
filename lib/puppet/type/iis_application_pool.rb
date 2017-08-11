@@ -36,7 +36,10 @@ Puppet::Type.newtype(:iis_application_pool) do
 
   newproperty(:state) do
     desc "The state of the ApplicationPool. By default, a newly created application pool will be started"
-    newvalues(:Started,:Stopped,:started,:stopped)
+    newvalues(:started, :stopped)
+
+    aliasvalue(:Stopped, :stopped)
+    aliasvalue(:Started, :started)
   end
 
   newproperty(:auto_start, :boolean => true) do
@@ -365,10 +368,15 @@ A value of '0' specifies that IIS runs the same number of worker processes as th
     desc "Specifies that the worker process should be recycled after a specified amount of time has elapsed."
   end
 
-  newproperty(:restart_schedule, :parent => PuppetX::PuppetLabs::IIS::Property::TimeFormat) do
-    desc "specifies the time intervals between restarts of worker processes in an application pool."
+  newproperty(:restart_schedule, :array_matching => :all) do
+    desc "Specifies the specific times in a 24-hour period that the worker process should be recycled."
+    validate do |value|
+      fail "#{self.name.to_s} values should be between 00:00:00 and 23:59:59 seconds inclusive, with a granularity of 60 seconds." unless value =~ /^\d\d:\d\d:00$/
+    end
+    def should_to_s(newvalue)
+      return newvalue
+    end
   end
-
 
   def munge_boolean(value)
     case value

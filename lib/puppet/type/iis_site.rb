@@ -117,6 +117,12 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
         end
       end
     end
+    munge do |value|
+      if ! value.nil? and value["certificatehash"]
+        value["certificatehash"] = value["certificatehash"].upcase
+      end
+      value
+    end
   end
 
   newproperty(:serviceautostart, :boolean => true) do

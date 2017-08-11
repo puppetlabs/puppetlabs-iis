@@ -35,24 +35,26 @@ Get-WebConfiguration -Filter '/system.applicationHost/applicationPools/add' | % 
     set_profile_environment    = [string]$_.processmodel.setProfileEnvironment
     shutdown_time_limit        = [string]$_.processmodel.shutdownTimeLimit
     startup_time_limit         = [string]$_.processmodel.startupTimeLimit
-    orphan_action_exe          = [string]$_.processmodel.orphanactionexe
-    orphan_action_params       = [string]$_.processmodel.orphanactionparams
-    orphan_worker_process      = [string]$_.processmodel.orphanworkerprocess
-    
-    load_balancer_capabilities        = [string]$_.loadbalancercapabilities
-    rapid_fail_protection             = [string]$_.rapidfailprotection
-    rapid_fail_protection_interval    = [string]$_.rapidfailprotectioninterval
-    rapid_fail_protection_max_crashes = [string]$_.rapidfailprotectionmaxcrashes
-    auto_shutdown_exe                 = [string]$_.autoshutdownexe
-    auto_shutdown_params              = [string]$_.autoshutdownparams
-    
-    disallow_overlapping_rotation      = [string]$_.disallowoverlappingrotation
-    disallow_rotation_on_config_change = [string]$_.disallowrotationonconfigchange
-    log_event_on_recycle               = [string]$_.logeventonrecycle
-    restart_memory_limit               = [string]$_.restartmemorylimit
-    restart_private_memory_limit       = [string]$_.restartprivatememorylimit
-    restart_requests_limit             = [string]$_.restartrequestslimit
-    restart_time_limit                 = [string]$_.restarttimelimit
-    restart_schedule                   = [string]$_.restartschedule
+    user_name                  = [string]$_.processmodel.username
+    password                   = [string]$_.processmodel.password
+
+    orphan_action_exe                 = [string]$_.failure.orphanactionexe
+    orphan_action_params              = [string]$_.failure.orphanactionparams
+    orphan_worker_process             = [string]$_.failure.orphanworkerprocess
+    load_balancer_capabilities        = [string]$_.failure.loadbalancercapabilities
+    rapid_fail_protection             = [string]$_.failure.rapidfailprotection
+    rapid_fail_protection_interval    = [string]$_.failure.rapidfailprotectioninterval
+    rapid_fail_protection_max_crashes = [string]$_.failure.rapidfailprotectionmaxcrashes
+    auto_shutdown_exe                 = [string]$_.failure.autoshutdownexe
+    auto_shutdown_params              = [string]$_.failure.autoshutdownparams
+
+    disallow_overlapping_rotation      = [string]$_.recycling.disallowoverlappingrotation
+    disallow_rotation_on_config_change = [string]$_.recycling.disallowrotationonconfigchange
+    log_event_on_recycle               = [string]$_.recycling.logeventonrecycle
+    restart_memory_limit               = [string]$_.recycling.periodicrestart.memory
+    restart_private_memory_limit       = [string]$_.recycling.periodicrestart.privatememory
+    restart_requests_limit             = [string]$_.recycling.periodicrestart.requests
+    restart_time_limit                 = [string]$_.recycling.periodicrestart.time
+    restart_schedule                   = [string]$_.recycling.periodicrestart.schedule.collection.value
   }
 } | ConvertTo-Json -Depth 10

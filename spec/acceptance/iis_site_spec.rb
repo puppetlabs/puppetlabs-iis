@@ -243,6 +243,7 @@ describe 'iis_site' do
           remove_all_sites
         end
       end
+
     end
 
     context 'with invalid value for' do
@@ -291,9 +292,9 @@ describe 'iis_site' do
       # TestRail ID: C100076
       context 'physicalpath' do
         before(:all) do
+          @site_name = "#{SecureRandom.hex(10)}"
           create_path('C:\inetpub\new')
           create_site(@site_name, true)
-          @site_name = "#{SecureRandom.hex(10)}"
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
@@ -310,6 +311,34 @@ describe 'iis_site' do
             @result = resource('iis_site', @site_name)
           end
           puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new')
+        end
+
+        after(:all) do
+          remove_all_sites
+        end
+      end
+
+      context 'applicationpool' do
+        before(:all) do
+          @site_name = "#{SecureRandom.hex(10)}"
+          @pool_name = "#{SecureRandom.hex(10)}"
+          create_app_pool(@pool_name)
+          create_site(@site_name, true)
+          @manifest = <<-HERE
+          iis_site { '#{@site_name}':
+            ensure          => 'started',
+            applicationpool => '#{@pool_name}',
+          }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        context 'when puppet resource is run' do
+          before(:all) do
+            @result = resource('iis_site', @site_name)
+          end
+          puppet_resource_should_show('applicationpool', @pool_name)
         end
 
         after(:all) do
@@ -458,6 +487,28 @@ describe 'iis_site' do
         after(:all) do
           remove_all_sites
         end
+      end
+    end
+
+    context 'with an existing website' do
+      before (:all) do
+        @site_name_one = "#{SecureRandom.hex(10)}"
+        @site_name_two = "#{SecureRandom.hex(10)}"
+        create_site(@site_name_one, true)
+        create_path('C:\inetpub\basic')
+        @manifest = <<-HERE
+          iis_site { '#{@site_name_two}':
+            ensure          => 'started',
+            physicalpath    => 'C:\\inetpub\\basic',
+            applicationpool => 'DefaultAppPool',
+          }
+        HERE
+      end
+
+      it_behaves_like 'a failing manifest'
+
+      after(:all) do
+        remove_all_sites
       end
     end
   end

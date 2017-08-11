@@ -1,6 +1,6 @@
 {
   "name"        : "puppetlabs-iis",
-  "version"     : "4.0.0",
+  "version"     : "4.1.0",
   "author"      : "puppetlabs",
   "license"     : "Apache-2.0",
   "summary"     : "Manage IIS for Windows Server 2008R2, 2012 and 2012R2. Maintain application sites, pools, installation, and many other IIS settings.",
@@ -20,7 +20,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 5.0.0"
+      "version_requirement": ">= 4.7.0 < 6.0.0"
     }
   ],
   "dependencies": [
