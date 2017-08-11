@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
   desc "IIS Virtual Directory provider using the PowerShell WebAdministration module"
 
-  confine    :iis_version     => ['7.5', '8.0', '8.5', '10.0']
+  confine    :feature         => :iis_compatible_version
   confine    :operatingsystem => [ :windows ]
   defaultfor :operatingsystem => :windows
 
