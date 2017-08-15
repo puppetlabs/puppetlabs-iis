@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_common')
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 # When writing IIS PowerShell code for any of the methods below
@@ -18,6 +19,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   mk_resource_methods
 
   def create
+    verify_physicalpath
+
     cmd = []
 
     cmd << self.class.ps_script_content('_newwebsite', @resource)
@@ -33,6 +36,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   end
 
   def update
+    verify_physicalpath
+
     cmd = []
 
     cmd << self.class.ps_script_content('_setwebsite', @resource)
@@ -140,7 +145,12 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
         binding.delete('certificatestorename') unless binding['protocol'] == 'https'
       end
 
-      site_hash[:ensure]               = site['state'].downcase
+      if site['state'] == ''
+        site_hash[:ensure]             = :present
+      else
+        site_hash[:ensure]             = site['state'].downcase
+      end
+
       site_hash[:name]                 = site['name']
       site_hash[:physicalpath]         = site['physicalpath']
       site_hash[:applicationpool]      = site['applicationpool']

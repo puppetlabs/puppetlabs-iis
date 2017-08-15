@@ -1,5 +1,5 @@
 require 'puppet/parameter/boolean'
-require_relative '../../puppet_x/puppetlabs/iis/property/string'
+require_relative '../../puppet_x/puppetlabs/iis/property/path'
 
 Puppet::Type.newtype(:iis_virtual_directory) do
   @doc = "Manage an IIS virtual directory."
@@ -11,6 +11,11 @@ Puppet::Type.newtype(:iis_virtual_directory) do
 
   newparam(:name, :namevar => true) do
     desc 'The name of the virtual directory to manage'
+    validate do |value|
+      if value.nil? or value.empty?
+        raise ArgumentError, "A non-empty name must be specified."
+      end
+    end
   end
 
   newproperty(:sitename) do
@@ -31,13 +36,12 @@ Puppet::Type.newtype(:iis_virtual_directory) do
     end
   end
 
-  newproperty(:physicalpath) do
-    desc 'The physical path to the IIS virtual directory folder'
+  newproperty(:physicalpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
+    desc 'The physical path to the virtual directory'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty physicalpath must be specified."
       end
-      fail("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ or value =~ /^\/\/[^\/]+\/[^\/]+/
     end
   end
 
