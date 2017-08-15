@@ -1,3 +1,26 @@
+## 2017-08-18 - Version 4.1.0
+
+### Summary
+
+This is a minor release, with bug fixes and documentation changes.
+
+### Added
+
+- Added ability to update physical path and application pool for sites ([MODULES-5125](https://tickets.puppetlabs.com/browse/MODULES-5125))
+- Updated metadata to support Puppet 5 ([MODULES-5144](https://tickets.puppetlabs.com/browse/MODULES-5144))
+
+### Fixed
+
+- Removed redundant ordering in README examples
+- Added testing of module on Puppet 5 ([MODULES-5187](https://tickets.puppetlabs.com/browse/MODULES-5187))
+- Added more acceptance testing of Application Pool settings ([MODULES-5195](https://tickets.puppetlabs.com/browse/MODULES-5195))
+- Added iis_virtual_directory to README ([MODULES-5433](https://tickets.puppetlabs.com/browse/MODULES-5433))
+- Fixed various formatting issues in README ([MODULES-5433](https://tickets.puppetlabs.com/browse/MODULES-5433))
+- Fixed certificate thumbprints to be case insensitive and handle nil values ([MODULES-5259](https://tickets.puppetlabs.com/browse/MODULES-5259))
+- Fixed iis_application_pool settings not being idempotent  ([MODULES-5169](https://tickets.puppetlabs.com/browse/MODULES-5169))
+- Fixed iis_site settings not being idempotent  ([MODULES-5429](https://tickets.puppetlabs.com/browse/MODULES-5429))
+
+
 ## 2017-06-05 - Version 4.0.0
 
 ### Summary
