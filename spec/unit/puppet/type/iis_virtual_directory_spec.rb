@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'iis_virtual_directory' do
+describe Puppet::Type.type(:iis_virtual_directory) do
   let(:type_class) { Puppet::Type.type(:iis_virtual_directory) }
 
   let :params do
@@ -16,21 +16,6 @@ describe 'iis_virtual_directory' do
       :application,
       :physicalpath
     ]
-  end
-
-  let :minimal_config do
-    {
-      name: 'Some Virtual Directory',
-    }
-  end
-
-  let :optional_config do
-    {
-    }
-  end
-
-  let :default_config do
-     minimal_config.merge(optional_config)
   end
 
   it 'should have expected properties' do
@@ -49,24 +34,75 @@ describe 'iis_virtual_directory' do
     expect(params + [:provider]).to include(*type_class.parameters)
   end
 
-  it 'should default ensure to present' do
-    pool = type_class.new(
-      name: 'foo',
-    )
-    expect(pool[:ensure]).to eq(:present)
+  let(:resource) { described_class.new(:name => "iis_virtual_directory") }
+  subject { resource }
+
+  describe "parameter :name" do
+    subject { resource.parameters[:name] }
+
+    it { is_expected.to be_isnamevar }
+
+    it "should not allow nil" do
+      expect {
+        resource[:name] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for name/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        resource[:name] = ''
+      }.to raise_error(Puppet::ResourceError, /A non-empty name must be specified/)
+    end
   end
 
-  context 'with a minimal set of properties' do
-    let :config do
-      minimal_config
+  describe "parameter :sitename" do
+    subject { resource.parameters[:name] }
+
+    it "should not allow nil" do
+      expect {
+        resource[:sitename] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for sitename/)
     end
 
-    let :virtual_directory do
-      type_class.new(config)
+    it "should not allow empty" do
+      expect {
+        resource[:sitename] = ''
+      }.to raise_error(Puppet::ResourceError, /A non-empty sitename must be specified/)
+    end
+  end
+
+  describe "parameter :application" do
+    subject { resource.parameters[:name] }
+
+    it "should not allow nil" do
+      expect {
+        resource[:application] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for application/)
     end
 
-    it 'should be valid' do
-      expect { virtual_directory }.not_to raise_error
+    it "should not allow empty" do
+      expect {
+        resource[:application] = ''
+      }.to raise_error(Puppet::ResourceError, /A non-empty application must be specified/)
+    end
+  end
+
+  context "parameter :physicalpath" do
+    it "should not allow nil" do
+      expect {
+        resource[:physicalpath] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for physicalpath/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        resource[:physicalpath] = ''
+      }.to raise_error(Puppet::Error, /A non-empty physicalpath must be specified/)
+    end
+
+    it "should accept forward-slash and backslash paths" do
+      resource[:physicalpath] = "c:/directory/subdirectory"
+      resource[:physicalpath] = "c:\\directory\\subdirectory"
     end
   end
 end
