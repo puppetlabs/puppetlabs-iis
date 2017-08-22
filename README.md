@@ -746,7 +746,7 @@ The application under which the virtual directory is created.
 
 #### OS Compatibility
 
-This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2` and `Windows Server 2016`.
+This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012` and `Windows Server 2012R2`.
 
 #### IIS Compatibility
 
