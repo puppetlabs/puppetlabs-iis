@@ -68,6 +68,9 @@ Puppet::Type.newtype(:iis_site) do
       unless value.kind_of?(String)
         fail("Invalid value '#{value}'. Should be a string")
       end
+      
+      fail("Invalid value ''. Valid values are http, https, net.pipe") if value.empty?
+      
       protocols = value.split(',')
       protocols.each do |protocol|
         unless ['http', 'https', 'net.pipe'].include?(protocol)
