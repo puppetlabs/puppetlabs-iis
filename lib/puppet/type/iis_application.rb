@@ -76,6 +76,25 @@ Puppet::Type.newtype(:iis_application) do
     end
   end
 
+  newproperty(:enabledprotocols) do
+    desc 'Sets the enabled protocols for the application'
+    validate do |value|
+      return if value.nil?
+      unless value.kind_of?(String)
+        fail("Invalid value '#{value}'. Should be a string")
+      end
+      
+      fail("Invalid value ''. Valid values are http, https, net.pipe") if value.empty?
+
+      protocols = value.split(',')
+      protocols.each do |protocol|
+        unless ['http', 'https', 'net.pipe'].include?(protocol)
+          fail("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe")
+        end
+      end
+    end
+  end
+
   autorequire(:iis_application_pool) { self[:applicationpool] }
   autorequire(:iis_site) { self[:sitename] }
 

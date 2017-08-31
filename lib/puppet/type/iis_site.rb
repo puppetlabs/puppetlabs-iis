@@ -68,8 +68,14 @@ Puppet::Type.newtype(:iis_site) do
       unless value.kind_of?(String)
         fail("Invalid value '#{value}'. Should be a string")
       end
-      unless ['http','https'].include?(value)
-        fail("Invalid value '#{value}'. Valid values are http, https")
+      
+      fail("Invalid value ''. Valid values are http, https, net.pipe") if value.empty?
+      
+      protocols = value.split(',')
+      protocols.each do |protocol|
+        unless ['http', 'https', 'net.pipe'].include?(protocol)
+          fail("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe")
+        end
       end
     end
   end
@@ -94,19 +100,27 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
 
     validate do |value|
       unless value.is_a?(Hash)
-        fail("All bindings must be a hash")
+          fail("All bindings must be a hash")
       end
       unless (['protocol','bindinginformation'] - value.keys).empty?
-        fail("All bindings must specify protocol and bindinginformation values")
+          fail("All bindings must specify protocol and bindinginformation values")
       end
-      unless ["http","https"].include?(value['protocol'])
-        fail("Invalid value '#{value}'. Valid values are http, https")
+      unless ["http","https","net.pipe"].include?(value['protocol'])
+          fail("Invalid value '#{value}'. Valid values are http, https, net.pipe")
       end
-      unless value["bindinginformation"].match(%r{^.+:\d+:.*})
-        fail("bindinginformation must be of the format '(ip|*):1-65535:hostname'")
+  
+      if ["http","https"].include?(value['protocol'])
+          unless value["bindinginformation"].match(%r{^.+:\d+:.*})
+          fail("bindinginformation for http and https protocols must be of the format '(ip|*):1-65535:hostname'")
+          end
+      elsif ["net.pipe"].include?(value['protocol'])
+          unless value["bindinginformation"].match(%r{^[^:]+$})
+          fail("bindinginformation for net.pipe protocol must be of the format 'hostname'")
+          end
       end
-      if value["protocol"] == "http" and (value["sslflags"] or value["certificatehash"] or value["certificatestorename"])
-        fail("#{value["bindinginformation"]}: sslflags, certificatehash, and certificatestorename are not valid when protocol is http")
+
+      if ["http","net.pipe"].include?(value["protocol"]) and (value["sslflags"] or value["certificatehash"] or value["certificatestorename"])
+        fail("#{value["bindinginformation"]}: sslflags, certificatehash, and certificatestorename are not valid when protocol is http or net.pipe")
       end
       if value["protocol"] == "https"
         if ! [0,1,2,3].include?(value["sslflags"])
