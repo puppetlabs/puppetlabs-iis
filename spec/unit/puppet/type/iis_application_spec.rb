@@ -132,4 +132,42 @@ describe 'iis_application' do
       it { expect{subject}.to raise_error(Puppet::Error, /sslflags/) }
     end
   end
+  describe 'enabledprotocols' do
+    context 'should accept valid string value' do
+      let(:params) do
+        {
+          title: 'foo\bar',
+          enabledprotocols: 'http,https,net.pipe',
+        }
+      end
+      it { expect(subject[:enabledprotocols]).to eq('http,https,net.pipe') }
+    end
+    context 'should not allow nil' do
+      let(:params) do 
+        {
+          title: 'foo\bar',
+          enabledprotocols: nil,
+        }
+      end
+      it { expect{subject}.to raise_error(Puppet::Error, /Got nil value for enabledprotocols/) }
+    end
+    context 'should not allow empty' do
+      let(:params) do 
+        {
+          title: 'foo\bar',
+          enabledprotocols: '',
+        }
+      end
+      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe/) }
+    end
+    context 'should not accept invalid string value' do
+      let(:params) do 
+        {
+          title: 'foo\bar',
+          enabledprotocols: 'woot',
+        }
+      end
+      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe/) }
+    end
+  end
 end
