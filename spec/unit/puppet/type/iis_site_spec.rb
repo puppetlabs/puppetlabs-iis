@@ -133,7 +133,7 @@ describe Puppet::Type.type(:iis_site) do
     it "should not allow empty" do
       expect {
         resource[:enabledprotocols] = ''
-      }.to raise_error(Puppet::ResourceError, /Invalid protocol ''. Valid values are http, https, net.pipe/)
+      }.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe/)
     end
 
     it "should accept valid string value" do
