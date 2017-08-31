@@ -167,7 +167,7 @@ describe 'iis_application' do
           enabledprotocols: 'woot',
         }
       end
-      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe/) }
+      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid protocol 'woot'. Valid values are http, https, net.pipe/) }
     end
   end
 end
