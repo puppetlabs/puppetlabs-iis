@@ -61,7 +61,7 @@ Try-SetItemProperty @logParams
 <% if !resource[:preloadenabled].nil? -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
-  Name  = 'applicationDefaults.serviceAutoStartEnabled'
+  Name  = 'applicationDefaults.preloadEnabled'
   Value = '<%= "#{resource[:preloadenabled]}" %>'
 }
 Try-SetItemProperty @logParams
