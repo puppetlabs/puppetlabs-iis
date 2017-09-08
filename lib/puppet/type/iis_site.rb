@@ -1,5 +1,6 @@
 require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/name'
+require_relative '../../puppet_x/puppetlabs/iis/property/hash'
 
 Puppet::Type.newtype(:iis_site) do
   @doc = "Create a new IIS website."
@@ -311,6 +312,18 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
       should.select do |k,v|
         is[k] != v
       end.empty?
+    end
+  end
+
+  newproperty(:authenticationinfo) do
+    desc 'Enable and disable authentication schemas. Note: some schemas require additional Windows features to be installed, for example windows authentication. This type does not ensure a given feature is installed before attempting to configure it.'
+    valid_schemas = ['anonymous', 'basic', 'clientCertificateMapping',
+                      'digest', 'iisClientCertificateMapping', 'windows']
+    validate do |value|
+      fail "#{self.name.to_s} should be a Hash" unless value.is_a? ::Hash
+      unless (value.keys & valid_schemas) == value.keys
+          fail("All schemas must specify any of the following: anonymous, basic, clientCertificateMapping, digest, iisClientCertificateMapping, or windows")
+      end
     end
   end
 

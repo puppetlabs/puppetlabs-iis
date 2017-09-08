@@ -49,7 +49,17 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
 
-
+    if @resource[:authenticationinfo]
+      @resource[:authenticationinfo].each do |auth,enable|
+        args = Array.new
+        args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
+        args << "-PSPath 'IIS:\\'"
+        args << "-Location '#{@resource[:name]}'"
+        args << "-Name enabled"
+        args << "-Value #{@resource[:authenticationinfo][auth]}"
+        cmd << "Set-WebConfigurationProperty #{args.join(' ')} -ErrorAction Stop\n"
+      end
+    end
 
     inst_cmd = cmd.join
 
@@ -108,6 +118,9 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     sites = instances
     resources.keys.each do |site|
       if !sites.nil? && provider = sites.find { |s| s.name == site }
+        if !resources[site]['authenticationinfo'].nil?
+          resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])
+        end
         resources[site].provider = provider
       end
     end
@@ -142,6 +155,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
         binding.delete('certificatestorename') unless binding['protocol'] == 'https'
       end
       site['limits'] = {} if site['limits'].nil?
+      site['authenticationinfo'] = {} if site['authenticationinfo'].nil?
 
       site_hash[:ensure]               = site['state'].downcase
       site_hash[:name]                 = site['name']
@@ -158,6 +172,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       site_hash[:logformat]            = site['logformat']
       site_hash[:logflags]             = site['logextfileflags'].split(/,\s*/).sort
       site_hash[:preloadenabled]       = to_bool(site['preloadenabled']) unless site['preloadenabled'].nil?
+      site_hash[:authenticationinfo]   = site['authenticationinfo']
 
       new(site_hash)
     end

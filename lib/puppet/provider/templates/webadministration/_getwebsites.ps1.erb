@@ -7,6 +7,20 @@ Get-WebSite | % {
     $preloadenabled = [string](Get-ItemProperty -Path "IIS:\Sites\$($name)" -Name 'applicationDefaults.preloadEnabled' -ErrorAction 'Continue').Value
   }
 
+  $authenticationTypes = @(
+    'anonymous',
+    'basic',
+    'clientCertificateMapping',
+    'digest',
+    'iisClientCertificateMapping',
+    'windows'
+  )
+  $authenticationTypes | Foreach-Object -Begin { $info = @{} } -Process {
+    $p = Get-WebConfiguration -Filter "system.webserver/security/authentication/$($_)Authentication" -PSPath "IIS:\sites\$($name)"
+    $info["$($_)"] = $p.enabled
+  }
+  $authenticationinfo = New-Object -TypeName PSObject -Property $info
+
   New-Object -TypeName PSObject -Property @{
     name             = [string]$_.Name
     physicalpath     = [string]$_.PhysicalPath
@@ -29,6 +43,7 @@ Get-WebSite | % {
       maxconnections     = [int64]$_.limits.maxconnections
       connectiontimeout  = [int]$_.limits.connectiontimeout.totalseconds
     }
+    authenticationinfo   = $authenticationinfo
     logformat            = [string]$_.LogFile.logFormat
     logpath              = [string]$_.LogFile.directory
     logperiod            = [string]$_.LogFile.period

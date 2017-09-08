@@ -189,6 +189,32 @@ describe 'iis_site' do
       end
     end
 
+    context 'when setting' do
+      describe 'authenticationinfo' do
+        before(:all) do
+          @site_name = SecureRandom.hex(10)
+          create_path('C:\inetpub\tmp')
+          @manifest  = <<-HERE
+            iis_site { '#{@site_name}':
+              ensure          => 'started',
+              physicalpath    => 'C:\\inetpub\\tmp',
+              applicationpool => 'DefaultAppPool',
+              authenticationinfo => {
+                'basic'     => true,
+                'anonymous' => false,
+              },
+            }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        after(:all) do
+          remove_all_sites
+        end
+      end
+    end
+
     # TestRail ID: C100071
     context 'can change site state from' do
       context 'stopped to started' do

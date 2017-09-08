@@ -58,6 +58,28 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
+  context "property: authenticationinfo" do
+    it "requires a hash or array of hashes" do
+      expect {
+        resource[:authenticationinfo] = "hi"
+      }.to raise_error(Puppet::Error, /Hash/)
+      expect {
+        resource[:authenticationinfo] = ["hi"]
+      }.to raise_error(Puppet::Error, /Hash/)
+    end
+    it "requires any of the schemas" do
+      expect {
+        resource[:authenticationinfo] = { 'wakka' => 'fdskjfndslk' }
+      }.to raise_error(Puppet::Error, /schema/)
+    end
+    it "allows valid syntax" do
+      resource[:authenticationinfo] = {
+        'basic' => true,
+        'anonymous' => false,
+      }
+    end
+  end
+
   context "property :bindings" do
     it "requires a hash or array of hashes" do
       expect {
