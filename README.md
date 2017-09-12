@@ -109,6 +109,15 @@ iis_application_pool { 'complete_site_app_pool':
   managed_runtime_version => 'v4.0',
 }
 
+#Application Pool No Managed Code .Net CLR Version set up
+iis_application_pool {'test_app_pool':
+    ensure                    => 'present',
+    enable32_bit_app_on_win64 => true,
+    managed_runtime_version   => '""',
+    managed_pipeline_mode     => 'Classic',
+    start_mode                => 'AlwaysRunning'
+  }
+
 iis_site { 'complete':
   ensure           => 'started',
   physicalpath     => 'c:\\inetpub\\complete',
