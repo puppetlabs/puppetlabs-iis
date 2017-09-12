@@ -48,6 +48,7 @@ describe 'iis_site' do
               ensure               => 'started',
               applicationpool      => 'DefaultAppPool',
               enabledprotocols     => 'https',
+              preloadenabled       => true,
               bindings             => [
                 {
                   'bindinginformation'   => '*:8080:',
@@ -84,6 +85,7 @@ describe 'iis_site' do
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
+          puppet_resource_should_show('preloadenabled',       'true')
           #puppet_resource_should_show('bindings',             [
           #    {
           #      'bindinginformation'   => '*:8080:',
