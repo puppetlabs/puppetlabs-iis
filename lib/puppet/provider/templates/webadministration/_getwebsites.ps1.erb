@@ -22,5 +22,6 @@ Get-WebSite | %{
     logtruncatesize      = [string]$_.LogFile.truncateSize
     loglocaltimerollover = [string]$_.LogFile.localTimeRollover
     logextfileflags      = [string]$_.LogFile.logExtFileFlags
+    preloadenabled       = [string](Get-ItemProperty -Path "IIS:\Sites\$($_.Name)" -Name 'applicationDefaults.preloadEnabled' -ErrorAction 'Continue').Value
   }
 } | ConvertTo-Json -Depth 10
