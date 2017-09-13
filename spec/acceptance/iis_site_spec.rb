@@ -48,7 +48,6 @@ describe 'iis_site' do
               ensure               => 'started',
               applicationpool      => 'DefaultAppPool',
               enabledprotocols     => 'https',
-              preloadenabled       => true,
               bindings             => [
                 {
                   'bindinginformation'   => '*:8080:',
@@ -85,7 +84,6 @@ describe 'iis_site' do
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
-          puppet_resource_should_show('preloadenabled',       'true')
           #puppet_resource_should_show('bindings',             [
           #    {
           #      'bindinginformation'   => '*:8080:',
@@ -108,6 +106,35 @@ describe 'iis_site' do
           puppet_resource_should_show('loglocaltimerollover', 'false')
           puppet_resource_should_show('logpath',              "C:\\inetpub\\logs\\NewLogFiles")
           puppet_resource_should_show('logtruncatesize',      '2000000')
+          puppet_resource_should_show('physicalpath',         "C:\\inetpub\\new")
+        end
+
+        after(:all) do
+          remove_all_sites
+        end
+      end
+
+      context 'using preloadenabled', :if => fact('kernelmajversion') != '6.1' do
+        before (:all) do
+          create_path('C:\inetpub\new')
+          @site_name = "#{SecureRandom.hex(10)}"
+          @manifest = <<-HERE
+            iis_site { '#{@site_name}':
+              ensure               => 'started',
+              preloadenabled       => true,
+              physicalpath         => 'C:\\inetpub\\new',
+            }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        context 'when puppet resource is run' do
+          before(:all) do
+            @result = resource('iis_site', @site_name)
+          end
+          puppet_resource_should_show('ensure',               'started')
+          puppet_resource_should_show('preloadenabled',       'true')
           puppet_resource_should_show('physicalpath',         "C:\\inetpub\\new")
         end
 
