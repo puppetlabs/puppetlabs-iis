@@ -3,7 +3,7 @@ $iis_version = '<%= Facter.value(:iis_version) %>'
 Get-WebSite | % {
   $name = $_.Name
 
-  if ($iis_version -ge '7.5') {
+  if ($iis_version -gt '7.5') {
     $preloadenabled = [string](Get-ItemProperty -Path "IIS:\Sites\$($name)" -Name 'applicationDefaults.preloadEnabled' -ErrorAction 'Continue').Value
   }
 
