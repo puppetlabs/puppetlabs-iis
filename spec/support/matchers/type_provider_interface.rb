@@ -1,3 +1,15 @@
+RSpec::Matchers.define :require_path_for do |property|
+  match do |type_class|
+    config = {name: 'name'}
+    config[property] = 2
+    expect do
+      type_class.new(config)
+    end.to raise_error(Puppet::Error, /#{property} should be a Path/)
+  end
+  failure_message do |type_class|
+    "#{type_class} should require #{property} to be a Path"
+  end
+end
 
 RSpec::Matchers.define :require_string_for do |property|
   match do |type_class|

@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_common')
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 # When writing IIS PowerShell code for any of the methods below
@@ -18,6 +19,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   mk_resource_methods
 
   def create
+    verify_physicalpath
+
     cmd = []
 
     cmd << self.class.ps_script_content('_newwebsite', @resource)
@@ -33,6 +36,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   end
 
   def update
+    verify_physicalpath
+
     cmd = []
 
     cmd << self.class.ps_script_content('_setwebsite', @resource)
