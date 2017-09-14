@@ -133,3 +133,64 @@ describe 'iis_application' do
     end
   end
 end
+
+describe Puppet::Type.type(:iis_application) do
+  let(:resource) { described_class.new(:applicationname => "test_application", :sitename => 'test_site', :applicationpool => 'test_site') }
+  subject { resource }
+
+  describe "parameter :applicationname" do
+    subject { resource.parameters[:applicationname] }
+
+    it { is_expected.to be_isnamevar }
+  end
+
+  describe "parameter :sitename" do
+    subject { resource.parameters[:sitename] }
+
+    [ 'values', 'UPPERCASEVALUES', '0123456789', 'values with spaces', "values with . - _ '" ].each do |value|
+      it "should accept '#{value}'" do
+        expect { resource[:sitename] = value }.not_to raise_error
+      end
+    end
+
+    [ '*', '()', '[]', '!@' ].each do |value|
+      it "should reject '#{value}'" do
+        expect { resource[:sitename] = value }.to raise_error(Puppet::ResourceError, /is not a valid sitename/)
+      end
+    end
+  end
+
+  describe "parameter :applicationpool" do
+    subject { resource.parameters[:applicationpool] }
+
+    it "should not allow nil" do
+      expect {
+        resource[:applicationpool] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for applicationpool/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        resource[:applicationpool] = ''
+      }.to raise_error(Puppet::ResourceError, /A non-empty applicationpool must/)
+    end
+
+    [ 'values', 'UPPERCASEVALUES', '0123456789', 'values with spaces', "values with . - _ '" ].each do |value|
+      it "should accept '#{value}'" do
+        expect { resource[:applicationpool] = value }.not_to raise_error
+      end
+    end
+
+    [ '*', '()', '[]', '!@' ].each do |value|
+      it "should reject '#{value}'" do
+        expect { resource[:applicationpool] = value }.to raise_error(Puppet::ResourceError, /is not a valid applicationpool/)
+      end
+    end
+
+    it "should not allow values with more than 64 characters" do
+      expect {
+        resource[:applicationpool] = '01234567890123456789012345678901234567890123456789012345678901234'
+      }.to raise_error(Puppet::Error, /The applicationpool must be less than 64 characters/)
+    end
+  end
+end

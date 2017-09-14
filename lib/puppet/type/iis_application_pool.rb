@@ -1,4 +1,5 @@
 require 'puppet/parameter/boolean'
+require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 require_relative '../../puppet_x/puppetlabs/iis/property/positive_integer'
 require_relative '../../puppet_x/puppetlabs/iis/property/timeformat'
@@ -22,15 +23,14 @@ Puppet::Type.newtype(:iis_application_pool) do
     defaultto :present
   end
   
-  newparam(:name, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+  newparam(:name, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc "The unique name of the ApplicationPool."
     validate do |value|
-      super value
       if value.nil? or value.empty?
-        raise ArgumentError, "A non-empty #{self.name.to_s} must be specified."
+        raise ArgumentError, "A non-empty name must be specified."
       end
-      fail("#{self.name.to_s} should be less than 64 characters") unless value.length < 64
-      fail("#{self.name.to_s} is not a valid web site name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
+      super value
+      fail("The name must be less than 64 characters") unless value.length < 64
     end
   end
 

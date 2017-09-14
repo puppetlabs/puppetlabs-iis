@@ -112,7 +112,6 @@ describe 'iis_application_pool' do
   ]
   
   [
-    :name,
     :clr_config_file,
     :managed_runtime_loader,
     :log_event_on_process_model,
@@ -286,4 +285,45 @@ describe 'iis_application_pool' do
   end
 
   # See https://github.com/puppetlabs/puppetlabs-azure/blob/master/spec/unit/type/azure_vm_spec.rb for more examples
+end
+
+describe Puppet::Type.type(:iis_application_pool) do
+  let(:resource) { described_class.new(:name => "test_iis_application_pool") }
+  subject { resource }
+
+  describe "parameter :name" do
+    subject { resource.parameters[:name] }
+
+    it { is_expected.to be_isnamevar }
+
+    it "should not allow nil" do
+      expect {
+        resource[:name] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for name/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        resource[:name] = ''
+      }.to raise_error(Puppet::ResourceError, /A non-empty name must/)
+    end
+
+    [ 'values', 'UPPERCASEVALUES', '0123456789', 'values with spaces', "values with . - _ '" ].each do |value|
+      it "should accept '#{value}'" do
+        expect { resource[:name] = value }.not_to raise_error
+      end
+    end
+
+    [ '*', '()', '[]', '!@' ].each do |value|
+      it "should reject '#{value}'" do
+        expect { resource[:name] = value }.to raise_error(Puppet::ResourceError, /is not a valid name/)
+      end
+    end
+
+    it "should not allow values with more than 64 characters" do
+      expect {
+        resource[:name] = '01234567890123456789012345678901234567890123456789012345678901234'
+      }.to raise_error(Puppet::Error, /The name must be less than 64 characters/)
+    end
+  end
 end
