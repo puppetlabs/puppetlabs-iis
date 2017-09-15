@@ -33,7 +33,7 @@ describe Puppet::Type.type(:iis_site) do
 
     [ '*', '()', '[]', '!@' ].each do |value|
       it "should reject '#{value}'" do
-        expect { resource[:name] = value }.to raise_error(Puppet::ResourceError, /name is not a valid web site name/)
+        expect { resource[:name] = value }.to raise_error(Puppet::ResourceError, /is not a valid name/)
       end
     end
   end
