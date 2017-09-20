@@ -25,7 +25,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::ResourceError, /A non-empty name must/)
     end
 
-    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-' ].each do |value|
+    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
       it "should accept '#{value}'" do
         expect { resource[:name] = value }.not_to raise_error
       end
@@ -33,7 +33,7 @@ describe Puppet::Type.type(:iis_site) do
 
     [ '*', '()', '[]', '!@' ].each do |value|
       it "should reject '#{value}'" do
-        expect { resource[:name] = value }.to raise_error(Puppet::ResourceError, /name is not a valid web site name/)
+        expect { resource[:name] = value }.to raise_error(Puppet::ResourceError, /is not a valid name/)
       end
     end
   end

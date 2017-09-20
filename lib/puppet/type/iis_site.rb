@@ -1,4 +1,5 @@
 require 'puppet/parameter/boolean'
+require_relative '../../puppet_x/puppetlabs/iis/property/name'
 
 Puppet::Type.newtype(:iis_site) do
   @doc = "Create a new IIS website."
@@ -29,7 +30,7 @@ Puppet::Type.newtype(:iis_site) do
     aliasvalue(:true, :started)
   end
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc "The Name of the IIS site. Used for uniqueness. Will set
       the target to this value if target is unset."
 
@@ -37,7 +38,7 @@ Puppet::Type.newtype(:iis_site) do
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty name must be specified."
       end
-      fail("#{name} is not a valid web site name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
+      super value
     end
   end
 
