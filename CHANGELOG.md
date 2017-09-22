@@ -1,3 +1,18 @@
+## 2017-09-26 - Version 4.1.1
+
+### Summary
+
+This is a minor release with bug fixes.
+
+### Added
+
+- Enabled iis_site preleoadenabled ([MODULES-5576](https://tickets.puppetlabs.com/browse/MODULES-5576))
+- Added 'No Managed Code' value to managed_runtime_version in iis_site ([MODULES-5381](https://tickets.puppetlabs.com/browse/MODULES-5381))
+
+### Fixed
+
+- Allow valid characters in title and name for iis_site ([MODULES-5443](https://tickets.puppetlabs.com/browse/MODULES-5443))
+
 ## 2017-08-18 - Version 4.1.0
 
 ### Summary
