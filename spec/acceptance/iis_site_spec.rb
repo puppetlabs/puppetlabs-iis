@@ -114,6 +114,35 @@ describe 'iis_site' do
         end
       end
 
+      context 'using preloadenabled', :if => fact('kernelmajversion') != '6.1' do
+        before (:all) do
+          create_path('C:\inetpub\new')
+          @site_name = "#{SecureRandom.hex(10)}"
+          @manifest = <<-HERE
+            iis_site { '#{@site_name}':
+              ensure               => 'started',
+              preloadenabled       => true,
+              physicalpath         => 'C:\\inetpub\\new',
+            }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        context 'when puppet resource is run' do
+          before(:all) do
+            @result = resource('iis_site', @site_name)
+          end
+          puppet_resource_should_show('ensure',               'started')
+          puppet_resource_should_show('preloadenabled',       'true')
+          puppet_resource_should_show('physicalpath',         "C:\\inetpub\\new")
+        end
+
+        after(:all) do
+          remove_all_sites
+        end
+      end
+
       # TestRail ID: C100070
       context 'using non-W3C log format and logtperiod' do
         before (:all) do

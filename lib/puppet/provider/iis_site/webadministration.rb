@@ -153,6 +153,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       site_hash[:loglocaltimerollover] = to_bool(site['loglocaltimerollover'])
       site_hash[:logformat]            = site['logformat']
       site_hash[:logflags]             = site['logextfileflags'].split(/,\s*/).sort
+      site_hash[:preloadenabled]       = to_bool(site['preloadenabled']) unless site['preloadenabled'].nil?
 
       new(site_hash)
     end

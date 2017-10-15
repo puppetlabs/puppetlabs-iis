@@ -1,4 +1,12 @@
-Get-WebSite | %{
+$iis_version = '<%= Facter.value(:iis_version) %>'
+
+Get-WebSite | % {
+  $name = $_.Name
+
+  if ($iis_version -gt '7.5') {
+    $preloadenabled = [string](Get-ItemProperty -Path "IIS:\Sites\$($name)" -Name 'applicationDefaults.preloadEnabled' -ErrorAction 'Continue').Value
+  }
+
   New-Object -TypeName PSObject -Property @{
     name             = [string]$_.Name
     physicalpath     = [string]$_.PhysicalPath
@@ -22,5 +30,6 @@ Get-WebSite | %{
     logtruncatesize      = [string]$_.LogFile.truncateSize
     loglocaltimerollover = [string]$_.LogFile.localTimeRollover
     logextfileflags      = [string]$_.LogFile.logExtFileFlags
+    preloadenabled       = $preloadenabled
   }
 } | ConvertTo-Json -Depth 10
