@@ -226,6 +226,21 @@ iis_application { 'myapp':
 }
 ```
 
+#### `enabledprotocols`
+
+The comma-delimited list of enabled protocols for the application. Valid protocols are: 'http', 'https', 'net.pipe'.
+
+##### Example
+
+Enable http and net.pipe protocols
+```puppet
+iis_application { 'myapp':
+  ensure           => 'present',
+  sitename         => 'mysite',
+  physicalpath     => 'C:\\inetpub\\app',
+  enabledprotocols => 'http,net.pipe',
+}
+```
 
 ### iis_application_pool
 
@@ -531,7 +546,7 @@ The name of the application pool for the site.
 
 ##### `enabledprotocols`
 
-The protocols enabled for the site. If 'https' is specified, 'http' is implied. If no value is provided, then this setting is disabled.
+The protocols enabled for the site. If 'https' is specified, 'http' is implied. If no value is provided, then this setting is disabled. Can be a comma delimited list of protocols. Valid protocols are: 'http', 'https', 'net.pipe'.
 
 ##### `bindings`
 
@@ -592,6 +607,21 @@ iis_site { 'mysite':
       'certificatehash'      => '3598FAE5ADDB8BA32A061C5579829B359409856F',
       'certificatestorename' => 'MY',
       'sslflags'             => 1,
+    },
+  ],
+}
+```
+
+Binding with net.pipe protocol
+```puppet
+iis_site { 'mysite':
+  ensure               => 'started',
+  applicationpool      => 'DefaultAppPool',
+  enabledprotocols     => 'net.pipe',
+  bindings             => [
+    {
+      'bindinginformation'   => 'netpipe.website.com',
+      'protocol'             => 'net.pipe',
     },
   ],
 }
