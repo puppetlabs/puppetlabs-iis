@@ -31,6 +31,10 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     end
   end
 
+  def enabledprotocols=(value)
+    @property_flush[:enabledprotocols] = value
+  end
+
   def create
     check_paths
     if @resource[:virtual_directory]
@@ -77,6 +81,10 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
       end
     end
 
+    if @property_flush[:enabledprotocols]
+      inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{resource[:sitename]}\"]/application[@path=\"/#{resource[:applicationname]}\"]' -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
+    end
+
     inst_cmd = inst_cmd.join("\n")
     result   = self.class.run(inst_cmd)
     fail "Error updating application: #{result[:errormessage]}" unless result[:exitcode] == 0
@@ -112,6 +120,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
       app_hash[:applicationpool]    = app['applicationpool']
       app_hash[:sslflags]           = app['sslflags']
       app_hash[:authenticationinfo] = app['authenticationinfo']
+      app_hash[:enabledprotocols]   = app['enabledprotocols']
 
       new(app_hash)
     end
