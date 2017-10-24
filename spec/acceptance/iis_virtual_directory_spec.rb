@@ -43,6 +43,37 @@ describe 'iis_virtual_directory' do
         remove_vdir(@virt_dir_name)
       end
     end
+    
+    context 'name allows slashes' do
+      context 'simple case' do
+        before(:all) do
+          @virt_dir_name = "#{SecureRandom.hex(10)}"
+          create_path('c:\inetpub\test_site')
+          create_path('c:\inetpub\test_vdir')
+          create_path('c:\inetpub\deeper')
+          create_site(@site_name, true)
+          @manifest  = <<-HERE
+          iis_virtual_directory{ "test_vdir":
+            ensure       => 'present',
+            sitename     => "#{@site_name}",
+            physicalpath => 'c:\\inetpub\\test_vdir',
+          }->
+          iis_virtual_directory { 'test_vdir\deeper':
+            name         => 'test_vdir\deeper',
+            ensure	     => 'present',
+            sitename     => '#{@site_name}',
+            physicalpath => 'c:\\inetpub\\deeper',
+          }
+          HERE
+        end
+        
+        it_behaves_like 'an idempotent resource'
+
+        after(:all) do
+          remove_vdir(@virt_dir_name)
+        end
+      end
+    end
 
     context 'with invalid' do
       context 'physicalpath parameter defined' do
