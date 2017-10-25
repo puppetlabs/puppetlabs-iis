@@ -26,7 +26,7 @@ Puppet::Type.newtype(:iis_application) do
     ]
   end
 
-  newparam(:applicationname, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
+  newparam(:applicationname, :namevar => true) do
     desc "The name of the Application. The virtual path of an application is /<applicationname>"
   end
 
