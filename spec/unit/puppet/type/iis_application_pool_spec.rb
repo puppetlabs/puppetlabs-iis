@@ -211,6 +211,48 @@ describe 'iis_application_pool' do
 
   end
 
+  context 'parameter :name' do
+    it "should not allow nil" do
+      expect {
+        pool = type_class.new(
+          name: 'foo'
+        )
+        pool[:name] = nil
+      }.to raise_error(Puppet::Error, /Got nil value for name/)
+    end
+
+    it "should not allow empty" do
+      expect {
+        pool = type_class.new(
+          name: 'foo'
+        )
+        pool[:name] = ''
+      }.to raise_error(Puppet::ResourceError, /A non-empty name must/)
+    end
+
+    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
+      it "should accept '#{value}'" do
+        expect { 
+          pool = type_class.new(
+            name: 'foo'
+          )
+          pool[:name] = value
+        }.not_to raise_error
+      end
+    end
+
+    [ '*', '()', '[]', '!@' ].each do |value|
+      it "should reject '#{value}'" do
+        expect {
+          pool = type_class.new(
+            name: 'foo'
+          )
+          pool[:name] = value
+        }.to raise_error(Puppet::ResourceError, /is not a valid name/)
+      end
+    end
+  end
+
   context 'parameter :restart_schedule' do
     it 'should accept a formatted time' do
       pool = type_class.new(
