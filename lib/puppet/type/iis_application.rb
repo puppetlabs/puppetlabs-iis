@@ -1,4 +1,5 @@
 require 'puppet/parameter/boolean'
+require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
 
@@ -25,11 +26,11 @@ Puppet::Type.newtype(:iis_application) do
     ]
   end
 
-  newparam(:applicationname, :namevar => true) do
+  newparam(:applicationname, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc "The name of the Application. The virtual path of an application is /<applicationname>"
   end
 
-  newproperty(:sitename, :namevar => true) do
+  newproperty(:sitename, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of the site for this IIS Web Application'
   end
 

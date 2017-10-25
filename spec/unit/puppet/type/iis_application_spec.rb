@@ -68,6 +68,57 @@ describe 'iis_application' do
     end
     it { expect(subject[:physicalpath]).to eq 'C:\test' }
   end
+  
+  describe 'parameter :applicationname' do
+    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
+      context "when '#{value}'" do
+        let(:params) do
+          {
+            title: 'foo\bar',
+            applicationname: value
+          }
+        end
+        it { expect{subject}.not_to raise_error }
+      end
+    end
+    [ '*', '()', '[]', '!@' ].each do |value|
+      context "when '#{value}'" do
+        let(:params) do
+          {
+            title: 'foo\bar',
+            applicationname: value
+          }
+        end
+        it { expect{subject}.to raise_error(Puppet::ResourceError, /is not a valid applicationname/) }
+      end
+    end
+  end
+
+  describe 'parameter :sitename' do
+    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
+      context "when '#{value}'" do
+        let(:params) do
+          {
+            title: 'foo\bar',
+            sitename: value
+          }
+        end
+        it { expect{subject}.not_to raise_error }
+      end
+    end
+    [ '*', '()', '[]', '!@' ].each do |value|
+      context "when '#{value}'" do
+        let(:params) do
+          {
+            title: 'foo\bar',
+            sitename: value
+          }
+        end
+        it { expect{subject}.to raise_error(Puppet::ResourceError, /is not a valid sitename/) }
+      end
+    end
+  end
+
   describe 'applicationpool' do
     context 'when empty' do
       let(:params) do
