@@ -44,13 +44,13 @@ Puppet::Type.newtype(:iis_application) do
     end
   end
 
-  newproperty(:applicationpool) do
+  newproperty(:applicationpool, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of an ApplicationPool for this IIS Web Application'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty applicationpool name must be specified."
       end
-      fail("#{name} is not a valid applicationpool name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
+      super value
     end
   end
 
