@@ -5,7 +5,7 @@ describe 'iis_feature' do
     # TestRail ID: C100065
     context 'with default parameters' do
       before(:all) do
-        @feature = 'Web-Mgmt-Console'
+        @feature = 'Web-Scripting-Tools'
         @manifest  = <<-HERE
           iis_feature { '#{@feature}':
             ensure => 'present'
