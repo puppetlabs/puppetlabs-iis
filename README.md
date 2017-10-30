@@ -785,11 +785,11 @@ The application under which the virtual directory is created.
 
 #### OS Compatibility
 
-This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012` and `Windows Server 2012R2`.
+This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2`, `Windows Server 2016` and `Windows Server 2016 Core`.
 
 #### IIS Compatibility
 
-This module only supports `IIS 7.5`, `IIS 8` or `IIS 8.5`.
+This module only supports `IIS 7.5`, `IIS 8`, `IIS 8.5` or `IIS 10.0`.
 
 #### PowerShell Compatibility
 
