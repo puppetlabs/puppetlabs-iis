@@ -69,13 +69,13 @@ describe 'iis_application' do
     it { expect(subject[:physicalpath]).to eq 'C:\test' }
   end
   
-  describe 'parameter :applicationname' do
+  describe 'parameter :applicationpool' do
     [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
       context "when '#{value}'" do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationname: value
+            applicationpool: value
           }
         end
         it { expect{subject}.not_to raise_error }
@@ -86,13 +86,10 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationname: value
+            applicationpool: value
           }
         end
-        it do
-          pending('Application Name validation fails under puppet resource')
-          expect{subject}.to raise_error(Puppet::ResourceError, /is not a valid applicationname/)
-        end
+        it {expect{subject}.to raise_error(Puppet::ResourceError, /is not a valid applicationpool/)}
       end
     end
   end
