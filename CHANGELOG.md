@@ -1,3 +1,17 @@
+## 2017-11-04 - Version 4.1.2
+
+### Summary
+
+This is a minor release with bug fixes.
+
+### Fixed
+
+- Loosen restriction on names for iis_site ([MODULES-5293](https://tickets.puppetlabs.com/browse/MODULES-5293))
+- Loosen restriction on name for iis_application_pool ([MODULES-5626](https://tickets.puppetlabs.com/browse/MODULES-5626))
+- Loosen restriction on iis_application applicationname parameter ([MODULES-5627](https://tickets.puppetlabs.com/browse/MODULES-5627))
+- Fix iis_virtual_directory idempotency ([MODULES-5344](https://tickets.puppetlabs.com/browse/MODULES-5344))
+- Add support for net.pipe protocol to iis_site ([MODULES-5521](https://tickets.puppetlabs.com/browse/MODULES-5521))
+
 ## 2017-09-26 - Version 4.1.1
 
 ### Summary
