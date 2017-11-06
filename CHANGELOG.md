@@ -1,3 +1,15 @@
+## 2017-11-10 - Version 4.2.0
+
+### Summary
+
+This is a feature release, with IIS 10 and Server 2016 Core support.
+
+### Added
+
+- Added support for IIS 10 (Server 2016) ([MODULES-5801](https://tickets.puppetlabs.com/browse/MODULES-5801))
+- Added support for Server 2016 Core ([MODULES-5803](https://tickets.puppetlabs.com/browse/MODULES-5803))
+- Added a GitHub Pull Request template to help community submissions
+
 ## 2017-11-04 - Version 4.1.2
 
 ### Summary
