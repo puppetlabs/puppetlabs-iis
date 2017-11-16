@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_common')
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
@@ -18,17 +19,17 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   def create
     Puppet.debug "Creating #{@resource[:name]}"
 
-    if @resource[:physicalpath].nil?
-      fail "physicalpath is a required paramter to create a iis virtual directory"
-    end
-
-    if @resource[:physicalpath] and ! File.exists?(@resource[:physicalpath])
-      fail "physicalpath doesn't exist: #{@resource[:physicalpath]}"
-    end
+    verify_physicalpath
 
     cmd = []
-    cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
-    cmd << "-Site \"#{@resource[:sitename]}\" " if @resource[:sitename]
+    if is_local_path(@resource[:physicalpath])
+      cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
+      cmd << "-Site \"#{@resource[:sitename]}\" " if @resource[:sitename]
+    else
+      # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
+      # and UNC paths are inherently not necessarily always available.
+      cmd << "New-Item -Type VirtualDirectory 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' "
+    end
     cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
     cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
     cmd << "-ErrorAction Stop"
@@ -42,9 +43,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   def update
     Puppet.debug "Updating #{@resource[:name]}"
 
-    if @resource[:physicalpath] and ! File.exists?(@resource[:physicalpath])
-      fail "physicalpath doesn't exist: #{@resource[:physicalpath]}"
-    end
+    verify_physicalpath
 
     cmd = []
 
@@ -58,7 +57,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   end
 
   def destroy
-    Puppet.debug "Creating #{@resource[:name]}"
+    Puppet.debug "Destroying #{@resource[:name]}"
     cmd = []
     cmd << "Remove-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
     cmd << "-Site \"#{@resource[:sitename]}\" " if @resource[:sitename]
@@ -106,7 +105,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
       virt_dir_hash[:ensure]       = :present
       virt_dir_hash[:name]         = virt_dir['name']
       virt_dir_hash[:physicalpath] = virt_dir['physicalpath']
-      virt_dir_hash[:applicaiton]  = virt_dir['applicaiton']
+      virt_dir_hash[:application]  = virt_dir['application']
       virt_dir_hash[:sitename]     = virt_dir['sitename']
 
       new(virt_dir_hash)

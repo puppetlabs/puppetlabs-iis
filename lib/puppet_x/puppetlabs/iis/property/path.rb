@@ -1,5 +1,3 @@
-# (c:\directory or c:/directory) or \\server\share
-
 module PuppetX
   module PuppetLabs
     module IIS
