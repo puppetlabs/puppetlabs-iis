@@ -35,6 +35,10 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     @property_flush[:enabledprotocols] = value
   end
 
+  def applicationpool=(value)
+    @property_flush[:applicationpool] = value
+  end
+
   def create
     check_paths
     if @resource[:virtual_directory]
@@ -83,6 +87,10 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
     if @property_flush[:enabledprotocols]
       inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{resource[:sitename]}\"]/application[@path=\"/#{resource[:applicationname]}\"]' -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
+    end
+
+    if @property_flush[:applicationpool]
+      inst_cmd << "Set-ItemProperty -Path 'IIS:/Sites/#{resource[:sitename]}/#{resource[:applicationname]}' -Name applicationPool -Value '#{resource[:applicationpool]}'"
     end
 
     inst_cmd = inst_cmd.join("\n")
