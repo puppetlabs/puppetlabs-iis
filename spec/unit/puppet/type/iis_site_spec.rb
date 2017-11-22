@@ -38,7 +38,6 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  # TODO: fix tests below
   context "parameter :physicalpath" do
     it "should not allow nil" do
       expect {
@@ -49,12 +48,12 @@ describe Puppet::Type.type(:iis_site) do
     it "should not allow empty" do
       expect {
         resource[:physicalpath] = ''
-      }.to raise_error(Puppet::Error, /A non-empty physicalpath must be specified./)
+      }.to raise_error(Puppet::Error, /A non-empty physicalpath must be specified/)
     end
 
-    it "should accept any string value" do
-      resource[:physicalpath] = "c:/thisstring-location/value/somefile.txt"
-      resource[:physicalpath] = "c:\\thisstring-location\\value\\somefile.txt"
+    it "should accept forward-slash and backslash paths" do
+      resource[:physicalpath] = "c:/directory/subdirectory"
+      resource[:physicalpath] = "c:\\directory\\subdirectory"
     end
   end
 
@@ -312,12 +311,12 @@ describe Puppet::Type.type(:iis_site) do
     it "should not allow empty" do
       expect {
         resource[:logpath] = ''
-      }.to raise_error(Puppet::Error, /A non-empty logpath must be specified./)
+      }.to raise_error(Puppet::Error, /A non-empty logpath must be specified/)
     end
 
-    it "should accept any string value" do
-      resource[:logpath] = "c:/thisstring-location/value/somefile.txt"
-      resource[:logpath] = "c:\\thisstring-location\\value\\somefile.txt"
+    it "should accept forward-slash and backslash paths" do
+      resource[:logpath] = "c:/directory/subdirectory"
+      resource[:logpath] = "c:\\directory\\subdirectory"
     end
   end
 
