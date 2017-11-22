@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_common')
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
@@ -40,7 +41,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   end
 
   def create
-    check_paths
+    verify_physicalpath if @resource[:physicalpath]
     if @resource[:virtual_directory]
       args = Array.new
       args << "#{@resource[:virtual_directory]}"
@@ -65,7 +66,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   end
 
   def update
-    check_paths
+    verify_physicalpath if @resource[:physicalpath]
     inst_cmd = []
 
     inst_cmd << "$webApplication = Get-WebApplication -Site '#{resource[:sitename]}' -Name '#{resource[:applicationname]}'"
@@ -132,17 +133,5 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
       new(app_hash)
     end
-  end
-
-  private
-
-  def check_paths
-    if @resource[:physicalpath] and ! File.exists?(@resource[:physicalpath])
-      fail "physicalpath doesn't exist: #{@resource[:physicalpath]}"
-    end
-    #XXX How do I check for IIS:\ path existence without shelling out to PS?
-    #if @resource[:virtual_directory] and ! File.exists?(@resource[:virtual_directory])
-    #  fail "virtual_directory doesn't exist: #{@resource[:virtual_directory]}"
-    #end
   end
 end
