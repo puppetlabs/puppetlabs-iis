@@ -113,7 +113,6 @@ describe 'iis_application_pool' do
   
   [
     :name,
-    :clr_config_file,
     :managed_runtime_loader,
     :log_event_on_process_model,
     :orphan_action_exe,
@@ -125,6 +124,14 @@ describe 'iis_application_pool' do
   ].each do |property|
     it "should require #{property} to be a string" do
       expect(type_class).to require_string_for(property)
+    end
+  end
+
+  [
+    :clr_config_file,
+  ].each do |property|
+    it "should require #{property} to be a path" do
+      expect(type_class).to require_path_for(property)
     end
   end
 
