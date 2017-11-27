@@ -1,23 +1,47 @@
 Get-WebApplication | % {
   $name = [string]$_.Path.replace("/","")
   $site = [string]$_.ItemXPath.split("'")[1]
+  $id   = [string]$_.ItemXPath.split("'")[3]
+
+  $user_name = [String](Get-WebConfigurationProperty -Filter "/system.applicationHost/sites/site[@name='${site}' and @id='${id}']/application[@path='/${name}']/virtualDirectory[@path='/']" -Name userName).Value
+  $password  = [String](Get-WebConfigurationProperty -Filter "/system.applicationHost/sites/site[@name='${site}' and @id='${id}']/application[@path='/${name}']/virtualDirectory[@path='/']" -Name password).Value
 
   $sslFlags = @()
-  $sslFlags_raw = [String](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags
-  if ($sslFlags_raw -ne '') { $sslFlags = $sslFlags_raw -split ',' }
+  $auth_anonymous                   = 'unknown'
+  $auth_basic                       = 'unknown'
+  $auth_clientCertificateMapping    = 'unknown'
+  $auth_iisClientCertificateMapping = 'unknown'
+  $auth_windows                     = 'unknown'
+  $provider_error                   = ''
+
+  # 'Get-WebConfiguration -Location' can fail if the identity cannot access physicalpath.
+  try {
+    $sslFlags_raw                     = [String](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags
+    if ($sslFlags_raw -ne '') { $sslFlags = $sslFlags_raw -split ',' }
+    $auth_anonymous                   = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/anonymousAuthentication").enabled
+    $auth_basic                       = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/basicAuthentication").enabled
+    $auth_clientCertificateMapping    = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/clientCertificateMappingAuthentication").enabled
+    $auth_iisClientCertificateMapping = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/iisClientCertificateMappingAuthentication").enabled
+    $auth_windows                     = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/windowsAuthentication").enabled
+  }catch{
+    $provider_error = 'Get-WebConfiguration error. Please review the identity accessing physicalpath.'
+  }
 
   New-Object -TypeName PSObject -Property @{
+    _provider_error    = $provider_error
     name               = $name
     site               = $site
     applicationpool    = [string]$_.ApplicationPool
     physicalpath       = [string]$_.PhysicalPath
+    user_name          = $user_name
+    password           = $password
     sslflags           = $sslFlags
     authenticationinfo = New-Object -TypeName PSObject -Property @{
-      anonymous                   = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/anonymousAuthentication").enabled
-      basic                       = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/basicAuthentication").enabled
-      clientCertificateMapping    = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/clientCertificateMappingAuthentication").enabled
-      iisClientCertificateMapping = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/iisClientCertificateMappingAuthentication").enabled
-      windows                     = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/windowsAuthentication").enabled
+      anonymous                   = $auth_anonymous
+      basic                       = $auth_basic
+      clientCertificateMapping    = $auth_clientCertificateMapping
+      iisClientCertificateMapping = $auth_iisClientCertificateMapping
+      windows                     = $auth_windows
     }
     enabledprotocols = [string]$_.enabledProtocols
   }

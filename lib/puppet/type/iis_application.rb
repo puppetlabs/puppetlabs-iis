@@ -45,6 +45,14 @@ Puppet::Type.newtype(:iis_application) do
     end
   end
 
+  newproperty(:user_name, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "Specifies the identity that should be impersonated when accessing the physical path."
+  end
+
+  newproperty(:password, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "Specifies the password associated with the user_name property."
+  end
+
   newproperty(:applicationpool, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of an ApplicationPool for this IIS Web Application'
     validate do |value|
@@ -102,5 +110,10 @@ Puppet::Type.newtype(:iis_application) do
 
   validate do
     fail("sitename is a required parameter") if (provider && ! provider.sitename) or ! self[:sitename]
+
+    unless self[:user_name].to_s.empty? && self[:password].to_s.empty?
+      raise ArgumentError, "A user_name is required when specifying password." if self[:user_name].to_s.empty?
+      raise ArgumentError, "A password is required when specifying user_name." if self[:password].to_s.empty?
+    end
   end
 end

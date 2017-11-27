@@ -16,6 +16,24 @@ $pathParams = @{
 Try-SetItemProperty @pathParams
 <% end -%>
 
+<% if !resource[:user_name].nil? -%>
+$usernameParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'userName'
+  Value = '<%= "#{resource[:user_name]}" %>'
+}
+Try-SetItemProperty @usernameParams
+<% end -%>
+
+<% if !resource[:password].nil? -%>
+$passwordParams = @{
+  Path  = "IIS:\Sites\$($resource.name)"
+  Name  = 'password'
+  Value = '<%= "#{resource[:password]}" %>'
+}
+Try-SetItemProperty @passwordParams
+<% end -%>
+
 <% if !resource[:applicationpool].nil? -%>
 $poolParams = @{
   Path  = "IIS:\Sites\$($resource.name)"

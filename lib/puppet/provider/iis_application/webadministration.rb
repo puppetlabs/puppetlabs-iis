@@ -42,6 +42,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
   def create
     verify_physicalpath if @resource[:physicalpath]
+
     if @resource[:virtual_directory]
       args = Array.new
       args << "#{@resource[:virtual_directory]}"
@@ -54,6 +55,18 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     result = self.class.run(inst_cmd)
     fail "Error creating application: #{result[:errormessage]}" unless result[:exitcode] == 0
     fail "Error creating application: #{result[:errormessage]}" unless result[:errormessage].nil?
+
+    if @resource[:user_name] && @resource[:password]
+      inst_cmd = []
+      inst_cmd << %{ $webApplication = Get-WebApplication -Site '#{@resource[:sitename]}' -Name '#{@resource[:applicationname]}' -ErrorAction Stop }
+      inst_cmd << %{ Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name userName -Value '#{@resource[:user_name]}' -ErrorAction Stop }
+      inst_cmd << %{ Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name password -Value '#{@resource[:password]}' -ErrorAction Stop }
+      inst_cmd = inst_cmd.join("\n")
+      result = self.class.run(inst_cmd)
+      fail "Error creating application: #{result[:errormessage]}" unless result[:exitcode] == 0
+      fail "Error creating application: #{result[:errormessage]}" unless result[:errormessage].nil?
+    end
+
     @property_hash[:ensure] = :present
   end
 
@@ -69,10 +82,18 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     verify_physicalpath if @resource[:physicalpath]
     inst_cmd = []
 
-    inst_cmd << "$webApplication = Get-WebApplication -Site '#{resource[:sitename]}' -Name '#{resource[:applicationname]}'"
+    inst_cmd << "$webApplication = Get-WebApplication -Site '#{@resource[:sitename]}' -Name '#{@resource[:applicationname]}'"
     if @property_flush[:physicalpath]
       #XXX Under what conditions would we have other paths?
       inst_cmd << %{Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name physicalPath -Value '#{@resource[:physicalpath]}' -ErrorAction Stop}
+    end
+
+    if @property_flush[:user_name]
+      inst_cmd << %{Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name userName -Value '#{@resource[:user_name]}' -ErrorAction Stop}
+    end
+
+    if @property_flush[:password]
+      inst_cmd << %{Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name password -Value '#{@resource[:password]}' -ErrorAction Stop}
     end
 
     if @property_flush[:sslflags]
@@ -126,10 +147,16 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
       app_hash[:applicationname]    = app['name']
       app_hash[:sitename]           = app['site']
       app_hash[:physicalpath]       = app['physicalpath']
+      app_hash[:user_name]          = app['user_name']
+      app_hash[:password]           = app['password']
       app_hash[:applicationpool]    = app['applicationpool']
       app_hash[:sslflags]           = app['sslflags']
       app_hash[:authenticationinfo] = app['authenticationinfo']
       app_hash[:enabledprotocols]   = app['enabledprotocols']
+
+      if !app['_provider_error'].empty?
+        Puppet.debug "Error retrieving some properties for iis_application '#{app_hash[:name]}' #{app['_provider_error']}"
+      end
 
       new(app_hash)
     end

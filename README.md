@@ -181,6 +181,14 @@ The name of the site for the application.
 
 The physical path to the application directory. This path must be fully qualified.
 
+##### `user_name`
+
+The identity that should be impersonated when accessing the physical path. Optional.
+
+##### `password`
+
+The password associated with the `user_name` property. Optional.
+
 #### `applicationpool`
 
 The name of the application pool for the application.
@@ -539,6 +547,14 @@ The name of the site.
 ##### `physicalpath`
 
 The physical path to the site directory. This path must be fully qualified.
+
+##### `user_name`
+
+The identity that should be impersonated when accessing the physical path. Optional.
+
+##### `password`
+
+The password associated with the `user_name` property. Optional.
 
 ##### `applicationpool`
 

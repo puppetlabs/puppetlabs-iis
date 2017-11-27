@@ -10,6 +10,8 @@ Get-WebSite | % {
   New-Object -TypeName PSObject -Property @{
     name             = [string]$_.Name
     physicalpath     = [string]$_.PhysicalPath
+    user_name        = [string]$_.userName
+    password         = [string]$_.password
     applicationpool  = [string]$_.ApplicationPool
     hostheader       = [string]$_.HostHeader
     state            = [string]$_.State
