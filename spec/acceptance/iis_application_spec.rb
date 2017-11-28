@@ -148,6 +148,28 @@ describe 'iis_application' do
 
       it_behaves_like 'an idempotent resource'
     end
+    
+    describe 'applicationpool' do
+      before(:all) do
+        @site_name = SecureRandom.hex(10)
+        @app_name = SecureRandom.hex(10)
+        create_site(@site_name, true)
+        create_path('C:\inetpub\wwwroot')
+        create_path('C:\inetpub\auth')
+        create_app(@site_name, @app_name, 'C:\inetpub\auth')
+        create_app_pool('foo_pool')
+        @manifest  = <<-HERE
+          iis_application { '#{@app_name}':
+            ensure       => 'present',
+            sitename     => '#{@site_name}',
+            physicalpath => 'C:\\inetpub\\auth',
+            applicationpool => 'foo_pool'
+          }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+    end
   end
 
   # TestRail ID: C100063
