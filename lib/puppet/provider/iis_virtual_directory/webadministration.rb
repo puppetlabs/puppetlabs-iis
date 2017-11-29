@@ -60,10 +60,10 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     Puppet.debug "Destroying #{@resource[:name]}"
     cmd = []
     cmd << "Remove-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
-    cmd << "-Site \"#{@resource[:sitename]}\" " if @resource[:sitename]
+    cmd << "-Site \"#{@property_hash[:sitename]}\" "
     
-    if @resource[:application]
-      cmd << "-Application \"#{@resource[:application]}\" "
+    if @property_hash[:application]
+      cmd << "-Application \"#{@property_hash[:application]}\" "
     else
       cmd << "-Application \"/\" "
     end
@@ -74,7 +74,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     result   = self.class.run(cmd)
     Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
     
-    @resource[:ensure]  = :absent
+    @property_hash[:ensure] = :absent
   end
 
   def initialize(value={})

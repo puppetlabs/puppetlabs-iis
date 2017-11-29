@@ -43,6 +43,33 @@ describe 'iis_virtual_directory' do
         remove_vdir(@virt_dir_name)
       end
     end
+
+    context 'can remove virtual directory' do
+      before(:all) do
+        @virt_dir_name = "#{SecureRandom.hex(10)}"
+        create_path('c:/foo')
+        create_vdir(@virt_dir_name, 'foo', 'c:/foo')
+        @manifest  = <<-HERE
+          iis_virtual_directory { '#{@virt_dir_name}':
+            ensure       => 'absent'
+          }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      context 'when puppet resource is run' do
+        before(:all) do
+          @result = resource('iis_virtual_directory', @virt_dir_name)
+        end
+
+        puppet_resource_should_show('ensure', 'absent')
+      end
+
+      after(:all) do
+        remove_vdir(@virt_dir_name)
+      end
+    end
     
     context 'name allows slashes' do
       context 'simple case' do
