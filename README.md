@@ -778,6 +778,14 @@ The physical path to the virtual directory. This path must be fully qualified.
 
 The application under which the virtual directory is created.
 
+##### `user_name`
+
+The identity that should be impersonated when accessing the physical path. Optional.
+
+##### `password`
+
+The password associated with the `user_name` property. Optional.
+
 
 ## Limitations
 

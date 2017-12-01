@@ -32,7 +32,9 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     end
     cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
     cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
-    cmd << "-ErrorAction Stop"
+    cmd << "-ErrorAction Stop;"
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;" if @resource[:user_name]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{@resource[:password]}' -ErrorAction Stop;" if @resource[:password]
     cmd = cmd.join
 
     result   = self.class.run(cmd)
@@ -50,6 +52,8 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'site' -Value '#{@resource[:sitename]}';" if @resource[:sitename]
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'physicalpath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'application' -Value '#{@resource[:application]}';" if @resource[:application]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'userName' -Value '#{@resource[:user_name]}';" if @resource[:user_name]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{@resource[:password]}';" if @resource[:password]
 
     cmd = cmd.join
     result   = self.class.run(cmd)
@@ -105,6 +109,8 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
       virt_dir_hash[:ensure]       = :present
       virt_dir_hash[:name]         = virt_dir['name']
       virt_dir_hash[:physicalpath] = virt_dir['physicalpath']
+      virt_dir_hash[:user_name]    = virt_dir['user_name']
+      virt_dir_hash[:password]     = virt_dir['password']
       virt_dir_hash[:application]  = virt_dir['application']
       virt_dir_hash[:sitename]     = virt_dir['sitename']
 

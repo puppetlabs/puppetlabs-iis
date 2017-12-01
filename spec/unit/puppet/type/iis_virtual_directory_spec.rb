@@ -14,7 +14,9 @@ describe Puppet::Type.type(:iis_virtual_directory) do
       :ensure,
       :sitename,
       :application,
-      :physicalpath
+      :physicalpath,
+      :user_name,
+      :password
     ]
   end
 
@@ -103,6 +105,18 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     it "should accept forward-slash and backslash paths" do
       resource[:physicalpath] = "c:/directory/subdirectory"
       resource[:physicalpath] = "c:\\directory\\subdirectory"
+    end
+  end
+
+  context "parameter :user_name" do
+    it "should require it to be a string" do
+      expect(type_class).to require_string_for(:user_name)
+    end
+  end
+
+  context "parameter :password" do
+    it "should require it to be a string" do
+      expect(type_class).to require_string_for(:password)
     end
   end
 end

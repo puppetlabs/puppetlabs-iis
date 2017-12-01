@@ -1,5 +1,6 @@
 require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/path'
+require_relative '../../puppet_x/puppetlabs/iis/property/string'
 
 Puppet::Type.newtype(:iis_virtual_directory) do
   @doc = "Manage an IIS virtual directory."
@@ -46,7 +47,22 @@ Puppet::Type.newtype(:iis_virtual_directory) do
     end
   end
 
+  newproperty(:user_name, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "Specifies the identity that should be impersonated when accessing the physical path."
+  end
+
+  newproperty(:password, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
+    desc "Specifies the password associated with the user_name property."
+  end
+
   autorequire(:iis_application) { self[:application] }
   autorequire(:iis_site) { self[:sitename] }
+
+  validate do
+    unless self[:user_name].to_s.empty? && self[:password].to_s.empty?
+      raise ArgumentError, "A user_name is required when specifying password." if self[:user_name].to_s.empty?
+      raise ArgumentError, "A password is required when specifying user_name." if self[:password].to_s.empty?
+    end
+  end
 
 end
