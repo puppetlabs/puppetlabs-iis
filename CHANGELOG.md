@@ -4,6 +4,10 @@
 
 This is a minor release with bug fixes.
 
+### Added
+
+- Added support for user_name and password when using a UNC physicalpath with iis_virtual_directory ([MODULES-6195](https://tickets.puppetlabs.com/browse/MODULES-6195))
+
 ### Fixed
 
 - IIS physicalpath regex doesn't match UNC paths ([MODULES-5264](https://tickets.puppetlabs.com/browse/MODULES-5264))
