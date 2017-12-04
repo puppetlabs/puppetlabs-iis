@@ -1,5 +1,7 @@
 Get-WebVirtualDirectory | ForEach-Object {
   $physicalpath = [string]$_.PhysicalPath
+  $user_name = [string]$_.userName
+  $password = [string]$_.password
   
   $name = [string]$_.Path
   $name = $name -Replace "^/", ''
@@ -20,6 +22,8 @@ Get-WebVirtualDirectory | ForEach-Object {
   New-Object -TypeName PSObject -Property @{
     name         = $name
     physicalpath = $physicalpath
+    user_name    = $user_name
+    password     = $password
     application  = $application
     sitename     = $sitename
   }
