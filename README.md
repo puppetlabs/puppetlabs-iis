@@ -772,7 +772,7 @@ The site under which the virtual directory is created.
 
 ##### `physicalpath`
 
-The physical path to the virtual directory. This path must be fully qualified.
+The physical path to the virtual directory. This path must be fully qualified. Though not recommended, this can be a UNC style path. Supply credentials for access to the UNC path with the `user_name` and `password` properties.
 
 ##### `application`
 

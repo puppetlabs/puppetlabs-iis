@@ -1,3 +1,23 @@
+## 2017-12-01 - Version 4.2.1
+
+### Summary
+
+This is a minor release with bug fixes.
+
+### Added
+
+- Added support for user_name and password when using a UNC physicalpath with iis_virtual_directory ([MODULES-6195](https://tickets.puppetlabs.com/browse/MODULES-6195))
+
+### Fixed
+
+- IIS physicalpath regex doesn't match UNC paths ([MODULES-5264](https://tickets.puppetlabs.com/browse/MODULES-5264))
+- IIS identity information is applied to application pool every agent run ([MODULES-5270](https://tickets.puppetlabs.com/browse/MODULES-5270))
+- IIS virtual directory cant use UNC path ([MODULES-5642](https://tickets.puppetlabs.com/browse/MODULES-5642))
+- IIS module remove warning already initialized constant ([MODULES-5954](https://tickets.puppetlabs.com/browse/MODULES-5954))
+- IIS module cannot change application pool of existing iis_application ([MODULES-6020](https://tickets.puppetlabs.com/browse/MODULES-6020))
+- IIS iis_virtual_directory calls update after destroy ([MODULES-6062](https://tickets.puppetlabs.com/browse/MODULES-6062))
+- IIS iis_site applicationpool does not allow valid characters ([MODULES-6069](https://tickets.puppetlabs.com/browse/MODULES-6069))
+
 ## 2017-11-10 - Version 4.2.0
 
 ### Summary
