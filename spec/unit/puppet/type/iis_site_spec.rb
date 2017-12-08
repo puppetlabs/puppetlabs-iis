@@ -104,6 +104,32 @@ describe Puppet::Type.type(:iis_site) do
       }
     end
   end
+  context "property :limits" do
+    it "requires a hash" do
+      expect {
+        resource[:limits] = "hi"
+      }.to raise_error(Puppet::Error, /Hash/)
+      expect {
+        resource[:limits] = ["hi"]
+      }.to raise_error(Puppet::Error, /Hash/)
+    end
+    it "accepts only valid limits as keys" do
+      expect {
+        resource[:limits] = {'invalid' => 'setting'}
+    }.to raise_error(Puppet::Error, /Invalid iis site limit key/)
+    end
+    it "rejects invalid limits values" do
+      expect {
+        resource[:limits] = { 'maxconnections' => "string"}
+      }.to raise_error(Puppet::Error, /integer/)
+      expect {
+        resource[:limits] = { 'maxbandwidth' => 0 }
+      }.to raise_error(Puppet::Error, /Cannot be less than 1 or greater than 4294967295/)
+      expect {
+        resource[:limits] = { 'maxbandwidth' => 4294967296 }
+      }.to raise_error(Puppet::Error, /Cannot be less than 1 or greater than 4294967295/)
+    end
+  end
   context "parameter :applicationpool" do
     it "should not allow nil" do
       expect {

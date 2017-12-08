@@ -1,0 +1,10 @@
+<%- if resource[:limits] -%>
+$website = Get-WebConfiguration -Filter '/system.applicationHost/sites/site' | Where-Object -FilterScript {$_.Name -eq '<%= resource[:name] %>' }
+  <%- resource[:limits].each do |limit_name,limit_setting| -%>
+    <%- if limit_name == 'connectiontimeout' -%>
+Set-WebConfiguration -Filter "$($website.ItemXPath)/limits/@<%= limit_name %>" -Value (New-Timespan -Seconds <%= limit_setting %>)
+    <%- else -%>
+Set-WebConfiguration -Filter "$($website.ItemXPath)/limits/@<%= limit_name %>" -Value <%= limit_setting %>
+    <%- end -%>
+  <%- end -%>
+<%- end -%>

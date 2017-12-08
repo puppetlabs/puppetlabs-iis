@@ -45,6 +45,8 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('logproperties', @resource)
 
+    cmd << self.class.ps_script_content('limitsproperty', @resource)
+
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
 
 
@@ -139,6 +141,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
         binding.delete('certificatehash') unless binding['protocol'] == 'https'
         binding.delete('certificatestorename') unless binding['protocol'] == 'https'
       end
+      site['limits'] = {} if site['limits'].nil?
 
       site_hash[:ensure]               = site['state'].downcase
       site_hash[:name]                 = site['name']
@@ -147,6 +150,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       site_hash[:serverautostart]      = to_bool(site['serverautostart'])
       site_hash[:enabledprotocols]     = site['enabledprotocols']
       site_hash[:bindings]             = site['bindings']
+      site_hash[:limits]               = site['limits']
       site_hash[:logpath]              = site['logpath']
       site_hash[:logperiod]            = site['logperiod']
       site_hash[:logtruncatesize]      = site['logtruncatesize']

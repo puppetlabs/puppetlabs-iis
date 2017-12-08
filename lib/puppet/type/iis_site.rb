@@ -294,6 +294,26 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
     end
   end
 
+  newproperty(:limits) do
+    desc 'Configure limits for an IIS Site'
+    valid_limits = ['connectiontimeout', 'maxbandwidth', 'maxconnections']
+    validate do |value|
+      fail "#{self.name.to_s} should be a Hash" unless value.is_a? ::Hash
+      value.each do |key, limit|
+        fail("Invalid iis site limit key '#{key}'. Should be one of: #{valid_limits}") unless valid_limits.include? key
+        fail("Invalid value '#{limit}' for #{key}. Must be an integer") unless limit.is_a? Integer
+        if key != 'connectiontimeout' and (limit < 1 or limit > 4294967295)
+          fail("Invalid value '#{limit} for #{key}'. Cannot be less than 1 or greater than 4294967295")
+        end
+      end
+    end
+    def insync?(is)
+      should.select do |k,v|
+        is[k] != v
+      end.empty?
+    end
+  end
+
   autorequire(:iis_application_pool) { self[:applicationpool] }
 
   validate do
