@@ -163,6 +163,8 @@ iis_virtual_directory { 'vdir':
 
 Allows creation of a new IIS Application and configuration of application parameters.
 
+The iis_application type uses a composite namevar for applicationname and sitename to uniquely identify a declaration. To use this successfully, put both the sitename and the applicationname in the title. Puppet will build the catalog using the composite of the two values, while still using the correct value for the applicationname when creating the IIS application. 
+
 #### Properties/Parameters
 
 #### `ensure`
@@ -187,7 +189,7 @@ The name of the application pool for the application.
 
 #### `virtual_directory`
 
-The IIS Virtual Directory to convert to an application on create.
+The IIS Virtual Directory to convert to an application on create. Similar to iis_application, iis_virtual_directory uses composite namevars.
 
 #### `sslflags`
 
