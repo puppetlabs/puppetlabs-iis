@@ -25,7 +25,7 @@ if Puppet.features.microsoft_windows?
   end
 
   def get_powershell_major_version()
-    provider = Puppet::Type.type(:iis_powershell)
+    provider = Puppet::Type.type(:iis_site).provider(:webadministration)
     
     begin
       psversion = provider.powershell_version.split(".").first

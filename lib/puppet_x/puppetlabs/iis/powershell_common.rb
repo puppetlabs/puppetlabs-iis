@@ -15,7 +15,7 @@ module PuppetX
       module_function :powershell_path
       
       def powershell_args
-        ps_args = ['-NoProfile', '-NonInteractive', '-NoLogo', '-ExecutionPolicy', 'Bypass', '-Command', '-']
+        ps_args = ['-NoProfile', '-NonInteractive', '-NoLogo', '-ExecutionPolicy', 'Bypass']
         ps_args
       end
       module_function :powershell_args
