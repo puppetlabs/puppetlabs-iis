@@ -65,6 +65,11 @@ describe 'iis_site' do
               #   'sslflags'             => 1,
               # },
               ],
+              limits               => {
+                connectiontimeout => 120,
+                maxbandwidth      => 4294967200,
+                maxconnections    => 4294967200,
+              },
               logflags             => ['ClientIP', 'Date', 'Time', 'UserName'],
               logformat            => 'W3C',
               loglocaltimerollover => false,

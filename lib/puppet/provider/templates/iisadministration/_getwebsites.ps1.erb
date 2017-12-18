@@ -16,6 +16,11 @@ Get-IISSite | %{
         certificatestorename = [string]$_.certificateStoreName
       }
     })
+    limits               = New-Object -TypeName PSObject -Property @{
+      maxbandwidth       = [int64]$_.limits.maxbandwidth
+      maxconnections     = [int64]$_.limits.maxconnections
+      connectiontimeout  = [int]$_.limits.connectiontimeout.totalseconds
+    }
     logformat            = [string]$_.LogFile.logFormat
     logpath              = [string]$_.LogFile.directory
     logperiod            = [string]$_.LogFile.period
