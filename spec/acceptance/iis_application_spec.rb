@@ -84,8 +84,7 @@ describe 'iis_application' do
 
   # TestRail ID: C100062
   context 'when setting' do
-    describe 'sslflags' do
-      skip("blocked by MODULES-5561")
+    skip 'sslflags - blocked by MODULES-5561' do
       before(:all) do
         @site_name = SecureRandom.hex(10)
         @app_name = SecureRandom.hex(10)
