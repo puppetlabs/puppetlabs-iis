@@ -24,27 +24,27 @@ describe Puppet::Provider::IIS_PowerShell do
       end
 
       it 'should append Importing the WebAdministration module' do
-        expect(ps_manager).to receive(:execute).with(/Import-Module WebAdministration/,nil,nil).and_return(execute_response)
+        expect(ps_manager).to receive(:execute).with(/Import-Module WebAdministration/).and_return(execute_response)
         subject.run(command)
       end
 
       it 'should append changing the working directory to IIS' do
-        expect(ps_manager).to receive(:execute).with(/cd iis:/,nil,nil).and_return(execute_response)
+        expect(ps_manager).to receive(:execute).with(/cd iis:/).and_return(execute_response)
         subject.run(command)
       end
 
       it 'should append a JSON converter' do
-        expect(ps_manager).to receive(:execute).with(/ConvertTo\-JSON/,nil,nil).and_return(execute_response)
+        expect(ps_manager).to receive(:execute).with(/ConvertTo\-JSON/).and_return(execute_response)
         subject.run(command)
       end
 
       it 'should set Confirmation Preference' do
-        expect(ps_manager).to receive(:execute).with(/\$ConfirmPreference = 'high'/,nil,nil).and_return(execute_response)
+        expect(ps_manager).to receive(:execute).with(/\$ConfirmPreference = 'high'/).and_return(execute_response)
         subject.run(command)
       end
 
       it 'should append the original command at the end' do
-        expect(ps_manager).to receive(:execute).with(/#{command}$/,nil,nil).and_return(execute_response)
+        expect(ps_manager).to receive(:execute).with(/#{command}$/).and_return(execute_response)
         subject.run(command)
       end
     end
@@ -56,7 +56,7 @@ describe Puppet::Provider::IIS_PowerShell do
         end
 
         it 'should not modify the command' do
-          expect(ps_manager).to receive(:execute).with(command,nil,nil).and_return(execute_response)
+          expect(ps_manager).to receive(:execute).with(command).and_return(execute_response)
           subject.run(command)
         end
       end
