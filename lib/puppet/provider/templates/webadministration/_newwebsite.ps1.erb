@@ -11,6 +11,8 @@ $createParams = @{
   ApplicationPool = $resource.applicationpool
   Force           = $true
   ErrorAction     = 'Stop'
+  <%= resource.provider.binding_value ? "port            = #{resource.provider.binding_value}" : nil %>
+  <%= resource.provider.binding_value == '443' ? "Ssl           = $true" : nil %>
 }
 
 # If there are no other websites, specify the Id, otherwise an Index Out of Range error can be thrown

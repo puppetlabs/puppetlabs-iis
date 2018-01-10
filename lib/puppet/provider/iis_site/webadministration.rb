@@ -168,4 +168,18 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     return :false  if value == false  || value =~ (/(^$|false|f|no|n|0)$/i)
     raise ArgumentError.new("invalid value for Boolean: \"#{value}\"")
   end
+
+  def binding_value
+
+    if @resource[:bindings] != nil
+      binding = @resource[:bindings].select {|binding| binding.to_s !~ /\*:80:/ }.first
+      int_binding = binding != nil ? binding['bindinginformation'].match(/:([0-9]*):/).captures.first : nil
+    end
+
+    if int_binding != nil
+      return int_binding
+    else 
+      return nil
+    end
+  end
 end
