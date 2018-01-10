@@ -1,4 +1,10 @@
-$iis_version = [Double]'<%= Facter.value(:iis_version) %>'
+Try {
+  $iis_properties = Get-ItemProperty HKLM:\SOFTWARE\Microsoft\InetStp
+  $iis_version = "$($iis_properties.MajorVersion).$($iis_properties.MinorVersion)"
+}
+Catch {
+  $iis_version = ""
+}
 
 Get-WebSite | % {
   $name = $_.Name
