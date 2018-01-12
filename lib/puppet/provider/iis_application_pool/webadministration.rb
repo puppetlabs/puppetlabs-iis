@@ -3,8 +3,8 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
   desc "IIS Application Pool provider using the PowerShell WebAdministration module"
 
-  confine    :iis_version     => ['7.5', '8.0', '8.5', '10.0']
-  confine    :operatingsystem => [ :windows ]
+  confine     :feature         => :iis_web_server
+  confine     :operatingsystem => [ :windows ]
   defaultfor :operatingsystem => :windows
 
   commands :powershell => PuppetX::IIS::PowerShellCommon.powershell_path
