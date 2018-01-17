@@ -28,6 +28,11 @@ Puppet::Type.newtype(:iis_application) do
 
   newparam(:applicationname, :namevar => true) do
     desc "The name of the Application. The virtual path of an application is /<applicationname>"
+    validate do |value|
+      if value =~ /^\/|^\\/
+        raise ArgumentError, "cannot begin applicationname property with a '\\' or a '/' character"
+      end
+    end
   end
 
   newproperty(:sitename, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do

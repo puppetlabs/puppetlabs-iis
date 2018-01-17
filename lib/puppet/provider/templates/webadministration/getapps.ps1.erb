@@ -1,5 +1,7 @@
+[regex]$pattern = '/'
+
 Get-WebApplication | % {
-  $name = [string]$_.Path.replace("/","")
+  $name = [string]$pattern.replace($_.Path,'',1)
   $site = [string]$_.ItemXPath.split("'")[1]
 
   $sslFlags = @()
