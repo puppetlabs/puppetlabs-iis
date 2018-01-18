@@ -545,5 +545,53 @@ describe 'iis_site' do
         remove_all_sites
       end
     end
+
+    context 'with conflicting sites' do
+      before (:all) do
+        create_path('C:\inetpub\basic')
+        @site_name = "#{SecureRandom.hex(10)}"
+        @second_site_name = "#{SecureRandom.hex(10)}"
+        create_site(@site_name, true)
+
+        @manifest = <<-HERE
+          iis_site { "#{@second_site_name}":
+            ensure          => 'started',
+            physicalpath    => 'C:\\inetpub\\basic',
+            applicationpool => 'DefaultAppPool',
+            bindings        => [
+              {
+                'bindinginformation' => "*:8080:#{@second_site_name}",
+                'protocol'           => 'http',
+              }
+            ],
+          }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      context 'when puppet resource is run' do
+        before(:all) do
+          @first_site = resource('iis_site', @site_name)
+          @second_site = resource('iis_site', @second_site_name)
+        end
+
+        it "should run the first site on port 80" do
+          expect(@first_site.stdout).to match(/ensure(\s*)=> 'started',/)
+
+          # binding info for this site does not contain a host name.
+          expect(@first_site.stdout).to match(/\*\:80\:/)
+        end
+
+        it "should run the second site on port 8080" do
+          expect(@second_site.stdout).to match(/ensure(\s*)=> 'started',/)
+          expect(@second_site.stdout).to match(/\*\:8080\:#{@second_site_name}/)
+        end
+      end
+
+      after(:all) do
+        remove_all_sites
+      end
+    end
   end
 end
