@@ -80,6 +80,132 @@ describe 'iis_application' do
         remove_all_sites
       end
     end
+
+    context 'with nested virtual directory' do
+      before(:all) do
+        @site_name  = SecureRandom.hex(10)
+        @app_name   = SecureRandom.hex(10)
+        create_site(@site_name, true)
+        create_path("c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}")
+        @manifest = <<-HERE
+          iis_application{'subFolder/#{@app_name}':
+            ensure => 'present',
+            applicationname => 'subFolder/#{@app_name}',
+            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}',
+            sitename => '#{@site_name}'
+          }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      describe "application validation" do
+        it "should create the correct application" do
+          @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/#{@app_name}"))
+          expect(@result.stdout).to match(/(sitename)(\s*)(=>)(\s*)('#{@site_name}'),/)
+          expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/#{@app_name}':/)
+          expect(@result.stdout).to match(/ensure\s*=> 'present',/)
+        end
+      end
+
+      after(:all) do
+        remove_app(@app_name)
+        remove_all_sites
+      end
+    end
+
+    context 'with nested virtual directory and single namevar' do
+      before(:all) do
+        @site_name  = SecureRandom.hex(10)
+        @app_name   = SecureRandom.hex(10)
+        create_site(@site_name, true)
+        create_path("c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}")
+        @manifest = <<-HERE
+          iis_application{'subFolder/#{@app_name}':
+            ensure => 'present',
+            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}',
+            sitename => '#{@site_name}'
+          }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      describe "application validation" do
+        it "should create the correct application" do
+          @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/#{@app_name}"))
+          expect(@result.stdout).to match(/(sitename)(\s*)(=>)(\s*)('#{@site_name}'),/)
+          expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/#{@app_name}':/)
+          expect(@result.stdout).to match(/ensure\s*=> 'present',/)
+        end
+      end
+
+      after(:all) do
+        remove_app(@app_name)
+        remove_all_sites
+      end
+    end
+
+    context 'with incorrect virtual directory name format' do
+      context 'with a leading slash' do
+        before(:all) do
+          @site_name  = SecureRandom.hex(10)
+          @app_name   = SecureRandom.hex(10)
+          create_site(@site_name, true)
+          create_path("c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}")
+          @manifest = <<-HERE
+            iis_application{'subFolder/#{@app_name}':
+              ensure => 'present',
+              applicationname => '/subFolder/#{@app_name}',
+              physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}',
+              sitename => '#{@site_name}'
+            }
+          HERE
+        end
+
+        # a lading slash in applicationname causes the name matching to fail and runs
+        # loses idempotency. A validation rule was added to prevent this.
+        it_behaves_like 'a failing manifest'
+
+        after(:all) do
+          remove_app(@app_name)
+          remove_all_sites
+        end
+      end
+    end
+
+    context 'with two level nested virtual directory' do
+      before(:all) do
+        @site_name  = SecureRandom.hex(10)
+        @app_name   = SecureRandom.hex(10)
+        create_site(@site_name, true)
+        create_path("c:\\inetpub\\wwwroot\\subFolder\\sub2\\#{@app_name}")
+        @manifest = <<-HERE
+          iis_application{'subFolder/sub2/#{@app_name}':
+            ensure => 'present',
+            applicationname => 'subFolder/sub2/#{@app_name}',
+            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\sub2\\#{@app_name}',
+            sitename => '#{@site_name}'
+          }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      describe "application validation" do
+        it "should create the correct application" do
+          @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/sub2/#{@app_name}"))
+          expect(@result.stdout).to match(/(sitename)(\s*)(=>)(\s*)('#{@site_name}'),/)
+          expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/sub2\/#{@app_name}':/)
+          expect(@result.stdout).to match(/ensure\s*=> 'present',/)
+        end
+      end
+
+      after(:all) do
+        remove_app(@app_name)
+        remove_all_sites
+      end
+    end
   end
 
   # TestRail ID: C100062
