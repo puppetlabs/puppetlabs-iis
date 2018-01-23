@@ -1,3 +1,16 @@
+## Unreleased
+
+### Added
+- The ability to set site limits for an IIS site, including connection timeout, max bandwidth, and max connections ([MODULES-6144](https://tickets.puppetlabs.com/browse/MODULES-6144))
+
+### Fixed
+- Ensured that calling `puppet resource iis_virtual_directory` without a sitename fails sanely ([MODULES-6166](https://tickets.puppetlabs.com/browse/MODULES-6166))
+- Ensured that IIS can be installed and configured in a single Puppet run ([MODULES-5465](https://tickets.puppetlabs.com/browse/MODULES-5465))
+- Ensured that sites can be created with a specific port, preventing a collision on creating new sites ([MODULES-6385](https://tickets.puppetlabs.com/browse/MODULES-6144))
+
+### Changed
+- Updated the code for the PowerShell manager to use named pipes instead of stdout redirection ([MODULES-6283](https://tickets.puppetlabs.com/browse/MODULES-6283))
+
 ## 2017-12-01 - Version 4.2.1
 
 ### Summary
