@@ -753,6 +753,28 @@ Use the system's local time to determine the log file name as well as when the l
 
 Specifies what W3C fields are logged in the log file. This is only valid when `logformat` is set to 'W3C'.
 
+##### `limits`
+
+Specifies connection limits for sites.
+
+###### Example
+
+Set default values for these limits.
+`connectiontimeout` is in seconds.
+`maxbandwidth` is in bytes/second.
+`maxconnections` is an integer that limits number of concurrent connections.
+
+```puppet
+iis_site {'mysite'
+  ...
+  limits => {
+    connectiontimeout => 120,
+    maxbandwidth      => 4294967200,
+    maxconnections    => 4294967200,
+  },
+  ...
+}
+```
 
 ### iis_virtual_directory
 
