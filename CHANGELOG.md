@@ -1,3 +1,21 @@
+## 2018-01-26 - Version 4.3.0
+
+### Summary
+
+This is a minor release with bug fixes, and one new property added to manage connection limits for IIS Sites.
+
+### Added
+
+- Setting site limits for [iis_site](https://github.com/puppetlabs/puppetlabs-iis#limits) ([MODULES-6144](https://tickets.puppetlabs.com/browse/MODULES-6144))
+
+### Fixed
+
+- iis_application resource cannot manage applications in nested site folders ([MODULES-6257](https://tickets.puppetlabs.com/browse/MODULES-6257))
+- Resources require a second run when iis feature is installed ([MODULES-5465](https://tickets.puppetlabs.com/browse/MODULES-5465))
+- iis_site binds to port 80 regardless of binding override on first run ([MODULES-6385](https://tickets.puppetlabs.com/browse/MODULES-6385))
+- Puppet resource iis_virtual_directory doesn't fail with a meaningful error when sitename is omitted ([MODULES-6166](https://tickets.puppetlabs.com/browse/MODULES-6166))
+- PowerShell manager code was updated to use named pipes to match the improvements in the [puppetlabs-powershell](https://github.com/puppetlabs/puppetlabs-powershell) module. ([MODULES-6283](https://tickets.puppetlabs.com/browse/MODULES-6283))
+
 ## 2017-12-01 - Version 4.2.1
 
 ### Summary
