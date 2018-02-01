@@ -776,6 +776,24 @@ iis_site {'mysite'
 }
 ```
 
+##### `authenticationinfo`
+
+Enable and disable authentication schemas. The available schemas are: anonymous, basic, clientCertificateMapping, digest, iisClientCertificateMapping, windows.
+
+###### Example
+
+```
+iis_site { 'test_site':
+  ensure          => 'started',
+  physicalpath    => 'C:\\inetpub\\tmp',
+  applicationpool => 'DefaultAppPool',
+  authenticationinfo => {
+    'basic'     => true,
+    'anonymous' => false,
+  },
+}
+```
+
 ### iis_virtual_directory
 
 Allows creation of a new IIS Virtual Directory and configuration of virtual directory parameters.
