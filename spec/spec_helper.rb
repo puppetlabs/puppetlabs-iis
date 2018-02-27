@@ -13,7 +13,7 @@ else
   end
 end
 
-if Puppet.features.microsoft_windows?
+if Puppet::Util::Platform.windows?
   require 'puppet/util/windows/security'
 
   def take_ownership(path)
