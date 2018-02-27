@@ -10,7 +10,7 @@ require 'fileutils'
 # automatically load any shared examples or contexts
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
-if Puppet.features.microsoft_windows?
+if Puppet::Util::Platform.windows?
   require 'puppet/util/windows/security'
 
   def take_ownership(path)
