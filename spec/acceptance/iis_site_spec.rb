@@ -572,7 +572,7 @@ describe 'iis_site' do
       end
     end
 
-    context 'with conflicting sites' do
+    context 'with conflicting sites on differing ports' do
       before (:all) do
         create_path('C:\inetpub\basic')
         @site_name = "#{SecureRandom.hex(10)}"
@@ -604,8 +604,6 @@ describe 'iis_site' do
 
         it "should run the first site on port 80" do
           expect(@first_site.stdout).to match(/ensure(\s*)=> 'started',/)
-
-          # binding info for this site does not contain a host name.
           expect(@first_site.stdout).to match(/\*\:80\:/)
         end
 
@@ -618,6 +616,52 @@ describe 'iis_site' do
       after(:all) do
         remove_all_sites
       end
+    end
+  end
+
+  context 'with conflicting sites on port 80 but different host headers' do
+    before(:all) do
+      create_path('C:\inetpub\basic')
+      @site_name = "#{SecureRandom.hex(10)}"
+      @second_site_name = "#{SecureRandom.hex(10)}"
+      create_site(@site_name, true)
+
+      @manifest = <<-HERE
+        iis_site { "#{@second_site_name}":
+          ensure          => 'started',
+          physicalpath    => 'C:\\inetpub\\basic',
+          applicationpool => 'DefaultAppPool',
+          bindings        => [
+            {
+              'bindinginformation' => "*:80:#{@second_site_name}",
+              'protocol'           => 'http',
+            }
+          ],
+        }
+      HERE
+    end
+
+    it_behaves_like 'an idempotent resource'
+
+    context 'when puppet resource is run' do
+      before(:all) do
+        @first_site = resource('iis_site', @site_name)
+        @second_site = resource('iis_site', @second_site_name)
+      end
+
+      it 'should run the first site on port 80 with no host header' do
+        expect(@first_site.stdout).to match(/ensure(\s*)=> 'started',/)
+        expect(@first_site.stdout).to match(/\*\:80\:/)
+      end
+
+      it 'should run the second site on port 80 but a different host header' do
+        expect(@second_site.stdout).to match(/ensure(\s*)=> 'started',/)
+        expect(@second_site.stdout).to match(/\*\:80\:#{@second_site_name}/)
+      end
+    end
+
+    after(:all) do
+      remove_all_sites
     end
   end
 end
