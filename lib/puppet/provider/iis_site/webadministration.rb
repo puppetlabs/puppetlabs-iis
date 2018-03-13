@@ -184,10 +184,11 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     raise ArgumentError.new("invalid value for Boolean: \"#{value}\"")
   end
 
-  def binding_port
-    if @resource[:bindings]
+  def binding_information
+    if @resource[:bindings] && (["http","https"].include?(@resource['bindings'].first['protocol']))
       binding = @resource[:bindings].first
-      return binding['bindinginformation'].match(/:([0-9]*):/).captures.first
+      matches = binding['bindinginformation'].match(/^(?<ip_dns>.+):(?<port>\d*):(?<host_header>(.*))/)
+      return matches[:ip_dns], matches[:port], matches[:host_header]
     end
   end
 end
