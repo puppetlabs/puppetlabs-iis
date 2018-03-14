@@ -20,11 +20,17 @@ Puppet::Type.newtype(:iis_site) do
     end
 
     newvalue(:present) do
-      provider.create
+      provider.create unless provider.exists?
     end
 
     newvalue(:absent) do
       provider.destroy
+    end
+
+    def insync?(is)
+      is.to_s == should.to_s or
+        (is.to_s == 'started' and should.to_s == 'present') or
+        (is.to_s == 'stopped' and should.to_s == 'present')
     end
 
     aliasvalue(:false, :stopped)

@@ -617,6 +617,47 @@ describe 'iis_site' do
         remove_all_sites
       end
     end
+
+    context 'with ensure set to present' do
+      before(:all) do
+        create_path('C:\inetpub\basic')
+        @site_name = "#{SecureRandom.hex(10)}"
+        create_site(@site_name, true)
+
+        setup_manifest = <<-HERE
+        iis_site { '#{@site_name}':
+            ensure           => 'stopped',
+            physicalpath     => 'C:\\inetpub\\basic',
+            applicationpool  => 'DefaultAppPool',
+            logformat        => 'W3C',
+            logflags         => ['ClientIP', 'Date', 'HttpStatus']
+        }
+        HERE
+
+        @manifest = <<-HERE
+        iis_site { '#{@site_name}':
+            ensure           => 'present',
+            physicalpath     => 'C:\\inetpub\\basic',
+            applicationpool  => 'DefaultAppPool',
+            logformat        => 'W3C',
+            logflags         => ['ClientIP', 'Date', 'HttpStatus']
+        }
+        HERE
+
+        execute_manifest(setup_manifest, :catch_failures => true)
+
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      context 'when puppet resource is run' do
+        before(:all) do
+          @result = resource('iis_site', @site_name)
+        end
+
+        puppet_resource_should_show('ensure', 'stopped')
+      end
+    end
   end
 
   context 'with conflicting sites on port 80 but different host headers' do
