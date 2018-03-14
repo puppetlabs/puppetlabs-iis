@@ -44,6 +44,40 @@ describe 'iis_virtual_directory' do
       end
     end
 
+    context 'with a password wrapped in Sensitive()' do
+      before(:all) do
+        @virt_dir_name = "#{SecureRandom.hex(10)}"
+        @manifest  = <<-HERE
+          file{ 'c:/foo':
+            ensure => 'directory'
+          }->
+          iis_virtual_directory { '#{@virt_dir_name}':
+            ensure       => 'present',
+            sitename     => '#{@site_name}',
+            physicalpath => 'c:\\foo',
+            user_name    => 'user',
+            password     => Sensitive('password'),
+          }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      context 'when puppet resource is run' do
+        before(:all) do
+          @result = resource('iis_virtual_directory', @virt_dir_name)
+        end
+
+        puppet_resource_should_show('ensure', 'present')
+        puppet_resource_should_show('user_name', 'user')
+        puppet_resource_should_show('password', 'password')
+      end
+
+      after(:all) do
+        remove_vdir(@virt_dir_name)
+      end
+    end
+
     context 'can remove virtual directory' do
       before(:all) do
         @virt_dir_name = "#{SecureRandom.hex(10)}"

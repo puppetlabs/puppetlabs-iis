@@ -92,6 +92,35 @@ describe 'iis_application_pool' do
       end
     end
 
+    context 'with a password wrapped in Sensitive() defined' do
+        before(:all) do
+          @pool_name = "#{SecureRandom.hex(10)}"
+          @manifest  = <<-HERE
+            iis_application_pool { '#{@pool_name}':
+              ensure    => 'present',
+              user_name => 'user',
+              password  => Sensitive('password'),
+            }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        context 'when puppet resource is run' do
+          before(:all) do
+            @result = resource('iis_application_pool', @pool_name)
+          end
+
+          puppet_resource_should_show('ensure', 'present')
+          puppet_resource_should_show('user_name', 'user')
+          puppet_resource_should_show('password', 'password')
+
+        after(:all) do
+          remove_app_pool(@pool_name)
+        end
+      end
+    end
+
     context 'with invalid' do
       # TestRail ID: C100019
       context 'state parameter defined' do
