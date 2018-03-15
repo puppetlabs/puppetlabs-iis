@@ -3,13 +3,15 @@ require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
 
 Puppet::Type.newtype(:iis_site) do
-  @doc = "Create a new IIS website."
+  @doc = "Allows creation of a new IIS Web Site and configuration of site
+          parameters."
 
   newproperty(:ensure) do
     desc "Specifies whether a site should be present or absent. If present is
-      specified, the site will be created but left in the default stopped state.
-      If started is specified, then the site will be created as well as started.
-      If stopped is specified, then the site will be created and kept stopped."
+          specified, the site will be created but left in the default stopped
+          state. If started is specified, then the site will be created as well
+          as started. If stopped is specified, then the site will be created and
+          kept stopped."
 
     newvalue(:stopped) do
       provider.stop
@@ -50,7 +52,8 @@ Puppet::Type.newtype(:iis_site) do
   end
 
   newproperty(:physicalpath) do
-    desc 'The physical path to the IIS web site folder'
+    desc 'The physical path to the site directory. This path must be fully
+          qualified.'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty physicalpath must be specified."
@@ -70,8 +73,10 @@ Puppet::Type.newtype(:iis_site) do
   end
 
   newproperty(:enabledprotocols) do
-    desc 'The protocols enabled for this site. If https is specified, http is implied.
-      If no value is provided, then this setting is disabled'
+    desc "The protocols enabled for the site. If 'https' is specified, 'http' is
+          implied. If no value is provided, then this setting is disabled. Can
+          be a comma delimited list of protocols. Valid protocols are: 'http',
+          'https', 'net.pipe'."
     validate do |value|
       unless value.kind_of?(String)
         fail("Invalid value '#{value}'. Should be a string")
@@ -89,22 +94,30 @@ Puppet::Type.newtype(:iis_site) do
   end
 
   newproperty(:bindings, :array_matching => :all) do
-    desc 'The protocol, address, port, and ssl certificate bindings for a web site.
+    desc 'The protocol, address, port, and ssl certificate bindings for a web
+          site.
 
-The bindinginformation value should be in the form of the IPv4/IPv6 address or wildcard *, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
+          The bindinginformation value should be in the form of the IPv4/IPv6
+          address or wildcard *, then the port, then the optional hostname
+          separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
 
-A protocol value of "http" indicates a binding that uses the HTTP protocol. A value of "https" indicates a binding that uses HTTP over SSL.
+          A protocol value of "http" indicates a binding that uses the HTTP
+          protocol. A value of "https" indicates a binding that uses HTTP over
+          SSL.
 
-The sslflags parameter accepts integer values from 0 to 3 inclusive.
-- A value of "0" specifies that the secure connection be made using an IP/Port
-  combination. Only one certificate can be bound to a combination of IP address
-  and the port.
-- A value of "1" specifies that the secure connection be made using the port
-  number and the host name obtained by using Server Name Indication (SNI).
-- A value of "2" specifies that the secure connection be made using the
-  centralized SSL certificate store without requiring a Server Name Indicator.
-- A value of "3" specifies that the secure connection be made using the
-  centralized SSL certificate store while requiring Server Name Indicator'
+          The sslflags parameter accepts integer values from 0 to 3 inclusive.
+          - A value of "0" specifies that the secure connection be made using an
+            IP/Port combination. Only one certificate can be bound to a
+            combination of IP address and the port.
+          - A value of "1" specifies that the secure connection be made using
+            the port number and the host name obtained by using Server Name
+            Indication (SNI).
+          - A value of "2" specifies that the secure connection be made using
+            the centralized SSL certificate store without requiring a Server
+            Name Indicator.
+          - A value of "3" specifies that the secure connection be made using
+            the centralized SSL certificate store while requiring Server Name
+            Indicator'
 
     validate do |value|
       unless value.is_a?(Hash)
@@ -116,7 +129,7 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
       unless ["http","https","net.pipe"].include?(value['protocol'])
           fail("Invalid value '#{value}'. Valid values are http, https, net.pipe")
       end
-  
+
       if ["http","https"].include?(value['protocol'])
           unless value["bindinginformation"].match(%r{^.+:\d+:.*})
           fail("bindinginformation for http and https protocols must be of the format '(ip|*):1-65535:hostname'")
@@ -158,16 +171,17 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   end
 
   newproperty(:serviceautostartprovidername) do
-    desc 'Specifies the provider used for service auto start. Used with :serviceautostartprovidertype.
-    The <serviceAutoStartProviders> element specifies a collection of managed assemblies that
-    Windows Process Activation Service (WAS) will load automatically when the startMode attribute of an
-    application pool is set to AlwaysRunning. This collection allows developers to specify assemblies that perform
-    initialization tasks before any HTTP requests are serviced.
-    
-    example:
-    serviceautostartprovidername => "MyAutostartProvider"
-    serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, version=1.0.0.0, Culture=neutral, PublicKeyToken=426f62526f636b73"
-    '
+    desc 'Specifies the provider used for service auto start. Used with
+          :serviceautostartprovidertype. The <serviceAutoStartProviders>
+          element specifies a collection of managed assemblies that Windows
+          Process Activation Service (WAS) will load automatically when the
+          startMode attribute of an application pool is set to AlwaysRunning.
+          This collection allows developers to specify assemblies that perform
+          initialization tasks before any HTTP requests are serviced.
+
+          example:
+          serviceautostartprovidername => "MyAutostartProvider"
+          serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, version=1.0.0.0, Culture=neutral, PublicKeyToken=426f62526f636b73"'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty serviceautostartprovidername name must be specified."
@@ -178,17 +192,16 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   end
 
   newproperty(:serviceautostartprovidertype) do
-    # serviceautostartprovidertype and serviceautostartprovidername work together
-    desc 'Specifies the application type for the provider used for service auto start. Used with :serviceautostartprovider
-    example:
-    serviceautostartprovidername => "MyAutostartProvider"
-    serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, version=1.0.0.0, Culture=neutral, PublicKeyToken=426f62526f636b73"
-    '
+    desc 'Specifies the application type for the provider used for service auto
+          start. Used with :serviceautostartprovider
+
+          example:
+          serviceautostartprovidername => "MyAutostartProvider"
+          serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, version=1.0.0.0, Culture=neutral, PublicKeyToken=426f62526f636b73"'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty serviceautostartprovidertype name must be specified."
       end
-      # fail("#{name} is not a valid serviceautostartprovidertype name") unless value =~ /^[a-zA-Z0-9\-\_'\s]+$/
     end
     
   end
@@ -204,6 +217,7 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   end
 
   newproperty(:defaultpage, :array_matching => :all) do
+    desc 'Specifies the default page of the site.'
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty defaultpage must be specified."
@@ -215,8 +229,8 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   end
 
   newproperty(:logformat) do
-    desc 'Specifies the format for the log file. When set to WSC,
-      it can be used in conjunction with :logflags'
+    desc "Specifies the format for the log file. When set to 'W3C', used with
+          `logflags`"
     validate do |value|
       unless value.kind_of?(String)
         fail("Invalid value '#{value}'. Should be a string")
@@ -250,10 +264,9 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   end
 
   newproperty(:logtruncatesize) do
-    desc 'Specifies how large the log file should be before truncating it.
-      The value must be in bytes. The value can be any size
-      between \'1048576 (1MB)\' and \'4294967295 (4GB)\'.
-      '
+    desc 'Specifies how large the log file should be before truncating it. The
+          value must be in bytes. The value can be any size between
+          \'1048576 (1MB)\' and \'4294967295 (4GB)\'.'
     validate do |value|
       unless value.kind_of?(Integer)
         fail("Invalid value '#{value}'. Should be a number")
@@ -266,7 +279,7 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
 
   newproperty(:loglocaltimerollover, :boolean => true) do
     desc 'Use the system\'s local time to determine for the log file name as
-       as well as when the log file is rolled over'
+          well as when the log file is rolled over'
     newvalue(:true)
     newvalue(:false)
 
@@ -276,8 +289,8 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   end
 
   newproperty(:logflags, :array_matching => :all) do
-    desc 'Specifies what W3C fields are logged in the IIS log file. This is only
-      valid when :logformat is set to W3C. '
+    desc "Specifies what W3C fields are logged in the log file. This is only
+          valid when `logformat` is set to 'W3C'."
     validate do |value|
       unless value.kind_of?(String)
         fail("Invalid logflags value '#{value}'. Should be a string")
@@ -322,7 +335,10 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   end
 
   newproperty(:authenticationinfo) do
-    desc 'Enable and disable authentication schemas. Note: some schemas require additional Windows features to be installed, for example windows authentication. This type does not ensure a given feature is installed before attempting to configure it.'
+    desc 'Enable and disable authentication schemas. Note: some schemas require
+          additional Windows features to be installed, for example windows
+          authentication. This type does not ensure a given feature is installed
+          before attempting to configure it.'
     valid_schemas = ['anonymous', 'basic', 'clientCertificateMapping',
                       'digest', 'iisClientCertificateMapping', 'windows']
     validate do |value|

@@ -3,7 +3,8 @@ require_relative '../../puppet_x/puppetlabs/iis/property/path'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 
 Puppet::Type.newtype(:iis_virtual_directory) do
-  @doc = "Manage an IIS virtual directory."
+  @doc = "Allows creation of a new IIS Virtual Directory and configuration of
+          virtual directory parameters."
 
   ensurable do
     defaultvalues
@@ -38,7 +39,10 @@ Puppet::Type.newtype(:iis_virtual_directory) do
   end
 
   newproperty(:physicalpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
-    desc 'The physical path to the virtual directory'
+    desc "The physical path to the virtual directory. This path must be fully
+          qualified. Though not recommended, this can be a UNC style path.
+          Supply credentials for access to the UNC path with the `user_name` and
+          `password` properties."
     validate do |value|
       if value.nil? or value.empty?
         raise ArgumentError, "A non-empty physicalpath must be specified."
@@ -48,7 +52,8 @@ Puppet::Type.newtype(:iis_virtual_directory) do
   end
 
   newproperty(:user_name, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
-    desc "Specifies the identity that should be impersonated when accessing the physical path."
+    desc "Specifies the identity that should be impersonated when accessing the
+          physical path."
   end
 
   newproperty(:password, :parent => PuppetX::PuppetLabs::IIS::Property::String) do
