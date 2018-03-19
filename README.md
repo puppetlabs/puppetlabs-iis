@@ -252,15 +252,15 @@ Allows creation of a new IIS Application Pool and configuration of application p
 
 #### `ensure`
 
-Specifies whether an application pool should be present or absent. If `state` is not specified, the application pool will be created and left in the default started state.
+Specifies whether an application pool should be present or absent. If `state` is not specified, the application pool is created and left in the default started state.
 
 #### `name`
 
-The unique name of the ApplicationPool. Must be unique.
+The name of the application pool. Must be unique.
 
 #### `state`
 
-The state of the ApplicationPool. By default, a newly created application pool will be started. Valid options 'started' or 'stopped'.
+The state of the application pool. By default, a newly created application pool will be started. Valid options 'started' or 'stopped'.
 
 #### `auto_start`
 
@@ -308,7 +308,7 @@ Configures the action that IIS takes when a worker process exceeds its configure
 
 #### `cpu_limit`
 
-Configures the maximum percentage of CPU time (in 1/1000ths of one percent) that the worker processes in an application pool are allowed to consume over a period of time as indicated by the `cpu_reset_interval` property. If the limit set by the limit property is exceeded, an event is written to the event log and an optional set of events can be triggered. These optional events are determined by the `cpu_action` property. Value must be <= 100000
+Configures the maximum percentage of cpu time per `cpu_reset_interval`, as a percentage in increments of 1/1000ths of one percent, that the worker is allowed to consume in an application pool. If the limit set by the limit property is exceeded, an event is written to the event log, and an optional set of events can be triggered. These optional events are determined by the `cpu_action` property. Value must be <= 100000
 
 #### `cpu_reset_interval`
 
@@ -540,7 +540,7 @@ If 'stopped' is specified, then the site will be created and stopped.
 
 ##### `name`
 
-The Name of the IIS site. Must be unique. Will set the target to this value if target is unset.
+The name of the IIS site. Must be unique. It will set the target to this value if target is unset.
 
 ##### `physicalpath`
 
@@ -556,17 +556,17 @@ The protocols enabled for the site. If 'https' is specified, 'http' is implied. 
 
 ##### `bindings`
 
-The protocol, address, port, and ssl certificate bindings for a web site.
+The protocol, address, port, and ssl certificate bindings for a website.
 
-The bindinginformation value should be in the form of the IPv4/IPv6 address or wildcard `*`, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
+The `bindinginformation` value should be in the form of the IPv4/IPv6 address or wildcard `*`, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
 
 A protocol value of "http" indicates a binding that uses the HTTP protocol. A value of "https" indicates a binding that uses HTTP over SSL.
 
 The sslflags parameter accepts integer values from 0 to 3 inclusive.
-- A value of "0" specifies that the secure connection be made using an IP/Port combination. Only one certificate can be bound to a combination of IP address and the port.
+- A value of "0" specifies that the secure connection be made using an IP/Port combination. Only one certificate can be bound to a combination of the IP address and the port.
 - A value of "1" specifies that the secure connection be made using the port number and the host name obtained by using Server Name Indication (SNI).
-- A value of "2" specifies that the secure connection be made using the centralized SSL certificate store without requiring a Server Name Indicator.
-- A value of "3" specifies that the secure connection be made using the centralized SSL certificate store while requiring Server Name Indicator
+- A value of "2" specifies that the secure connection be made using the centralized SSL certificate store without requiring a SNI.
+- A value of "3" specifies that the secure connection be made using the centralized SSL certificate store while requiring SNI
 
 ###### Examples
 
@@ -794,7 +794,9 @@ iis_site {'mysite'
 
 ##### `authenticationinfo`
 
-Enable and disable authentication schemas. Note: some schemas require additional Windows features to be installed, for example windows authentication. This type does not ensure a given feature is installed before attempting to configure it.
+Enable and disable authentication schemas. 
+
+Note: some schemas require additional Windows features to be installed, for example Windows authentication. This type does not ensure a given feature is installed before attempting to configure it.
 
 The available schemas are: anonymous, basic, clientCertificateMapping, digest, iisClientCertificateMapping, windows.
 
