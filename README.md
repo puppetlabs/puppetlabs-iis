@@ -256,11 +256,11 @@ Specifies whether an application pool should be present or absent. If `state` is
 
 #### `name`
 
-The name of the applicationPools. Must be unique.
+The name of the `application pool`. Must be unique.
 
 #### `state`
 
-The state of the applicationPools. By default, a newly created application pool will be started. Valid options 'started' or 'stopped'.
+The state of the `application pool`. By default, a newly created application pool will be started. Valid options 'started' or 'stopped'.
 
 #### `auto_start`
 
@@ -558,7 +558,7 @@ The protocols enabled for the site. If 'https' is specified, 'http' is implied. 
 
 The protocol, address, port, and ssl certificate bindings for a website.
 
-The binding information value should be in the form of the IPv4/IPv6 address or wildcard `*`, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
+The `bindinginformation` value should be in the form of the IPv4/IPv6 address or wildcard `*`, then the port, then the optional hostname separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
 
 A protocol value of "http" indicates a binding that uses the HTTP protocol. A value of "https" indicates a binding that uses HTTP over SSL.
 
