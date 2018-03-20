@@ -1,3 +1,12 @@
+## 2018-03-22 - Version 4.3.1
+
+This is a minor release with bug fixes.
+
+### Fixed
+
+- iis_website causes state changes on each run when `ensure` property is set to `present`. ([MODULES-6673](https://tickets.puppetlabs.com/browse/MODULES-6673))
+- iis_website has port conflict on create if only host name is different in binding information ([MODULES-6637](https://tickets.puppetlabs.com/browse/MODULES-6637))
+- iis_site does not support `authenticationinfo` ([MODULES-5229](https://tickets.puppetlabs.com/browse/MODULES-5229))
 ## 2018-01-26 - Version 4.3.0
 
 ### Summary
