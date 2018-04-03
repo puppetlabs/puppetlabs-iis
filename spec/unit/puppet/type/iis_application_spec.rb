@@ -68,7 +68,7 @@ describe 'iis_application' do
     end
     it { expect(subject[:physicalpath]).to eq 'C:\test' }
   end
-  
+
   describe 'parameter :applicationpool' do
     [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
       context "when '#{value}'" do
@@ -188,13 +188,13 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: 'http,https,net.pipe',
+          enabledprotocols: 'http,https,net.pipe,net.tcp,net.msmq,msmq.formatname',
         }
       end
-      it { expect(subject[:enabledprotocols]).to eq('http,https,net.pipe') }
+      it { expect(subject[:enabledprotocols]).to eq('http,https,net.pipe,net.tcp,net.msmq,msmq.formatname') }
     end
     context 'should not allow nil' do
-      let(:params) do 
+      let(:params) do
         {
           title: 'foo\bar',
           enabledprotocols: nil,
@@ -203,22 +203,22 @@ describe 'iis_application' do
       it { expect{subject}.to raise_error(Puppet::Error, /Got nil value for enabledprotocols/) }
     end
     context 'should not allow empty' do
-      let(:params) do 
+      let(:params) do
         {
           title: 'foo\bar',
           enabledprotocols: '',
         }
       end
-      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe/) }
+      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname/) }
     end
     context 'should not accept invalid string value' do
-      let(:params) do 
+      let(:params) do
         {
           title: 'foo\bar',
           enabledprotocols: 'woot',
         }
       end
-      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid protocol 'woot'. Valid values are http, https, net.pipe/) }
+      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid protocol 'woot'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname/) }
     end
   end
 end
