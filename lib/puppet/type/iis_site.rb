@@ -76,18 +76,18 @@ Puppet::Type.newtype(:iis_site) do
     desc "The protocols enabled for the site. If 'https' is specified, 'http' is
           implied. If no value is provided, then this setting is disabled. Can
           be a comma delimited list of protocols. Valid protocols are: 'http',
-          'https', 'net.pipe'."
+          'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'."
     validate do |value|
       unless value.kind_of?(String)
         fail("Invalid value '#{value}'. Should be a string")
       end
-      
-      fail("Invalid value ''. Valid values are http, https, net.pipe") if value.empty?
-      
+
+      fail("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
+
       protocols = value.split(',')
       protocols.each do |protocol|
-        unless ['http', 'https', 'net.pipe'].include?(protocol)
-          fail("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe")
+        unless ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(protocol)
+          fail("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
         end
       end
     end
@@ -126,8 +126,8 @@ Puppet::Type.newtype(:iis_site) do
       unless (['protocol','bindinginformation'] - value.keys).empty?
           fail("All bindings must specify protocol and bindinginformation values")
       end
-      unless ["http","https","net.pipe"].include?(value['protocol'])
-          fail("Invalid value '#{value}'. Valid values are http, https, net.pipe")
+      unless ["http","https","net.pipe","net.tcp","net.msmq","msmq.formatname"].include?(value['protocol'])
+          fail("Invalid value '#{value}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
       end
 
       if ["http","https"].include?(value['protocol'])
@@ -138,10 +138,22 @@ Puppet::Type.newtype(:iis_site) do
           unless value["bindinginformation"].match(%r{^[^:]+$})
           fail("bindinginformation for net.pipe protocol must be of the format 'hostname'")
           end
+      elsif ["net.tcp"].include?(value['protocol'])
+          unless value["bindinginformation"].match(%r{^\d+:.*})
+          fail("bindinginformation for net.tcp protocol must be of the format '(ip|*):1-65535:hostname'")
+          end
+      elsif ["net.msmq"].include?(value['protocol'])
+          unless value["bindinginformation"].match(%r{^[^:]+$})
+          fail("bindinginformation for net.msmq protocol must be of the format 'hostname'")
+          end
+      elsif ["msmq.formatname"].include?(value['protocol'])
+          unless value["bindinginformation"].match(%r{^[^:]+$})
+          fail("bindinginformation for msmq.formatname protocol must be of the format 'hostname'")
+          end
       end
 
-      if ["http","net.pipe"].include?(value["protocol"]) and (value["sslflags"] or value["certificatehash"] or value["certificatestorename"])
-        fail("#{value["bindinginformation"]}: sslflags, certificatehash, and certificatestorename are not valid when protocol is http or net.pipe")
+      if ["http","net.pipe","net.tcp","net.msmq","msmq.formatname"].include?(value["protocol"]) and (value["sslflags"] or value["certificatehash"] or value["certificatestorename"])
+        fail("#{value["bindinginformation"]}: sslflags, certificatehash, and certificatestorename are only valid when the protocol is https")
       end
       if value["protocol"] == "https"
         if ! [0,1,2,3].include?(value["sslflags"])
@@ -203,7 +215,7 @@ Puppet::Type.newtype(:iis_site) do
         raise ArgumentError, "A non-empty serviceautostartprovidertype name must be specified."
       end
     end
-    
+
   end
 
   newproperty(:preloadenabled, :boolean => true) do
@@ -369,11 +381,11 @@ Puppet::Type.newtype(:iis_site) do
         fail("Cannot specify logflags when logformat is not W3C")
       end
     end
-    
+
     if self[:serviceautostartprovidername]
       fail("Must specify serviceautostartprovidertype as well as serviceautostartprovidername") unless self[:serviceautostartprovidertype]
     end
-    
+
     if self[:serviceautostartprovidertype]
       fail("Must specify serviceautostartprovidername as well as serviceautostartprovidertype") unless self[:serviceautostartprovidername]
     end
