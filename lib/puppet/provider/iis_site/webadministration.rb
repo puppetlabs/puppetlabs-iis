@@ -191,4 +191,11 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       return matches[:ip_dns], matches[:port], matches[:host_header]
     end
   end
+
+  def ssl?
+    bindings_ssl  = !resource[:bindings].find {|x| x['protocol'] == 'https'}.nil? unless resource[:bindings].nil?
+    port_443      = binding_information[1] == '443' unless binding_information.nil?
+
+    bindings_ssl || port_443
+  end
 end
