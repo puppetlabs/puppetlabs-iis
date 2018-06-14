@@ -1,4 +1,17 @@
+## 2018-06-13 - Version 4.3.2
+
+### Summary
+
+This is a minor release with bug fixes.
+
+### Fixed
+
+- `iis_website`, with a port binding of 443, does not start. ([MODULES-7173](https://tickets.puppetlabs.com/browse/MODULES-7173))
+- Custom PowerShell host unreliable on some versions of Windows 2008 ([MODULES-6928](https://tickets.puppetlabs.com/browse/MODULES-6928))
+
 ## 2018-03-22 - Version 4.3.1
+
+### Summary
 
 This is a minor release with bug fixes.
 
