@@ -1,12 +1,15 @@
 {
-  "name"        : "puppetlabs-iis",
-  "version"     : "4.3.2",
-  "author"      : "puppetlabs",
-  "license"     : "Apache-2.0",
-  "summary"     : "Manage IIS for Windows Server 2008R2, 2012, 2012R2 and 2016. Maintain application sites, pools, installation, and many other IIS settings.",
-  "source"      : "https://github.com/puppetlabs/puppetlabs-iis.git",
+  "name": "puppetlabs-iis",
+  "version": "4.3.2",
+  "author": "puppetlabs",
+  "summary": "Manage IIS for Windows Server 2008R2, 2012, 2012R2 and 2016. Maintain application sites, pools, installation, and many other IIS settings.",
+  "license": "Apache-2.0",
+  "source": "https://github.com/puppetlabs/puppetlabs-iis.git",
   "project_page": "https://github.com/puppetlabs/puppetlabs-iis",
-  "issues_url"  : "https://tickets.puppet.com/browse/MODULES",
+  "issues_url": "https://tickets.puppet.com/browse/MODULES",
+  "dependencies": [
+
+  ],
   "operatingsystem_support": [
     {
       "operatingsystem": "windows",
@@ -24,7 +27,7 @@
       "version_requirement": ">= 4.7.0 < 6.0.0"
     }
   ],
-  "dependencies": [
-
-  ]
+  "pdk-version": "1.6.0",
+  "template-url": "file://C:/Program Files/Puppet Labs/DevelopmentKit/share/cache/pdk-templates.git",
+  "template-ref": "1.6.0-0-gf5564c0"
 }

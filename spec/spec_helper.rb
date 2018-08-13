@@ -1,46 +1,48 @@
+RSpec.configure do |c|
+  c.mock_with :rspec
+end
+
 require 'puppetlabs_spec_helper/module_spec_helper'
+require 'rspec-puppet-facts'
 
-if Puppet::Util::Package.versioncmp(Puppet.version, '4.5.0') >= 0
-  RSpec.configure do |c|
-    c.mock_with :rspec
-    c.before :each do
-      Puppet.settings[:strict] = :error
-    end
-  end
-else
-  RSpec.configure do |c|
-    c.mock_with :rspec
-  end
-end
-
-if Puppet.features.microsoft_windows?
-  require 'puppet/util/windows/security'
-
-  def take_ownership(path)
-    path = path.gsub('/', '\\')
-    output = %x(takeown.exe /F #{path} /R /A /D Y 2>&1)
-    if $? != 0 #check if the child process exited cleanly.
-      puts "#{path} got error #{output}"
-    end
-  end
-
-  def get_powershell_major_version()
-    provider = Puppet::Type.type(:iis_site).provider(:webadministration)
-    
-    begin
-      psversion = provider.powershell_version.split(".").first
-      # psversion = `#{powershell} -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -Command \"$PSVersionTable.PSVersion.Major.ToString()\"`.chomp!.to_i
-      puts "PowerShell major version number is #{psversion}"
-    rescue
-      puts "Unable to determine PowerShell version"
-      psversion = -1    
-    end
-    psversion
-  end
-end
-
-# put local configuration and setup into spec_helper_local
 begin
-  require 'spec_helper_local'
-rescue LoadError
+  require 'spec_helper_local' if File.file?(File.join(File.dirname(__FILE__), 'spec_helper_local.rb'))
+rescue LoadError => loaderror
+  warn "Could not require spec_helper_local: #{loaderror.message}"
 end
+
+include RspecPuppetFacts
+
+default_facts = {
+  puppetversion: Puppet.version,
+  facterversion: Facter.version,
+}
+
+default_facts_path = File.expand_path(File.join(File.dirname(__FILE__), 'default_facts.yml'))
+default_module_facts_path = File.expand_path(File.join(File.dirname(__FILE__), 'default_module_facts.yml'))
+
+if File.exist?(default_facts_path) && File.readable?(default_facts_path)
+  default_facts.merge!(YAML.safe_load(File.read(default_facts_path)))
+end
+
+if File.exist?(default_module_facts_path) && File.readable?(default_module_facts_path)
+  default_facts.merge!(YAML.safe_load(File.read(default_module_facts_path)))
+end
+
+RSpec.configure do |c|
+  c.default_facts = default_facts
+  c.before :each do
+    # set to strictest setting for testing
+    # by default Puppet runs at warning level
+    Puppet.settings[:strict] = :warning
+  end
+end
+
+def ensure_module_defined(module_name)
+  module_name.split('::').reduce(Object) do |last_module, next_module|
+    last_module.const_set(next_module, Module.new) unless last_module.const_defined?(next_module)
+    last_module.const_get(next_module)
+  end
+end
+
+# 'spec_overrides' from sync.yml will appear below this line
