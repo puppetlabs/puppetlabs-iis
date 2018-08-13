@@ -8,23 +8,19 @@ describe PuppetX::PuppetLabs::IIS::IISVersion, :if => Puppet::Util::Platform.win
   end
 
   describe "when iis is installed" do
-
     it "should detect a iis version" do
-      Win32::Registry.any_instance.expects(:[])
-        .with('MajorVersion').returns('10')
-      Win32::Registry.any_instance.expects(:[])
-        .with('MinorVersion').returns('0')
-
+      expect_any_instance_of(Win32::Registry).to receive(:open)
+        .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
+        .and_yield({ 'MajorVersion' => 10, 'MinorVersion' => 0 })
       version = @ps.installed_version
 
       expect(version).not_to be_nil
     end
 
     it "should report true if iis supported version installed" do
-      Win32::Registry.any_instance.expects(:[])
-        .with('MajorVersion').returns('10')
-      Win32::Registry.any_instance.expects(:[])
-        .with('MinorVersion').returns('0')
+      expect_any_instance_of(Win32::Registry).to receive(:open)
+        .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
+        .and_yield({ 'MajorVersion' => 10, 'MinorVersion' => 0 })
 
       result = @ps.supported_version_installed?
 
@@ -32,26 +28,21 @@ describe PuppetX::PuppetLabs::IIS::IISVersion, :if => Puppet::Util::Platform.win
     end
 
     it "should report false if no iis supported version installed" do
-      Win32::Registry.any_instance.expects(:[])
-        .with('MajorVersion').returns('6')
-      Win32::Registry.any_instance.expects(:[])
-        .with('MinorVersion').returns('0')
+      expect_any_instance_of(Win32::Registry).to receive(:open)
+        .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
+        .and_yield({ 'MajorVersion' => 6, 'MinorVersion' => 0 })
 
       result = @ps.supported_version_installed?
 
       expect(result).to be_falsey
     end
-
   end
 
   describe "when iis is not installed" do
-
     it "should return nil and not throw" do
-      Win32::Registry.any_instance
-        .expects(:open)
+      expect_any_instance_of(Win32::Registry).to receive(:open)
         .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
-        .raises(Win32::Registry::Error.new(2), 'nope')
-        .once
+        .and_raise(Win32::Registry::Error.new(2), 'nope')
 
       version = @ps.installed_version
 

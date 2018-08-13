@@ -1,33 +1,51 @@
 ---
-appveyor.yml:
-  matrix:
-    - PUPPET_GEM_VERSION: '~> 4.0'
-      RUBY_VER: 21
-    - PUPPET_GEM_VERSION: '~> 4.0'
-      RUBY_VER: 21-x64
-    - PUPPET_GEM_VERSION: '~> 4.0'
-      RUBY_VER: 23
-    - PUPPET_GEM_VERSION: '~> 4.0'
-      RUBY_VER: 23-x64
 Gemfile:
+  required:
+    ':system_tests':
+      - gem: 'puppet-module-posix-system-r#{minor_version}'
+        platforms: ruby
+      - gem: 'puppet-module-win-system-r#{minor_version}'
+        platforms:
+          - mswin
+          - mingw
+          - x64_mingw
+      - gem: beaker
+        version: '~> 3.13'
+        from_env: BEAKER_VERSION
+      - gem: beaker-abs
+        version: '~> 0.1'
+        from_env: BEAKER_ABS_VERSION
+      - gem: beaker-pe
+      - gem: beaker-hostgenerator
+        version: '>= 0.0'
+        from_env: BEAKER_HOSTGENERATOR_VERSION
+      - gem: beaker-rspec
+        version: '>= 0.0'
+        from_env: BEAKER_RSPEC_VERSION
+      - gem: beaker-testmode_switcher
+        version: '~> 0.4'
+      - gem: master_manipulator
+      - gem: puppet-blacksmith
+        version: '~> 3.4'
   optional:
     ':development':
       - gem: 'rototiller'
         version: '~> 1.0'
-    ':system_tests':
-      - gem: 'beaker-testmode_switcher'
-MAINTAINERS.md:
-  maintainers:
-    - "Puppet Windows Team `windows |at| puppet |dot| com`"
-NOTICE:
-  copyright_holders:
-    - name: 'Puppet, Inc.'
-      begin: 2017
 
-# already using master branch's version
 spec/spec_helper.rb:
+  mock_with: ':rspec'
+
+# For the moment don't do any rubocop checks.
+.rubocop.yml:
+  include_todos: true
+  selected_profile: off
+
+# Includes acceptance_tests rototiller rake task added with MODULES-3373
+Rakefile:
   unmanaged: true
 
-# includes acceptance_tests rototiller rake task added with MODULES-3373
-Rakefile:
+.gitlab-ci.yml:
+  delete: true
+
+spec/default_facts.yml:
   unmanaged: true
