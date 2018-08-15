@@ -29,7 +29,7 @@ describe 'iis_application_pool' do
     end
 
     context 'with valid parameters defined' do
-    # TestRail ID: C100018
+      # TestRail ID: C100018
       before(:all) do
         @pool_name = "#{SecureRandom.hex(10)}"
         @manifest  = <<-HERE
@@ -93,13 +93,16 @@ describe 'iis_application_pool' do
     end
 
     context 'with a password wrapped in Sensitive() defined' do
+      if (get_puppet_version.to_i < 5)
+        skip 'is skipped due to version being lower than puppet 5'
+      else
         before(:all) do
           @pool_name = "#{SecureRandom.hex(10)}"
           @manifest  = <<-HERE
             iis_application_pool { '#{@pool_name}':
               ensure    => 'present',
               user_name => 'user',
-              password  => Sensitive('password'),
+              password  => Sensitive('#@\\\'454sdf'),
             }
           HERE
         end
@@ -113,10 +116,11 @@ describe 'iis_application_pool' do
 
           puppet_resource_should_show('ensure', 'present')
           puppet_resource_should_show('user_name', 'user')
-          puppet_resource_should_show('password', 'password')
+          puppet_resource_should_show('password', '#@\\\'454sdf')
 
-        after(:all) do
-          remove_app_pool(@pool_name)
+          after(:all) do
+            remove_app_pool(@pool_name)
+          end
         end
       end
     end
@@ -212,9 +216,9 @@ describe 'iis_application_pool' do
   context 'when removing an application pool' do
     before(:all) do
       @pool_name = "#{SecureRandom.hex(10)}"
-      
+
       create_app_pool(@pool_name)
-      
+
       @manifest = <<-HERE
           iis_application_pool { '#{@pool_name}':
             ensure => 'absent'
@@ -264,7 +268,7 @@ describe 'iis_application_pool' do
     }
   end
 
-    context 'when building a kitchen sink' do
+  context 'when building a kitchen sink' do
     before(:all) do
       @pool_name = "#{SecureRandom.hex(10)}"
       @manifest = <<-HERE
