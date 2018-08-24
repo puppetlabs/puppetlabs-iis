@@ -181,20 +181,23 @@ describe Puppet::Type.type(:iis_site) do
     it "should not allow empty" do
       expect {
         resource[:enabledprotocols] = ''
-      }.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe/)
+      }.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname/)
     end
 
     it "should accept valid string value" do
-      resource[:enabledprotocols] = ['http','https','net.pipe']
+      resource[:enabledprotocols] = ['http','https','net.pipe','net.tcp','net.msmq','msmq.formatname']
       resource[:enabledprotocols] = 'http'
       resource[:enabledprotocols] = 'https'
       resource[:enabledprotocols] = 'net.pipe'
+      resource[:enabledprotocols] = 'net.tcp'
+      resource[:enabledprotocols] = 'net.msmq'
+      resource[:enabledprotocols] = 'msmq.formatname'
     end
 
     it "should not accept invalid string value" do
       expect {
         resource[:enabledprotocols] = 'woot'
-      }.to raise_error(Puppet::ResourceError, /Invalid protocol 'woot'. Valid values are http, https, net.pipe/)
+      }.to raise_error(Puppet::ResourceError, /Invalid protocol 'woot'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname/)
     end
   end
 

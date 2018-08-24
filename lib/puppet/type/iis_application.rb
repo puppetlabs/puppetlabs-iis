@@ -100,19 +100,19 @@ Puppet::Type.newtype(:iis_application) do
 
   newproperty(:enabledprotocols) do
     desc 'The comma-delimited list of enabled protocols for the application.
-          Valid protocols are: \'http\', \'https\', \'net.pipe\'.'
+          Valid protocols are: \'http\', \'https\', \'net.pipe\', \'net.tcp\', \'net.msmq\', \'msmq.formatname\'.'
     validate do |value|
       return if value.nil?
       unless value.kind_of?(String)
         fail("Invalid value '#{value}'. Should be a string")
       end
 
-      fail("Invalid value ''. Valid values are http, https, net.pipe") if value.empty?
+      fail("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
 
       protocols = value.split(',')
       protocols.each do |protocol|
-        unless ['http', 'https', 'net.pipe'].include?(protocol)
-          fail("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe")
+        unless ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(protocol)
+          fail("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
         end
       end
     end
