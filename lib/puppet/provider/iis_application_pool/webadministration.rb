@@ -34,10 +34,10 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       if property.value.is_a?(Array)
         cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}'"
         property.value.each do |item|
-          cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @\{value=\"#{item}\"\}"
+          cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @\{value=#{escape_value(item)}\}"
         end
       else
-        cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{property.value}"
+        cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{escape_value(property.value)}"
       end
     end
 
@@ -219,5 +219,17 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     }
     
     iis_properties
+  end
+
+  def escape_value(value)
+    if is_number?(value)
+      value
+    else
+      "'#{value.to_s.gsub("'","''")}\'"
+    end
+  end
+
+  def is_number?(value)
+    value.respond_to?(:to_i) ? value.to_s == value.to_i.to_s : false
   end
 end
