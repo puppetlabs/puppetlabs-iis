@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.4.0] - 2018-09-05
+
+### Added
+
+- Added additional valid binding protocols for `iis_application`. Thanks Pedro Cunha (@Pedro-Cunha). ([MODULES-6947](https://tickets.puppetlabs.com/browse/MODULES-6947))
+
+### Fixed
+
+- Fixed password escaping for the `iis_application_pool` and `iis_virtual_directory` types. ([MODULES-6870](https://tickets.puppetlabs.com/browse/MODULES-6870))
+
 ## [4.3.2] - 2018-06-13
 
 ### Fixed
