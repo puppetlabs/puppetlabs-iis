@@ -39,6 +39,7 @@ describe 'iis_application provider' do
         {
           title: 'foo\bar',
           physicalpath: 'C:\exist',
+          sitename: 'foo',
         }
       end
       before :each do
@@ -52,7 +53,7 @@ describe 'iis_application provider' do
     let(:params) do
       {
         title: 'foo\bar',
-        virtual_directory: 'IIS:\exists',
+        virtual_directory: 'IIS:\Sites\exists\vdir',
       }
     end
     before :each do

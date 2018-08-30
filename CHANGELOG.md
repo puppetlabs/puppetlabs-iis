@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Fixed
+
+- `iis_application` cannot manage two applications with the same name under different web sites ([MODULES-5493](https://tickets.puppetlabs.com/browse/MODULES-5493))
+- `applicationname` parameter cannot start with '/' character. Fixed as a by product of [MODULES-5493](https://tickets.puppetlabs.com/brows/MODULES-5493).
+
+### Changed
+
+- The direction of slashes used in the title of an `iis_application` resource no longer matters. This is true both for the slash that separates the `sitename` portion of the title from the `applicationname` name, and also for the path separator used if the application path is nested deeply in folders under the web site.
+
 ## [4.4.0] - 2018-09-05
 
 ### Added
