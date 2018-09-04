@@ -239,7 +239,7 @@ iis_application { 'myapp':
 
 #### `enabledprotocols`
 
-The comma-delimited list of enabled protocols for the application. Valid protocols are: 'http', 'https', 'net.pipe'.
+The comma-delimited list of enabled protocols for the application. Valid protocols are: 'http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'.
 
 ##### Example
 
@@ -561,7 +561,7 @@ The name of the application pool for the site.
 
 ##### `enabledprotocols`
 
-The protocols enabled for the site. If 'https' is specified, 'http' is implied. If no value is provided, then this setting is disabled. Can be a comma delimited list of protocols. Valid protocols are: 'http', 'https', 'net.pipe'.
+The protocols enabled for the site. If 'https' is specified, 'http' is implied. If no value is provided, then this setting is disabled. Can be a comma delimited list of protocols. Valid protocols are: 'http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'.
 
 ##### `bindings`
 
