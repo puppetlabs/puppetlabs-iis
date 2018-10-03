@@ -7,7 +7,6 @@ describe 'iis_site' do
   end
 
   context 'when configuring a website' do
-    # TestRail ID: C100068
     context 'with basic required parameters' do
       before (:all) do
         create_path('C:\inetpub\basic')
@@ -37,7 +36,6 @@ describe 'iis_site' do
       end
     end
 
-    # TestRail ID: C100069
     context 'with all parameters specified' do
       context 'using W3C log format, logflags and logtruncatesize' do
         before (:all) do
@@ -172,7 +170,6 @@ describe 'iis_site' do
         end
       end
 
-      # TestRail ID: C100070
       context 'using non-W3C log format and logtperiod' do
         before (:all) do
           create_path('C:\inetpub\tmp')
@@ -239,7 +236,6 @@ describe 'iis_site' do
       end
     end
 
-    # TestRail ID: C100071
     context 'can change site state from' do
       context 'stopped to started' do
         before (:all) do
@@ -271,7 +267,6 @@ describe 'iis_site' do
         end
       end
 
-      # TestRail ID: C100072
       context 'started to stopped' do
         before (:all) do
           create_path('C:\inetpub\tmp')
@@ -302,7 +297,6 @@ describe 'iis_site' do
         end
       end
 
-      # TestRail ID: C100073
       context 'started to absent' do
         before (:all) do
           @site_name = "#{SecureRandom.hex(10)}"
@@ -331,7 +325,6 @@ describe 'iis_site' do
     end
 
     context 'with invalid value for' do
-      # TestRail ID: C100074
       context 'logformat' do
         before(:all) do
           create_path('C:\inetpub\wwwroot')
@@ -349,7 +342,6 @@ describe 'iis_site' do
         it_behaves_like 'a failing manifest'
       end
 
-      # TestRail ID: C100075
       context 'logperiod' do
         before(:all) do
           create_path('C:\inetpub\wwwroot')
@@ -373,7 +365,6 @@ describe 'iis_site' do
     end
 
     context 'can changed previously set value' do
-      # TestRail ID: C100076
       context 'physicalpath' do
         before(:all) do
           @site_name = "#{SecureRandom.hex(10)}"
@@ -430,7 +421,6 @@ describe 'iis_site' do
         end
       end
 
-      # TestRail ID: C100077
       context 'bindings' do
         before(:all) do
           create_path('C:\inetpub\new')
@@ -493,7 +483,6 @@ describe 'iis_site' do
         end
       end
 
-      # TestRail ID: C100078
       context 'enabledprotocols' do
         before(:all) do
           create_path('C:\inetpub\new')
@@ -532,7 +521,6 @@ describe 'iis_site' do
         end
       end
 
-      # TestRail ID: C100079
       context 'logflags' do
         before(:all) do
           create_path('C:\inetpub\new')
