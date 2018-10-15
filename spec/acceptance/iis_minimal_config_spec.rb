@@ -1,6 +1,5 @@
 require 'spec_helper_acceptance'
 
-# TestRail ID: C100067
 describe 'a minimal IIS config:' do
   before(:all) do
     @manifest = <<-EOF
