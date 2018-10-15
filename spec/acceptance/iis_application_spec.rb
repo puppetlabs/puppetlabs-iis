@@ -12,7 +12,7 @@ describe 'iis_application' do
         @site_name = SecureRandom.hex(10)
         @app_name = SecureRandom.hex(10)
         create_path('C:\inetpub\basic')
-        @manifest  = <<-HERE
+        @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
             physicalpath    => 'C:\\inetpub\\basic',
@@ -35,7 +35,6 @@ describe 'iis_application' do
         end
 
         include_context 'with a puppet resource run'
-        puppet_resource_should_show('sitename', @site_name)
         puppet_resource_should_show('physicalpath', 'C:\inetpub\basic')
         puppet_resource_should_show('applicationpool', 'DefaultAppPool')
       end
@@ -54,7 +53,7 @@ describe 'iis_application' do
         create_site(@site_name, true)
         create_path('C:\inetpub\vdir')
         create_virtual_directory(@site_name, @app_name, 'C:\inetpub\vdir')
-        @manifest  = <<-HERE
+        @manifest = <<-HERE
           iis_application { '#{@site_name}\\#{@app_name}':
             ensure            => 'present',
             virtual_directory => 'IIS:\\Sites\\#{@site_name}\\#{@app_name}',
@@ -70,7 +69,6 @@ describe 'iis_application' do
         end
 
         include_context 'with a puppet resource run'
-        puppet_resource_should_show('sitename', @site_name)
         puppet_resource_should_show('physicalpath', 'C:\inetpub\vdir')
         puppet_resource_should_show('applicationpool', 'DefaultAppPool')
       end
@@ -83,8 +81,8 @@ describe 'iis_application' do
 
     context 'with nested virtual directory' do
       before(:all) do
-        @site_name  = SecureRandom.hex(10)
-        @app_name   = SecureRandom.hex(10)
+        @site_name = SecureRandom.hex(10)
+        @app_name = SecureRandom.hex(10)
         create_site(@site_name, true)
         create_path("c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}")
         @manifest = <<-HERE
@@ -102,7 +100,6 @@ describe 'iis_application' do
       describe "application validation" do
         it "should create the correct application" do
           @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/#{@app_name}"))
-          expect(@result.stdout).to match(/(sitename)(\s*)(=>)(\s*)('#{@site_name}'),/)
           expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/#{@app_name}':/)
           expect(@result.stdout).to match(/ensure\s*=> 'present',/)
         end
@@ -116,8 +113,8 @@ describe 'iis_application' do
 
     context 'with nested virtual directory and single namevar' do
       before(:all) do
-        @site_name  = SecureRandom.hex(10)
-        @app_name   = SecureRandom.hex(10)
+        @site_name = SecureRandom.hex(10)
+        @app_name = SecureRandom.hex(10)
         create_site(@site_name, true)
         create_path("c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}")
         @manifest = <<-HERE
@@ -134,7 +131,6 @@ describe 'iis_application' do
       describe "application validation" do
         it "should create the correct application" do
           @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/#{@app_name}"))
-          expect(@result.stdout).to match(/(sitename)(\s*)(=>)(\s*)('#{@site_name}'),/)
           expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/#{@app_name}':/)
           expect(@result.stdout).to match(/ensure\s*=> 'present',/)
         end
@@ -146,11 +142,11 @@ describe 'iis_application' do
       end
     end
 
-    context 'with incorrect virtual directory name format' do
+    context 'with forward slash virtual directory name format' do
       context 'with a leading slash' do
         before(:all) do
-          @site_name  = SecureRandom.hex(10)
-          @app_name   = SecureRandom.hex(10)
+          @site_name = SecureRandom.hex(10)
+          @app_name = SecureRandom.hex(10)
           create_site(@site_name, true)
           create_path("c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}")
           @manifest = <<-HERE
@@ -163,9 +159,7 @@ describe 'iis_application' do
           HERE
         end
 
-        # a lading slash in applicationname causes the name matching to fail and runs
-        # loses idempotency. A validation rule was added to prevent this.
-        it_behaves_like 'a failing manifest'
+        it_behaves_like 'an idempotent resource'
 
         after(:all) do
           remove_app(@app_name)
@@ -174,10 +168,34 @@ describe 'iis_application' do
       end
     end
 
+    context 'with backward slash virtual directory name format' do
+      before(:all) do
+        @site_name = SecureRandom.hex(10)
+        @app_name = SecureRandom.hex(10)
+        create_site(@site_name, true)
+        create_path("c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}")
+        @manifest = <<-HERE
+            iis_application{'subFolder\\#{@app_name}':
+              ensure => 'present',
+              applicationname => 'subFolder/#{@app_name}',
+              physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{@app_name}',
+              sitename => '#{@site_name}'
+            }
+        HERE
+      end
+
+      it_behaves_like 'an idempotent resource'
+
+      after(:all) do
+        remove_app(@app_name)
+        remove_all_sites
+      end
+    end
+
     context 'with two level nested virtual directory' do
       before(:all) do
-        @site_name  = SecureRandom.hex(10)
-        @app_name   = SecureRandom.hex(10)
+        @site_name = SecureRandom.hex(10)
+        @app_name = SecureRandom.hex(10)
         create_site(@site_name, true)
         create_path("c:\\inetpub\\wwwroot\\subFolder\\sub2\\#{@app_name}")
         @manifest = <<-HERE
@@ -195,7 +213,6 @@ describe 'iis_application' do
       describe "application validation" do
         it "should create the correct application" do
           @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/sub2/#{@app_name}"))
-          expect(@result.stdout).to match(/(sitename)(\s*)(=>)(\s*)('#{@site_name}'),/)
           expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/sub2\/#{@app_name}':/)
           expect(@result.stdout).to match(/ensure\s*=> 'present',/)
         end
@@ -220,7 +237,7 @@ describe 'iis_application' do
         site_hostname = 'www.puppet.local'
         thumbprint = create_selfsigned_cert(site_hostname)
         create_app(@site_name, @app_name, 'C:\inetpub\wwwroot')
-        @manifest  = <<-HERE
+        @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
             physicalpath    => 'C:\\inetpub\\wwwroot',
@@ -259,7 +276,7 @@ describe 'iis_application' do
         create_path('C:\inetpub\wwwroot')
         create_path('C:\inetpub\auth')
         create_app(@site_name, @app_name, 'C:\inetpub\auth')
-        @manifest  = <<-HERE
+        @manifest = <<-HERE
           iis_application { '#{@app_name}':
             ensure       => 'present',
             sitename     => '#{@site_name}',
@@ -274,7 +291,7 @@ describe 'iis_application' do
 
       it_behaves_like 'an idempotent resource'
     end
-    
+
     describe 'applicationpool' do
       before(:all) do
         @site_name = SecureRandom.hex(10)
@@ -284,7 +301,7 @@ describe 'iis_application' do
         create_path('C:\inetpub\auth')
         create_app(@site_name, @app_name, 'C:\inetpub\auth')
         create_app_pool('foo_pool')
-        @manifest  = <<-HERE
+        @manifest = <<-HERE
           iis_application { '#{@app_name}':
             ensure       => 'present',
             sitename     => '#{@site_name}',
@@ -307,7 +324,7 @@ describe 'iis_application' do
       create_path('C:\inetpub\remove')
       create_virtual_directory(@site_name, @app_name, 'C:\inetpub\remove')
       create_app(@site_name, @app_name, 'C:\inetpub\remove')
-      @manifest  = <<-HERE
+      @manifest = <<-HERE
           iis_application { '#{@app_name}':
             ensure       => 'absent',
             sitename     => '#{@site_name}',
@@ -329,6 +346,74 @@ describe 'iis_application' do
 
     after(:all) do
       remove_app(@app_name)
+    end
+  end
+
+
+  context 'with multiple sites with same application name' do
+    before(:all) do
+      remove_all_sites
+      @site_name = SecureRandom.hex(10)
+      @site_name2 = SecureRandom.hex(10)
+      @app_name = SecureRandom.hex(10)
+      create_path("C:\\inetpub\\#{@site_name}\\#{@app_name}")
+      create_path("C:\\inetpub\\#{@site_name2}\\#{@app_name}")
+      @manifest = <<-HERE
+          iis_site { '#{@site_name}':
+            ensure          => 'started',
+            physicalpath    => 'C:\\inetpub\\#{@site_name}',
+            applicationpool => 'DefaultAppPool',
+            bindings        => [
+            {
+              'bindinginformation' => '*:8081:',
+              'protocol'           => 'http',
+            }]
+          }
+          iis_application { '#{@site_name}\\#{@app_name}':
+            ensure            => 'present',
+            sitename        => '#{@site_name}',
+            physicalpath => 'C:\\inetpub\\#{@site_name}\\#{@app_name}',
+          }
+          iis_site { '#{@site_name2}':
+            ensure          => 'started',
+            physicalpath    => 'C:\\inetpub\\#{@site_name2}',
+            applicationpool => 'DefaultAppPool',
+          }
+          iis_application { '#{@site_name2}\\#{@app_name}':
+            ensure            => 'present',
+            sitename        => '#{@site_name2}',
+            physicalpath => 'C:\\inetpub\\#{@site_name2}\\#{@app_name}',
+          }
+      HERE
+    end
+
+    it 'should run without errors' do
+      execute_manifest(@manifest, :catch_failures => true)
+    end
+
+    it 'should run a second time without changes' do
+      execute_manifest(@manifest, :catch_changes => true)
+    end
+
+
+    it 'contains two sites with the same app name' do
+      on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\#{@app_name}")) do |result|
+        expect(result.stdout).to match(/#{@site_name}\\#{@app_name}/)
+        expect(result.stdout).to match(/ensure\s*=> 'present',/)
+        expect(result.stdout).to match (/C:\\inetpub\\#{@site_name}\\#{@app_name}/)
+        expect(result.stdout).to match (/applicationpool\s*=> 'DefaultAppPool'/)
+      end
+      on(default, puppet('resource', 'iis_application', "#{@site_name2}\\\\#{@app_name}")) do |result|
+        expect(result.stdout).to match(/#{@site_name2}\\#{@app_name}/)
+        expect(result.stdout).to match(/ensure\s*=> 'present',/)
+        expect(result.stdout).to match (/C:\\inetpub\\#{@site_name2}\\#{@app_name}/)
+        expect(result.stdout).to match (/applicationpool\s*=> 'DefaultAppPool'/)
+      end
+    end
+
+    after(:all) do
+      remove_app(@app_name)
+      remove_all_sites
     end
   end
 end

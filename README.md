@@ -172,7 +172,43 @@ iis_virtual_directory { 'vdir':
 
 Allows creation of a new IIS Application and configuration of application parameters.
 
-The iis_application type uses a composite namevar for applicationname and sitename to uniquely identify a declaration. To use this successfully, put both the sitename and the applicationname in the title. Puppet will build the catalog using the composite of the two values, while still using the correct value for the applicationname when creating the IIS application.  It requires a `\` in between the `sitename` and `applicationname`, for example, `iis_application { '#{@site_name}\\#{@app_name}'`. 
+The iis_application type creates IIS Applications from directories and virtual directories, within an IIS Website. To use this type you must specify the name of a website, and then the path within the website where you would like to host an application. To do this you can use either the title only or you can use the application name and the sitename parameters separately or in combination with the title. You may also omit the sitename if you are converting an virtual directory to an application, as that parameter will already tell the provider the name of the site.
+
+```puppet
+iis_application {"$site_name\\$app_name":
+  ensure => present,
+}
+
+iis_application { $app_name:
+  ensure   => present,
+  sitename => $site_name,
+}
+
+iis_application {'myAwesomeApp':
+  ensure          => present,
+  applicationname => $app_name, # <-- Does not need to match the title
+  sitename        => $site_name
+}
+
+iis_application {'importantApplication':
+  ensure => present,
+  virtual_directory => 'IIS:\\Sites\\important_website\\importantApplication'
+}
+```
+
+To manage two applications of the same name but in different websites on the same IIS instance, you will need to ensure that both the sitename and the applicationname are in the resource title, to ensure that Puppet can refer to them uniquely when it compiles the catalog, as in the example below:
+
+```puppet
+iis_application {'site1/api':
+  ensure => present,
+}
+
+iis_application {'site2/api':
+  ensure => present,
+}
+```
+
+*note: Both forward slashes and back slashes can be used in any combination.
 
 #### Properties/Parameters
 
@@ -198,7 +234,7 @@ The name of the application pool for the application.
 
 #### `virtual_directory`
 
-The IIS Virtual Directory to convert to an application on create. Similar to iis_application, iis_virtual_directory uses composite namevars.
+The IIS Virtual Directory to convert to an application on create. Path must be in the form of `IIS:\\Sites\\<sitename>\\<path\\to\\virtdir>`.
 
 #### `sslflags`
 

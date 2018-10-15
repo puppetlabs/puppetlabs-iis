@@ -57,7 +57,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   end
 
   def destroy
-    inst_cmd = "Remove-WebApplication -Site \"#{@resource[:sitename]}\" -Name \"#{@resource[:applicationname]}\" -ErrorAction Stop"
+    inst_cmd = "Remove-WebApplication -Site \"#{self.class.find_sitename(resource)}\" -Name \"#{app_name}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
     @property_hash.clear
     fail "Error destroying application: #{result[:errormessage]}" unless result[:exitcode] == 0
@@ -68,7 +68,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     check_paths
     inst_cmd = []
 
-    inst_cmd << "$webApplication = Get-WebApplication -Site '#{resource[:sitename]}' -Name '#{resource[:applicationname]}'"
+    inst_cmd << "$webApplication = Get-WebApplication -Site '#{self.class.find_sitename(resource)}' -Name '#{app_name}'"
     if @property_flush[:physicalpath]
       #XXX Under what conditions would we have other paths?
       inst_cmd << %{Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name physicalPath -Value '#{@resource[:physicalpath]}' -ErrorAction Stop}
@@ -76,21 +76,21 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
     if @property_flush[:sslflags]
       flags = @property_flush[:sslflags].join(',')
-      inst_cmd << "Set-WebConfigurationProperty -Location '#{@resource[:sitename]}/#{@resource[:applicationname]}' -Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
+      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' -Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
     end
 
     if @property_flush[:authenticationinfo]
       @property_flush[:authenticationinfo].each do |auth,enable|
-        inst_cmd << "Set-WebConfigurationProperty -Location '#{@resource[:sitename]}/#{@resource[:applicationname]}' -Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
+        inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' -Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
       end
     end
 
     if @property_flush[:enabledprotocols]
-      inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{resource[:sitename]}\"]/application[@path=\"/#{resource[:applicationname]}\"]' -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
+      inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{self.class.find_sitename(resource)}\"]/application[@path=\"/#{app_name}\"]' -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
     end
 
     if @property_flush[:applicationpool]
-      inst_cmd << "Set-ItemProperty -Path 'IIS:/Sites/#{resource[:sitename]}/#{resource[:applicationname]}' -Name applicationPool -Value '#{resource[:applicationpool]}'"
+      inst_cmd << "Set-ItemProperty -Path 'IIS:/Sites/#{self.class.find_sitename(resource)}/#{app_name}' -Name applicationPool -Value '#{resource[:applicationpool]}'"
     end
 
     inst_cmd = inst_cmd.join("\n")
@@ -102,7 +102,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   def self.prefetch(resources)
     apps = instances
     resources.each do |name, resource|
-      if provider = apps.find{ |app| app.sitename == resource[:sitename] && app.applicationname == resource[:applicationname] }
+      if provider = apps.find{ |app| compare_app_names(app, resource) && app.sitename == find_sitename(resource)}
         resources[name].provider = provider
       end
     end
@@ -122,7 +122,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
       app_hash[:ensure]             = :present
       app_hash[:name]               = "#{app['site']}\\#{app['name']}"
-      app_hash[:applicationname]    = app['name']
+      app_hash[:applicationname]    = "#{app['site']}\\#{app['name']}" #app['name']
       app_hash[:sitename]           = app['site']
       app_hash[:physicalpath]       = app['physicalpath']
       app_hash[:applicationpool]    = app['applicationpool']
@@ -131,6 +131,36 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
       app_hash[:enabledprotocols]   = app['enabledprotocols']
 
       new(app_hash)
+    end
+  end
+
+  def self.compare_app_names(app, resource)
+    app_appname      =  app.applicationname.split(/[\\\/]/) - Array(app.sitename)
+    resource_appname =  resource[:applicationname].split(/[\\\/]/).reject(&:empty?) - Array(find_sitename(resource))
+    app_appname      == resource_appname
+  end
+
+  def self.find_sitename(resource)
+
+    if resource.parameters.has_key?(:virtual_directory)
+      sitename = resource[:virtual_directory].gsub('IIS:\\Sites\\','').split(/[\\\/]/)[0]
+    elsif !resource.parameters.has_key?(:sitename)
+      sitename = resource[:applicationname].split(/[\\\/]/)[0]
+    else
+      sitename = resource[:sitename]
+    end
+
+    return sitename
+  end
+
+  def app_name
+    name_segments = @resource[:applicationname].split(/[\\\/]/)
+    if @resource[:sitename] && name_segments.count > 1 && name_segments[0] == @resource[:sitename]
+      name_segments[1..-1].join('/')
+    elsif @resource[:sitename].nil?
+      name_segments[1..-1].join('/')
+    else
+      name_segments.join('/')
     end
   end
 

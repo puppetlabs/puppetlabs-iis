@@ -7,46 +7,27 @@ Puppet::Type.newtype(:iis_application) do
   @doc = "Allows creation of a new IIS Application and configuration of
           application parameters.
 
-          The iis_application type uses a composite namevar for applicationname
-          and sitename to uniquely identify a declaration. To use this
-          successfully, put both the sitename and the applicationname in the
-          title. Puppet will build the catalog using the composite of the two
-          values, while still using the correct value for the applicationname
-          when creating the IIS application. It requires a \ in between the
-          sitename and applicationname, for example,
-          iis_application { '\#{@site_name}\\\#{@app_name}'."
+          The iis_application type uses an applicationname and a sitename to
+          create an IIS Application. When specifying an application you must
+          specify both. You can specify the sitename by putting it in the title
+          as in \"$site_name\\$application_name\", or you can use the named
+          parameters. If converting a virtual directory to an app, you can use
+          the virtual_directory parameter to specify the site and omit the
+          sitename parameter. To manage two applications of the same name within
+          different websites on an IIS instance, you must ensure the resource
+          title is unique. You can do this by entering both the sitename and
+          applicationname in the title, or using a descriptive title for the
+          resource and using the named parameters for sitename and
+          applicationname"
 
   ensurable
-
-  def self.title_patterns
-    [
-      [
-        /^([^\\]+)\\([^\\]+)$/,
-        [
-          [:sitename],
-          [:applicationname],
-        ]
-      ],
-      [
-        /^([^\\]+)$/,
-        [
-          [:applicationname],
-        ]
-      ]
-    ]
-  end
 
   newparam(:applicationname, :namevar => true) do
     desc "The name of the application. The virtual path of the application is
           '/<applicationname>'."
-    validate do |value|
-      if value =~ /^\/|^\\/
-        raise ArgumentError, "cannot begin applicationname property with a '\\' or a '/' character"
-      end
-    end
   end
 
-  newproperty(:sitename, :namevar => true, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
+  newproperty(:sitename, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of the site for the application.'
   end
 
@@ -75,6 +56,10 @@ Puppet::Type.newtype(:iis_application) do
     desc "The IIS Virtual Directory to convert to an application on create.
           Similar to iis_application, iis_virtual_directory uses composite
           namevars."
+
+    munge do | value |
+      value.start_with?("IIS:") ? value : File.join('IIS:/Sites',value)
+    end
   end
 
   newproperty(:sslflags, :array_matching => :all) do
@@ -120,8 +105,4 @@ Puppet::Type.newtype(:iis_application) do
 
   autorequire(:iis_application_pool) { self[:applicationpool] }
   autorequire(:iis_site) { self[:sitename] }
-
-  validate do
-    fail("sitename is a required parameter") if (provider && ! provider.sitename) or ! self[:sitename]
-  end
 end
