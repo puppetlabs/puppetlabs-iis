@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - `iis_application` cannot manage two applications with the same name under different web sites ([MODULES-5493](https://tickets.puppetlabs.com/browse/MODULES-5493))
 - `applicationname` parameter cannot start with '/' character. Fixed as a by product of [MODULES-5493](https://tickets.puppetlabs.com/brows/MODULES-5493).
+- Removing an IIS feature using the module results in an error. ([MODULES-7174](https://tickets.puppetlabs.com/browse/MODULES-7174)). Thanks Brian Fekete ([@bFekete](https://github.com/bfekete)).
 
 ### Changed
 
@@ -18,7 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- Added additional valid binding protocols for `iis_application`. Thanks Pedro Cunha (@Pedro-Cunha). ([MODULES-6947](https://tickets.puppetlabs.com/browse/MODULES-6947))
+- Added additional valid binding protocols for `iis_application`. ([MODULES-6947](https://tickets.puppetlabs.com/browse/MODULES-6947)). Thanks Pedro Cunha ([@Pedro-Cunha](https://github.com/Pedro-Cunha)).
 
 ### Fixed
 
