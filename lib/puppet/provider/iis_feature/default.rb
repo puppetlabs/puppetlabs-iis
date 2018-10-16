@@ -37,6 +37,10 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
     Puppet.debug "Powershell create response was '#{result}'"
   end
 
+  def update
+    Puppet.debug "Updating #{@resource[:name]}"
+  end
+
   def destroy
     raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.is_iis_feature?(resource[:name])
 
