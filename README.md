@@ -170,9 +170,9 @@ iis_virtual_directory { 'vdir':
 
 ### iis_application
 
-Allows creation of a new IIS Application and configuration of application parameters.
+Creates new IIS Applications and configures application parameters.
 
-The iis_application type creates IIS Applications from directories and virtual directories, within an IIS Website. To use this type you must specify the name of a website, and then the path within the website where you would like to host an application. To do this you can use either the title only or you can use the application name and the sitename parameters separately or in combination with the title. You may also omit the sitename if you are converting an virtual directory to an application, as that parameter will already tell the provider the name of the site.
+The iis_application type creates IIS Applications from directories and virtual directories within an IIS website. To use this type, specify the name of a website and the path within the website where you would like to host the application. To do this, you can either use the title, use the application name and the sitename parameters separately, or use these in combination with the title. You can also omit the sitename if you are converting an virtual directory to an application — as that parameter will already tell the provider the name of the site.
 
 ```puppet
 iis_application {"$site_name\\$app_name":
