@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.5.0] - 2018-10-23
+
 ### Fixed
 
 - `iis_application` cannot manage two applications with the same name under different web sites ([MODULES-5493](https://tickets.puppetlabs.com/browse/MODULES-5493))
