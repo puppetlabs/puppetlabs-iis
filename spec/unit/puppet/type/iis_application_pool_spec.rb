@@ -160,16 +160,24 @@ describe 'iis_application_pool' do
     {:startup_time_limit => "00:00:00"},
     {:rapid_fail_protection_interval => "00:00:00"},
     {:restart_time_limit => "00:00:00"},
+    {:restart_time_limit => "1.00:00:00"},
   ].each do |property|
     prop = property.keys[0]
     upper_limit = property[property.keys[0]]
     
+    it "should support #{prop} as a formatted time" do
+      config = {name: 'name'}
+      config[prop] = upper_limit
+      expect do
+        type_class.new(config)
+      end.not_to raise_error
+    end
     it "should require #{prop} to be a formatted time" do
       config = {name: 'name'}
       config[prop] = 'string'
       expect do
         type_class.new(config)
-      end.to raise_error(Puppet::Error, /#{prop} should match datetime format 00:00:00/)
+      end.to raise_error(Puppet::Error, /#{prop} should match datetime format 00:00:00 or 0.00:00:00/)
     end
   end
 

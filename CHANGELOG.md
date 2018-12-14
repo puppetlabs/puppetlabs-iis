@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Fixed
+
+- Ensure ability to specify timespans which include days, such as `1.05:00:00` ([MODULES-8381]. (https://tickets.puppetlabs.com/browse/MODULES-8381)). Thanks, Trey Dockendorf ([@treydock](https://github.com/treydock))!
+
 ## [4.5.1] - 2019-03-02
 
 ### Added
