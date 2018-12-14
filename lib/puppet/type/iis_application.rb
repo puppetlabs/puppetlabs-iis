@@ -2,6 +2,7 @@ require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
+require_relative '../../puppet_x/puppetlabs/iis/property/path'
 
 Puppet::Type.newtype(:iis_application) do
   @doc = "Allows creation of a new IIS Application and configuration of
@@ -31,7 +32,7 @@ Puppet::Type.newtype(:iis_application) do
     desc 'The name of the site for the application.'
   end
 
-  newproperty(:physicalpath) do
+  newproperty(:physicalpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
     desc 'The physical path to the application directory. This path must be
           fully qualified.'
     validate do |value|

@@ -1,6 +1,7 @@
 require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
+require_relative '../../puppet_x/puppetlabs/iis/property/path'
 
 Puppet::Type.newtype(:iis_site) do
   @doc = "Allows creation of a new IIS Web Site and configuration of site
@@ -51,7 +52,7 @@ Puppet::Type.newtype(:iis_site) do
     end
   end
 
-  newproperty(:physicalpath) do
+  newproperty(:physicalpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
     desc 'The physical path to the site directory. This path must be fully
           qualified.'
     validate do |value|
@@ -253,7 +254,7 @@ Puppet::Type.newtype(:iis_site) do
     end
   end
 
-  newproperty(:logpath) do
+  newproperty(:logpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
     desc 'Specifies the physical path to place the log file'
     validate do |value|
       if value.nil? or value.empty?

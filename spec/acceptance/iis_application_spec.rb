@@ -36,6 +36,23 @@ describe 'iis_application' do
         include_context 'with a puppet resource run'
         puppet_resource_should_show('physicalpath', 'C:\inetpub\basic')
         puppet_resource_should_show('applicationpool', 'DefaultAppPool')
+
+        context 'when case is changed in a manifest' do
+          before(:all) do
+            @manifest = <<-HERE
+              iis_application { '#{@app_name}':
+                ensure       => 'present',
+                sitename     => '#{@site_name}',
+                # Change the capitalization of the T to see if it breaks.
+                physicalpath => 'C:\\ineTpub\\basic',
+              }
+            HERE
+          end
+
+          it 'should run with no changes' do
+            execute_manifest(@manifest, :catch_changes => true)
+          end
+        end
       end
 
       after(:all) do

@@ -37,6 +37,23 @@ describe 'iis_virtual_directory' do
         end
 
         puppet_resource_should_show('ensure', 'present')
+
+        context 'when capitalization of paths change' do
+          before(:all) do
+            @manifest  = <<-HERE
+              iis_virtual_directory { '#{@virt_dir_name}':
+                ensure       => 'present',
+                sitename     => '#{@site_name}',
+                # Change capitalization to see if it breaks idempotency
+                physicalpath => 'c:\\Foo'
+              }
+            HERE
+          end
+
+          it 'should run with no changes' do
+            execute_manifest(@manifest, :catch_changes => true)
+          end
+        end
       end
 
       after(:all) do
