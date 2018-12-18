@@ -8,6 +8,10 @@ module PuppetX
               fail("#{self.name.to_s} should be a path (local or UNC) not '#{value}'")
             end
           end
+
+          def property_matches?(current, desired)
+            current.downcase == desired.downcase
+          end
         end
       end
     end

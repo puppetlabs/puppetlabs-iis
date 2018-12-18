@@ -134,6 +134,23 @@ describe 'iis_site' do
           it 'should have a binding to 443' do
             expect(@result.stdout).to match(/'bindinginformation' => '\*:443:www.puppet.local'/)
           end
+
+          context 'when capitalization is changed in path parameters' do
+            before (:all) do
+              @manifest = <<-HERE
+                iis_site { '#{@site_name}':
+                  ensure               => 'started',
+                  # Change capitalization to see if it break idempotency
+                  logpath              => 'C:\\ineTpub\\logs\\NewLogFiles',
+                  physicalpath         => 'C:\\ineTpub\\new',
+                }
+              HERE
+            end
+
+            it 'should run with no changes' do
+              execute_manifest(@manifest, :catch_changes => true)
+            end
+          end
         end
 
         after(:all) do
