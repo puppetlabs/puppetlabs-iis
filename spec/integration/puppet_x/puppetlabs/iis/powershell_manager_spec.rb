@@ -31,10 +31,14 @@ module PuppetX
   end
 end
 
-describe PuppetX::IIS::PowerShellManager,
-  :if => Puppet::Util::Platform.windows? && PuppetX::IIS::PowerShellManager.supported?,
-  :skip => (Puppet::Util::Platform.windows? && PuppetX::IIS::PowerShellManager.supported? && get_powershell_major_version.to_i >= 3) ? false : "Powershell version is less than 3.0 or undetermined" do
+describe PuppetX::IIS::PowerShellManager do
   
+before :each do
+  skip ('Not on Windows platform') unless Puppet::Util::Platform.windows? 
+  skip ('Powershell manager not supported') unless PuppetX::IIS::PowerShellManager.supported?
+  skip ("Powershell version is less than 3.0 or undetermined") unless (get_powershell_major_version.to_i >= 3)
+end
+
   let (:manager_args) {
     powershell = PuppetX::IIS::PowerShellCommon.powershell_path
     cli_args = PuppetX::IIS::PowerShellCommon.powershell_args.join(' ')

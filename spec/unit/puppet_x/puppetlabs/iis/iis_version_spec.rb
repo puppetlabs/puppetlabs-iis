@@ -2,8 +2,9 @@ require 'spec_helper'
 require 'puppet/type'
 require 'puppet_x/puppetlabs/iis/iis_version'
 
-describe PuppetX::PuppetLabs::IIS::IISVersion, :if => Puppet::Util::Platform.windows? do
+describe PuppetX::PuppetLabs::IIS::IISVersion do
   before(:each) do
+    skip ('Not on Windows platform') unless Puppet::Util::Platform.windows?
     @ps = PuppetX::PuppetLabs::IIS::IISVersion
   end
 

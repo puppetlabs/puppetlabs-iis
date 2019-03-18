@@ -3,8 +3,12 @@ require 'spec_helper'
 require 'puppet/type'
 require 'puppet/provider/iis_powershell'
 
-describe Puppet::Provider::IIS_PowerShell, :if => Puppet::Util::Platform.windows? do
+describe Puppet::Provider::IIS_PowerShell do
   let (:subject) { Puppet::Provider::IIS_PowerShell }
+
+  before :each do
+    skip('Not on Winodws Platform') unless Puppet::Util::Platform.windows?
+  end
 
   describe "when powershell is installed" do
 
