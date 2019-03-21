@@ -50,8 +50,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
     cmd = []
 
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'site' -Value '#{@resource[:sitename]}';" if @resource[:sitename]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'physicalpath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'physicalPath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'application' -Value '#{@resource[:application]}';" if @resource[:application]
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'userName' -Value '#{@resource[:user_name]}';" if @resource[:user_name]
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{escape_string(@resource[:password])}';" if @resource[:password]
