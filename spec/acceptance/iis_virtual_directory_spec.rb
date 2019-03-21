@@ -21,6 +21,9 @@ describe 'iis_virtual_directory' do
           file{ 'c:/foo':
             ensure => 'directory'
           }->
+          file{ 'c:/foo2':
+          ensure => 'directory'
+          }->
           iis_virtual_directory { '#{@virt_dir_name}':
             ensure       => 'present',
             sitename     => '#{@site_name}',
@@ -53,6 +56,28 @@ describe 'iis_virtual_directory' do
           it 'should run with no changes' do
             execute_manifest(@manifest, :catch_changes => true)
           end
+        end
+      end
+
+      context 'when physical path changes' do
+        before(:all) do
+          @manifest  = <<-HERE
+          iis_virtual_directory { '#{@virt_dir_name}':
+            ensure       => 'present',
+            sitename     => '#{@site_name}',
+            physicalpath => 'c:\\foo2'
+          }
+          HERE
+        end
+
+        it_behaves_like 'an idempotent resource'
+
+        context 'when puppet resource is run' do
+          before(:all) do
+            @result = resource('iis_virtual_directory', @virt_dir_name)
+          end
+
+          puppet_resource_should_show('physicalpath', 'c:\\foo2')
         end
       end
 
