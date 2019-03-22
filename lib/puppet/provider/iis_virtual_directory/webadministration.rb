@@ -62,16 +62,18 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
   def destroy
     Puppet.debug "Destroying #{@resource[:name]}"
-    cmd = []
-    cmd << "Remove-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
-    cmd << "-Site \"#{@property_hash[:sitename]}\" "
-    cmd << "-Application \"#{@property_hash[:application]}\" "
-    cmd << "-ErrorAction Stop"
-    cmd = cmd.join
+    test = self.class.run("Test-Path -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}'")
+    if test[:stdout].strip.downcase == 'true'
+      cmd = []
+      cmd << "Remove-Item " 
+      cmd << "-Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' "
+      cmd << "-Recurse "
+      cmd << "-ErrorAction Stop "
+      cmd = cmd.join
 
-    result   = self.class.run(cmd)
-    Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
-
+      result   = self.class.run(cmd)
+      Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
+    end
     @property_hash[:ensure] = :absent
   end
 

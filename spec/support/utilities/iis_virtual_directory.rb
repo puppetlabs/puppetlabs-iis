@@ -9,7 +9,7 @@ def create_vdir(vdir_name, site = 'foo', path = 'C:\inetpub\wwwroot')
 end
 
 def remove_vdir(vdir_name, site = 'foo', path = 'C:\inetpub\wwwroot')
-  command = format_powershell_iis_command("Remove-WebVirtualDirectory -Name #{vdir_name} -Site #{@site} -PhysicalPath #{@path}")
+  command = format_powershell_iis_command("Remove-Item -Path 'IIS:\\Sites\\#{@site}\\#{@vdir_name}' -Recurse -ErrorAction Stop")
   on(default, command) if has_vdir(vdir_name)
 end
 
