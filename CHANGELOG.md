@@ -16,7 +16,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Ensure removal of virtual directories is idempotent ([MODULES-6080](https://tickets.puppetlabs.com/browse/MODULES-6080)).
 - Case sensitive path comparisons ([MODULES-8346](https://tickets.puppetlabs.com/browse/MODULES-8346))
 - Virtual directories did not correct config drift ([MODULES-6061](https://tickets.puppetlabs.com/browse/MODULES-6061))
-- Virtual directory removal not idempotent ([MODULES-6080](https://tickets.puppetlabs.com/browse/MODULES-6080))
 
 ## [4.5.0] - 2018-10-23
 
