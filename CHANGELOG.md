@@ -5,9 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.5.1] - 2019-03-02
+
+### Added
+
+- Windows Server 2019 added to supported OS list ([FM-7693](https://tickets.puppetlabs.com/browse/FM-7693))
+
 ### Fixed
 
 - Ensure removal of virtual directories is idempotent ([MODULES-6080](https://tickets.puppetlabs.com/browse/MODULES-6080)).
+- Case sensitive path comparisons ([MODULES-8346](https://tickets.puppetlabs.com/browse/MODULES-8346))
+- Virtual directories did not correct config drift ([MODULES-6061](https://tickets.puppetlabs.com/browse/MODULES-6061))
 
 ## [4.5.0] - 2018-10-23
 
@@ -156,7 +164,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   - `iis_site` ([MODULES-3049](https://tickets.puppetlabs.com/browse/MODULES-3049), [MODULES-3887](https://tickets.puppetlabs.com/browse/MODULES-3887))
   - `iis_feature` ([MODULES-4434](https://tickets.puppetlabs.com/browse/MODULES-4434))
 
-[Unreleased]: https://github.com/puppetlabs/puppetlabs-iis/compare/4.3.2...master
+[Unreleased]: https://github.com/puppetlabs/puppetlabs-iis/compare/4.5.1...master
+[4.5.1]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.5.0...4.5.1
+[4.5.0]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.4.0...4.5.0
+[4.4.0]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.3.2...4.4.0
 [4.3.2]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.3.1...4.3.2
 [4.3.1]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.3.0...4.3.1
 [4.3.0]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.2.1...4.3.0
