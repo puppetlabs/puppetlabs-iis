@@ -29,7 +29,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
     cmd << "Install-WindowsFeature -Name #{resource[:name]} " if self.class.is_windows2008 == false
     cmd << '-IncludeAllSubFeature ' if @resource[:include_all_subfeatures] == true
     cmd << '-Restart ' if @resource[:restart] == true
-    cmd << "-Source #{resource['source']} " if @resource[:source] == false
+    cmd << "-Source #{resource['source']} " if @resource[:source]
     cmd << '-IncludeManagementTools' if @resource[:include_management_tools] == true && self.class.is_windows2008 == false
 
     Puppet.debug "Powershell create command is '#{cmd}'"
