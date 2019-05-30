@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 
+- Ensure setting `iis_application_pool` state is idempotent ([MODULES-7700](https://tickets.puppetlabs.com/browse/MODULES-7700)).
 - Ensure setting `:managed_runtime_version` to `''` results in `iis_app_pool` being set to `No Managed Code` idempotently ([MODULES-7820](https://tickets.puppetlabs.com/browse/MODULES-7820)).
 - Ensure ability to specify timespans which include days, such as `1.05:00:00` ([MODULES-8381]. (https://tickets.puppetlabs.com/browse/MODULES-8381)). Thanks, Trey Dockendorf ([@treydock](https://github.com/treydock))!
 
