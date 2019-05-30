@@ -122,7 +122,7 @@ iis_application_pool { 'complete_site_app_pool':
 iis_application_pool {'test_app_pool':
     ensure                    => 'present',
     enable32_bit_app_on_win64 => true,
-    managed_runtime_version   => '""',
+    managed_runtime_version   => '',
     managed_pipeline_mode     => 'Classic',
     start_mode                => 'AlwaysRunning'
   }
@@ -334,6 +334,7 @@ Specifies the managed loader to use for pre-loading the the application pool. No
 #### `managed_runtime_version`
 
 Specifies the .NET Framework version that is used by the application pool.
+Specify an empty string (`''`) to set as 'No Managed Code.'
 
 #### `pass_anonymous_token`
 

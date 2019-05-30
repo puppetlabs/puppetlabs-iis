@@ -95,8 +95,9 @@ Puppet::Type.newtype(:iis_application_pool) do
   end
 
   newproperty(:managed_runtime_version) do
-    desc "Specifies the .NET Framework version to be used by the application pool"
-    newvalues('""','v1.1','v2.0','v4.0')
+    desc "Specifies the .NET Framework version to be used by the application pool.
+          Specify an empty string (`''`) to set as 'No Managed Code.'"
+    newvalues('','v1.1','v2.0','v4.0')
   end
 
   newproperty(:pass_anonymous_token, :boolean => true) do

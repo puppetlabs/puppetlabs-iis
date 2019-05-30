@@ -101,7 +101,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       pool_hash[:enable32_bit_app_on_win64]     = pool['enable32_bit_app_on_win64'].to_s.downcase
       pool_hash[:enable_configuration_override] = pool['enable_configuration_override'].to_s.downcase
       pool_hash[:managed_pipeline_mode]         = pool['managed_pipeline_mode']
-      pool_hash[:managed_runtime_version]       = pool['managed_runtime_version']
+      pool_hash[:managed_runtime_version]       = pool['managed_runtime_version'].nil? ? '' : pool['managed_runtime_version']
       pool_hash[:pass_anonymous_token]          = pool['pass_anonymous_token'].to_s.downcase
       pool_hash[:start_mode]                    = pool['start_mode']
       pool_hash[:queue_length]                  = pool['queue_length']
