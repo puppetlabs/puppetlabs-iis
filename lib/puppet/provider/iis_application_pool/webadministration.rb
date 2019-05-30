@@ -45,9 +45,9 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       Puppet.debug "Changing #{@resource[:name]} to #{@resource[:state]}"
       case @resource[:state].downcase
       when :stopped
-        cmd << "Stop-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
+        cmd << "If((Get-WebAppPoolState -Name \"#{@resource[:name]}\").Value -ne 'Stopped'){Stop-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop}"
       when :started
-        cmd << "Start-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
+        cmd << "If((Get-WebAppPoolState -Name \"#{@resource[:name]}\").Value -ne 'Started'){Start-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop}"
       end
     end
 
