@@ -1,4 +1,5 @@
 require 'spec_helper_acceptance'
+require 'pry-byebug'
 
 describe 'iis_application_pool' do
   context 'when configuring an application pool' do
@@ -28,6 +29,7 @@ describe 'iis_application_pool' do
     end
 
     context 'with valid parameters defined' do
+      binding.pry
       before(:all) do
         @pool_name = "#{SecureRandom.hex(10)}"
         @manifest  = <<-HERE
