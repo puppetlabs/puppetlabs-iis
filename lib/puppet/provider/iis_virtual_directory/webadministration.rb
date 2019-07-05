@@ -13,7 +13,11 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   mk_resource_methods
 
   def exists?
-    @property_hash[:ensure] == :present
+    inst_cmd = "If (Get-WebVirtualDirectory -Name #{@resource[:name]} -site #{@resource[:sitename]}) { exit 0 } else { exit 255 }"
+
+    result   = self.class.run(inst_cmd)
+
+    return result[:exitcode] == 0
   end
 
   def create
@@ -21,25 +25,27 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
     verify_physicalpath
 
-    cmd = []
-    if is_local_path(@resource[:physicalpath])
-      cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
-      fail("sitename is a required parameter") unless @resource[:sitename]
-      cmd << "-Site \"#{@resource[:sitename]}\" "
-    else
-      # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
-      # and UNC paths are inherently not necessarily always available.
-      cmd << "New-Item -Type VirtualDirectory 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' "
+    if ! exists?
+      cmd = []
+      if is_local_path(@resource[:physicalpath])
+        cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
+        fail("sitename is a required parameter") unless @resource[:sitename]
+        cmd << "-Site \"#{@resource[:sitename]}\" "
+      else
+        # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
+        # and UNC paths are inherently not necessarily always available.
+        cmd << "New-Item -Type VirtualDirectory 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' "
+      end
+      cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
+      cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
+      cmd << "-ErrorAction Stop;"
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;" if @resource[:user_name]
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;" if @resource[:password]
+      cmd = cmd.join
+  
+      result   = self.class.run(cmd)
+      Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
     end
-    cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
-    cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
-    cmd << "-ErrorAction Stop;"
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;" if @resource[:user_name]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;" if @resource[:password]
-    cmd = cmd.join
-
-    result   = self.class.run(cmd)
-    Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
     @resource[:ensure] = :present
   end
 
