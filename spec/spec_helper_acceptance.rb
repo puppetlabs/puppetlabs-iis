@@ -7,16 +7,16 @@ require 'beaker/testmode_switcher/dsl'
 require 'beaker/module_install_helper'
 
 # automatically load any shared examples or contexts
-Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
+Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 run_puppet_install_helper
 configure_type_defaults_on(hosts)
-install_ca_certs unless ENV['PUPPET_INSTALL_TYPE'] =~ /pe/i
+install_ca_certs unless ENV['PUPPET_INSTALL_TYPE'] =~ %r{pe}i
 
 # Install iis module either from source or from staging forge if given correct env variables
 unless ENV['MODULE_provision'] == 'no'
-  if ENV.has_key?('BEAKER_FORGE_HOST') && ENV.has_key?('BEAKER_FORGE_API')
-    module_version = ENV.has_key?('MODULE_VERSION') || '>= 0.1.0'
+  if ENV.key?('BEAKER_FORGE_HOST') && ENV.key?('BEAKER_FORGE_API')
+    module_version = ENV.key?('MODULE_VERSION') || '>= 0.1.0'
     install_module_from_forge_on(hosts, 'puppetlabs-iis', module_version)
   else
     hosts.each do |host|
@@ -26,7 +26,7 @@ unless ENV['MODULE_provision'] == 'no'
 end
 
 def windows_hosts
-  hosts.select { |host| host.platform =~ /windows/i }
+  hosts.select { |host| host.platform =~ %r{windows}i }
 end
 
 def get_puppet_version

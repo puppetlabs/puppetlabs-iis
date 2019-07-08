@@ -35,7 +35,7 @@ module PuppetX
               # any of these keys: v3.5, v4.0, v4
               hive = Win32::Registry::HKEY_LOCAL_MACHINE
               # redirection doesn't actually matter here - disable it anyway
-              hive.open('SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5', Win32::Registry::KEY_READ | 0x100) do |reg|
+              hive.open('SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5', Win32::Registry::KEY_READ | 0x100) do |_reg|
                 value = true
               end
             rescue Win32::Registry::Error => e

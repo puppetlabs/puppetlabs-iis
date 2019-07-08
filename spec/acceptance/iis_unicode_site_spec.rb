@@ -3,7 +3,7 @@ require 'spec_helper_acceptance'
 describe 'iis_site' do
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
-    remove_all_sites();
+    remove_all_sites
   end
 
   context 'when configuring a website' do
@@ -20,20 +20,20 @@ describe 'iis_site' do
         HERE
       end
 
-      it 'should run without errors' do
+      it 'runs without errors' do
         expect_failure('Expected to fail due to MODULES-6869') do
-          execute_manifest(@manifest, :catch_failures => true)
+          execute_manifest(@manifest, catch_failures: true)
         end
       end
 
       def verify_iis_site(iis_site_name)
         <<-powershell
-          Import-Module Webadministration 
+          Import-Module Webadministration
           (Get-ChildItem -Path IIS:\Sites | Where-Object { $_.Name -match ([regex]::Unescape(\"#{iis_site_name}\")) } | Measure-Object).Count
         powershell
       end
 
-      windows_hosts = hosts.select {|host| host.platform =~ /windows/i}
+      windows_hosts = hosts.select { |host| host.platform =~ %r{windows}i }
 
       windows_hosts.each do |host|
         it 'Verify that IIS site name is present' do

@@ -63,7 +63,7 @@ describe 'iis_application_pool' do
       :restart_time_limit,
       :restart_schedule,
       :user_name,
-      :password
+      :password,
     ]
   end
 
@@ -79,22 +79,22 @@ describe 'iis_application_pool' do
   end
 
   let :default_config do
-     minimal_config.merge(optional_config)
+    minimal_config.merge(optional_config)
   end
 
-  it 'should have expected properties' do
+  it 'has expected properties' do
     expect(type_class.properties.map(&:name)).to include(*properties)
   end
 
-  it 'should have expected parameters' do
+  it 'has expected parameters' do
     expect(type_class.parameters).to include(*params)
   end
 
-  it 'should not have unexpected properties' do
+  it 'does not have unexpected properties' do
     expect(properties).to include(*type_class.properties.map(&:name))
   end
 
-  it 'should not have unexpected parameters' do
+  it 'does not have unexpected parameters' do
     expect(params + [:provider]).to include(*type_class.parameters)
   end
 
@@ -108,9 +108,9 @@ describe 'iis_application_pool' do
     :logon_type,
     :load_balancer_capabilities,
     :identity_type,
-    
+
   ]
-  
+
   [
     :name,
     :clr_config_file,
@@ -143,54 +143,54 @@ describe 'iis_application_pool' do
     :disallow_rotation_on_config_change,
   ].each do |property|
     it "should require #{property} to be boolean" do
-      config = {name: 'name'}
+      config = { name: 'name' }
       config[property] = 'string'
-      expect do
+      expect {
         type_class.new(config)
-      end.to raise_error(Puppet::Error, /Parameter #{property} failed on .*: Invalid value/)
-    end
-  end
-  
-  [
-    {:cpu_reset_interval => "00:00:00"},
-    {:idle_timeout => "00:00:00"},
-    {:ping_interval => "00:00:00"},
-    {:ping_response_time => "00:00:00"},
-    {:shutdown_time_limit => "00:00:00"},
-    {:startup_time_limit => "00:00:00"},
-    {:rapid_fail_protection_interval => "00:00:00"},
-    {:restart_time_limit => "00:00:00"},
-    {:restart_time_limit => "1.00:00:00"},
-  ].each do |property|
-    prop = property.keys[0]
-    upper_limit = property[property.keys[0]]
-    
-    it "should support #{prop} as a formatted time" do
-      config = {name: 'name'}
-      config[prop] = upper_limit
-      expect do
-        type_class.new(config)
-      end.not_to raise_error
-    end
-    it "should require #{prop} to be a formatted time" do
-      config = {name: 'name'}
-      config[prop] = 'string'
-      expect do
-        type_class.new(config)
-      end.to raise_error(Puppet::Error, /#{prop} should match datetime format 00:00:00 or 0.00:00:00/)
+      }.to raise_error(Puppet::Error, %r{Parameter #{property} failed on .*: Invalid value})
     end
   end
 
   [
-    {:queue_length => 65535},
-    {:cpu_limit => 100000},
-    {:cpu_smp_processor_affinity_mask => nil},
-    {:cpu_smp_processor_affinity_mask2 => nil},
-    {:max_processes => 2147483647},
-    {:rapid_fail_protection_max_crashes => 2147483647},
-    {:restart_memory_limit => nil},
-    {:restart_private_memory_limit => nil},
-    {:restart_requests_limit => nil},
+    { cpu_reset_interval: '00:00:00' },
+    { idle_timeout: '00:00:00' },
+    { ping_interval: '00:00:00' },
+    { ping_response_time: '00:00:00' },
+    { shutdown_time_limit: '00:00:00' },
+    { startup_time_limit: '00:00:00' },
+    { rapid_fail_protection_interval: '00:00:00' },
+    { restart_time_limit: '00:00:00' },
+    { restart_time_limit: '1.00:00:00' },
+  ].each do |property|
+    prop = property.keys[0]
+    upper_limit = property[property.keys[0]]
+
+    it "should support #{prop} as a formatted time" do
+      config = { name: 'name' }
+      config[prop] = upper_limit
+      expect {
+        type_class.new(config)
+      }.not_to raise_error
+    end
+    it "should require #{prop} to be a formatted time" do
+      config = { name: 'name' }
+      config[prop] = 'string'
+      expect {
+        type_class.new(config)
+      }.to raise_error(Puppet::Error, %r{#{prop} should match datetime format 00:00:00 or 0.00:00:00})
+    end
+  end
+
+  [
+    { queue_length: 65_535 },
+    { cpu_limit: 100_000 },
+    { cpu_smp_processor_affinity_mask: nil },
+    { cpu_smp_processor_affinity_mask2: nil },
+    { max_processes: 2_147_483_647 },
+    { rapid_fail_protection_max_crashes: 2_147_483_647 },
+    { restart_memory_limit: nil },
+    { restart_private_memory_limit: nil },
+    { restart_requests_limit: nil },
   ].each do |property|
     prop = property.keys[0]
     upper_limit = property[property.keys[0]]
@@ -205,94 +205,92 @@ describe 'iis_application_pool' do
     #     type_class.new(config)
     #   end.to raise_error(Puppet::Error, /#{prop} should be greater than 0/)
     # end
-    
-    if upper_limit
-      it "should require #{prop} to be less than #{upper_limit}" do
-        expect do
-          upper_limit += 1
-          config = {name: 'sample'}
-          config[prop] = upper_limit
-          type_class.new(config)
-        end.to raise_error(Puppet::Error, /#{prop} should be less than or equal to #{upper_limit}/)
-      end
-    end
 
+    next unless upper_limit
+    it "should require #{prop} to be less than #{upper_limit}" do
+      expect {
+        upper_limit += 1
+        config = { name: 'sample' }
+        config[prop] = upper_limit
+        type_class.new(config)
+      }.to raise_error(Puppet::Error, %r{#{prop} should be less than or equal to #{upper_limit}})
+    end
   end
 
   context 'parameter :name' do
-    it "should not allow nil" do
+    it 'does not allow nil' do
       expect {
         pool = type_class.new(
-          name: 'foo'
+          name: 'foo',
         )
         pool[:name] = nil
-      }.to raise_error(Puppet::Error, /Got nil value for name/)
+      }.to raise_error(Puppet::Error, %r{Got nil value for name})
     end
 
-    it "should not allow empty" do
+    it 'does not allow empty' do
       expect {
         pool = type_class.new(
-          name: 'foo'
+          name: 'foo',
         )
         pool[:name] = ''
-      }.to raise_error(Puppet::ResourceError, /A non-empty name must/)
+      }.to raise_error(Puppet::ResourceError, %r{A non-empty name must})
     end
 
-    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
+    ['value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period'].each do |value|
       it "should accept '#{value}'" do
-        expect { 
+        expect {
           pool = type_class.new(
-            name: 'foo'
+            name: 'foo',
           )
           pool[:name] = value
         }.not_to raise_error
       end
     end
 
-    [ '*', '()', '[]', '!@' ].each do |value|
+    ['*', '()', '[]', '!@'].each do |value|
       it "should reject '#{value}'" do
         expect {
           pool = type_class.new(
-            name: 'foo'
+            name: 'foo',
           )
           pool[:name] = value
-        }.to raise_error(Puppet::ResourceError, /is not a valid name/)
+        }.to raise_error(Puppet::ResourceError, %r{is not a valid name})
       end
     end
   end
 
   context 'parameter :restart_schedule' do
-    it 'should accept a formatted time' do
+    it 'accepts a formatted time' do
       pool = type_class.new(
         name: 'foo',
         restart_schedule: '00:00:00',
       )
       expect(pool[:restart_schedule]).to eq(['00:00:00'])
     end
-    it 'should accept an array of formatted times' do
+    it 'accepts an array of formatted times' do
       pool = type_class.new(
         name: 'foo',
         restart_schedule: ['00:00:00'],
       )
       expect(pool[:restart_schedule]).to eq(['00:00:00'])
     end
-    it 'should reject a value that is not a formatted time' do
-      expect do
+    it 'rejects a value that is not a formatted time' do
+      expect {
         config = {
           name: 'foo',
           restart_schedule: 'bottle',
         }
         type_class.new(config)
-      end.to raise_error(Puppet::Error, /Parameter restart_schedule failed/)
+      }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})
     end
-    it 'should reject a formatted time with a granularity of less than 60 seconds' do
-      expect do
+    it 'rejects a formatted time with a granularity of less than 60 seconds' do
+      expect {
         config = {
           name: 'foo',
           restart_schedule: '00:00:45',
         }
         type_class.new(config)
-      end.to raise_error(Puppet::Error, /Parameter restart_schedule failed/)
+      }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})
     end
   end
 
@@ -314,7 +312,7 @@ describe 'iis_application_pool' do
   #   end
   # end
 
-  it 'should default ensure to present' do
+  it 'defaults ensure to present' do
     pool = type_class.new(
       name: 'foo',
     )
@@ -330,7 +328,7 @@ describe 'iis_application_pool' do
       type_class.new(config)
     end
 
-    it 'should be valid' do
+    it 'is valid' do
       expect { app_pool }.not_to raise_error
     end
   end

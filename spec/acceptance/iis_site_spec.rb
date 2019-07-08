@@ -3,14 +3,14 @@ require 'spec_helper_acceptance'
 describe 'iis_site' do
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
-    remove_all_sites();
+    remove_all_sites
   end
 
   context 'when configuring a website' do
     context 'with basic required parameters' do
       before (:all) do
         create_path('C:\inetpub\basic')
-        @site_name = "#{SecureRandom.hex(10)}"
+        @site_name = SecureRandom.hex(10).to_s
         @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
@@ -40,7 +40,7 @@ describe 'iis_site' do
       context 'using W3C log format, logflags and logtruncatesize' do
         before (:all) do
           create_path('C:\inetpub\new')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           thumbprint = create_selfsigned_cert('www.puppet.local')
           @manifest = <<-HERE
             iis_site { '#{@site_name}':
@@ -79,7 +79,7 @@ describe 'iis_site' do
           HERE
         end
 
-        #it_behaves_like 'an idempotent resource'
+        # it_behaves_like 'an idempotent resource'
 
         # Idempotency is broken in this module. Only by the third run will you
         # know if you have an idempotency bug in the module. If on the third
@@ -89,16 +89,16 @@ describe 'iis_site' do
         # not sites, the issue is with how the module itself handles configuring
         # resources.
 
-        it 'should run without errors' do
-          execute_manifest(@manifest, :catch_failures => true)
+        it 'runs without errors' do
+          execute_manifest(@manifest, catch_failures: true)
         end
 
-        it 'should have changes on the second run' do
-          execute_manifest(@manifest, :catch_changes => false)
+        it 'has changes on the second run' do
+          execute_manifest(@manifest, catch_changes: false)
         end
 
-        it 'should run the third time without errors or changes' do
-          execute_manifest(@manifest, :catch_failures => true)
+        it 'runs the third time without errors or changes' do
+          execute_manifest(@manifest, catch_failures: true)
         end
 
         context 'when puppet resource is run' do
@@ -108,7 +108,7 @@ describe 'iis_site' do
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('applicationpool',      'DefaultAppPool')
           puppet_resource_should_show('enabledprotocols',     'https')
-          #puppet_resource_should_show('bindings',             [
+          # puppet_resource_should_show('bindings',             [
           #    {
           #      'bindinginformation'   => '*:8080:',
           #      'certificatehash'      => '',
@@ -124,15 +124,15 @@ describe 'iis_site' do
           #      'sslflags'             => '0',
           #    }
           #  ]
-          #)
+          # )
           puppet_resource_should_show('logflags',             ['ClientIP', 'Date', 'Time', 'UserName'])
           puppet_resource_should_show('logformat',            'W3C')
           puppet_resource_should_show('loglocaltimerollover', 'false')
-          puppet_resource_should_show('logpath',              "C:\\inetpub\\logs\\NewLogFiles")
+          puppet_resource_should_show('logpath',              'C:\\inetpub\\logs\\NewLogFiles')
           puppet_resource_should_show('logtruncatesize',      '2000000')
-          puppet_resource_should_show('physicalpath',         "C:\\inetpub\\new")
-          it 'should have a binding to 443' do
-            expect(@result.stdout).to match(/'bindinginformation' => '\*:443:www.puppet.local'/)
+          puppet_resource_should_show('physicalpath',         'C:\\inetpub\\new')
+          it 'has a binding to 443' do
+            expect(@result.stdout).to match(%r{'bindinginformation' => '\*:443:www.puppet.local'})
           end
 
           context 'when capitalization is changed in path parameters' do
@@ -147,8 +147,8 @@ describe 'iis_site' do
               HERE
             end
 
-            it 'should run with no changes' do
-              execute_manifest(@manifest, :catch_changes => true)
+            it 'runs with no changes' do
+              execute_manifest(@manifest, catch_changes: true)
             end
           end
         end
@@ -158,10 +158,10 @@ describe 'iis_site' do
         end
       end
 
-      context 'using preloadenabled', :if => fact('kernelmajversion') != '6.1' do
+      context 'using preloadenabled', if: fact('kernelmajversion') != '6.1' do
         before (:all) do
           create_path('C:\inetpub\new')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           @manifest = <<-HERE
             iis_site { '#{@site_name}':
               ensure               => 'started',
@@ -179,7 +179,7 @@ describe 'iis_site' do
           end
           puppet_resource_should_show('ensure',               'started')
           puppet_resource_should_show('preloadenabled',       'true')
-          puppet_resource_should_show('physicalpath',         "C:\\inetpub\\new")
+          puppet_resource_should_show('physicalpath',         'C:\\inetpub\\new')
         end
 
         after(:all) do
@@ -190,7 +190,7 @@ describe 'iis_site' do
       context 'using non-W3C log format and logtperiod' do
         before (:all) do
           create_path('C:\inetpub\tmp')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           @manifest = <<-HERE
             iis_site { '#{@site_name}':
               ensure               => 'started',
@@ -216,7 +216,7 @@ describe 'iis_site' do
           puppet_resource_should_show('enabledprotocols',     'https')
           puppet_resource_should_show('logformat',            'NCSA')
           puppet_resource_should_show('loglocaltimerollover', 'false')
-          puppet_resource_should_show('logpath',              "C:\\inetpub\\logs\\NewLogFiles")
+          puppet_resource_should_show('logpath',              'C:\\inetpub\\logs\\NewLogFiles')
           puppet_resource_should_show('logperiod',            'Daily')
           puppet_resource_should_show('physicalpath',         'C:\inetpub\new')
         end
@@ -232,7 +232,7 @@ describe 'iis_site' do
         before(:all) do
           @site_name = SecureRandom.hex(10)
           create_path('C:\inetpub\tmp')
-          @manifest  = <<-HERE
+          @manifest = <<-HERE
             iis_site { '#{@site_name}':
               ensure          => 'started',
               physicalpath    => 'C:\\inetpub\\tmp',
@@ -258,7 +258,7 @@ describe 'iis_site' do
         before (:all) do
           create_path('C:\inetpub\tmp')
           create_site(@site_name, false)
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
@@ -288,7 +288,7 @@ describe 'iis_site' do
         before (:all) do
           create_path('C:\inetpub\tmp')
           create_site(@site_name, true)
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'stopped',
@@ -316,7 +316,7 @@ describe 'iis_site' do
 
       context 'started to absent' do
         before (:all) do
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           create_site(@site_name, true)
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
@@ -338,14 +338,13 @@ describe 'iis_site' do
           remove_all_sites
         end
       end
-
     end
 
     context 'with invalid value for' do
       context 'logformat' do
         before(:all) do
           create_path('C:\inetpub\wwwroot')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
@@ -362,7 +361,7 @@ describe 'iis_site' do
       context 'logperiod' do
         before(:all) do
           create_path('C:\inetpub\wwwroot')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure          => 'started',
@@ -384,7 +383,7 @@ describe 'iis_site' do
     context 'can changed previously set value' do
       context 'physicalpath' do
         before(:all) do
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           create_path('C:\inetpub\new')
           create_site(@site_name, true)
           @manifest = <<-HERE
@@ -412,8 +411,8 @@ describe 'iis_site' do
 
       context 'applicationpool' do
         before(:all) do
-          @site_name = "#{SecureRandom.hex(10)}"
-          @pool_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
+          @pool_name = SecureRandom.hex(10).to_s
           create_app_pool(@pool_name)
           create_site(@site_name, true)
           @manifest = <<-HERE
@@ -441,7 +440,7 @@ describe 'iis_site' do
       context 'bindings' do
         before(:all) do
           create_path('C:\inetpub\new')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           setup_manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure           => 'started',
@@ -460,7 +459,7 @@ describe 'iis_site' do
             ],
           }
           HERE
-          execute_manifest(setup_manifest, :catch_failures => true)
+          execute_manifest(setup_manifest, catch_failures: true)
 
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
@@ -484,7 +483,7 @@ describe 'iis_site' do
           before(:all) do
             @result = resource('iis_site', @site_name)
           end
-          #puppet_resource_should_show('bindings', [
+          # puppet_resource_should_show('bindings', [
           #  {
           #    "protocol"             => "http",
           #    "bindinginformation"   => "*:8081:",
@@ -492,7 +491,7 @@ describe 'iis_site' do
           #    "certificatehash"      => "",
           #    "certificatestorename" => "",
           #  }
-          #])
+          # ])
         end
 
         after(:all) do
@@ -503,7 +502,7 @@ describe 'iis_site' do
       context 'enabledprotocols' do
         before(:all) do
           create_path('C:\inetpub\new')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           setup_manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure           => 'started',
@@ -512,7 +511,7 @@ describe 'iis_site' do
             applicationpool  => 'DefaultAppPool',
           }
           HERE
-          execute_manifest(setup_manifest, :catch_failures => true)
+          execute_manifest(setup_manifest, catch_failures: true)
 
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
@@ -541,7 +540,7 @@ describe 'iis_site' do
       context 'logflags' do
         before(:all) do
           create_path('C:\inetpub\new')
-          @site_name = "#{SecureRandom.hex(10)}"
+          @site_name = SecureRandom.hex(10).to_s
           setup_manifest = <<-HERE
           iis_site { '#{@site_name}':
             ensure           => 'started',
@@ -551,7 +550,7 @@ describe 'iis_site' do
             logflags         => ['ClientIP', 'Date', 'HttpStatus']
           }
           HERE
-          execute_manifest(setup_manifest, :catch_failures => true)
+          execute_manifest(setup_manifest, catch_failures: true)
 
           @manifest = <<-HERE
           iis_site { '#{@site_name}':
@@ -581,8 +580,8 @@ describe 'iis_site' do
 
     context 'with an existing website' do
       before (:all) do
-        @site_name_one = "#{SecureRandom.hex(10)}"
-        @site_name_two = "#{SecureRandom.hex(10)}"
+        @site_name_one = SecureRandom.hex(10).to_s
+        @site_name_two = SecureRandom.hex(10).to_s
         create_site(@site_name_one, true)
         create_path('C:\inetpub\basic')
         @manifest = <<-HERE
@@ -604,8 +603,8 @@ describe 'iis_site' do
     context 'with conflicting sites on differing ports' do
       before (:all) do
         create_path('C:\inetpub\basic')
-        @site_name = "#{SecureRandom.hex(10)}"
-        @second_site_name = "#{SecureRandom.hex(10)}"
+        @site_name = SecureRandom.hex(10).to_s
+        @second_site_name = SecureRandom.hex(10).to_s
         create_site(@site_name, true)
 
         @manifest = <<-HERE
@@ -631,14 +630,14 @@ describe 'iis_site' do
           @second_site = resource('iis_site', @second_site_name)
         end
 
-        it "should run the first site on port 80" do
-          expect(@first_site.stdout).to match(/ensure(\s*)=> 'started',/)
-          expect(@first_site.stdout).to match(/\*\:80\:/)
+        it 'runs the first site on port 80' do
+          expect(@first_site.stdout).to match(%r{ensure(\s*)=> 'started',})
+          expect(@first_site.stdout).to match(%r{\*\:80\:})
         end
 
-        it "should run the second site on port 8080" do
-          expect(@second_site.stdout).to match(/ensure(\s*)=> 'started',/)
-          expect(@second_site.stdout).to match(/\*\:8080\:#{@second_site_name}/)
+        it 'runs the second site on port 8080' do
+          expect(@second_site.stdout).to match(%r{ensure(\s*)=> 'started',})
+          expect(@second_site.stdout).to match(%r{\*\:8080\:#{@second_site_name}})
         end
       end
 
@@ -650,7 +649,7 @@ describe 'iis_site' do
     context 'with ensure set to present' do
       before(:all) do
         create_path('C:\inetpub\basic')
-        @site_name = "#{SecureRandom.hex(10)}"
+        @site_name = SecureRandom.hex(10).to_s
         create_site(@site_name, true)
 
         setup_manifest = <<-HERE
@@ -673,8 +672,7 @@ describe 'iis_site' do
         }
         HERE
 
-        execute_manifest(setup_manifest, :catch_failures => true)
-
+        execute_manifest(setup_manifest, catch_failures: true)
       end
 
       it_behaves_like 'an idempotent resource'
@@ -692,8 +690,8 @@ describe 'iis_site' do
   context 'with conflicting sites on port 80 but different host headers' do
     before(:all) do
       create_path('C:\inetpub\basic')
-      @site_name = "#{SecureRandom.hex(10)}"
-      @second_site_name = "#{SecureRandom.hex(10)}"
+      @site_name = SecureRandom.hex(10).to_s
+      @second_site_name = SecureRandom.hex(10).to_s
       create_site(@site_name, true)
 
       @manifest = <<-HERE
@@ -719,14 +717,14 @@ describe 'iis_site' do
         @second_site = resource('iis_site', @second_site_name)
       end
 
-      it 'should run the first site on port 80 with no host header' do
-        expect(@first_site.stdout).to match(/ensure(\s*)=> 'started',/)
-        expect(@first_site.stdout).to match(/\*\:80\:/)
+      it 'runs the first site on port 80 with no host header' do
+        expect(@first_site.stdout).to match(%r{ensure(\s*)=> 'started',})
+        expect(@first_site.stdout).to match(%r{\*\:80\:})
       end
 
-      it 'should run the second site on port 80 but a different host header' do
-        expect(@second_site.stdout).to match(/ensure(\s*)=> 'started',/)
-        expect(@second_site.stdout).to match(/\*\:80\:#{@second_site_name}/)
+      it 'runs the second site on port 80 but a different host header' do
+        expect(@second_site.stdout).to match(%r{ensure(\s*)=> 'started',})
+        expect(@second_site.stdout).to match(%r{\*\:80\:#{@second_site_name}})
       end
     end
 

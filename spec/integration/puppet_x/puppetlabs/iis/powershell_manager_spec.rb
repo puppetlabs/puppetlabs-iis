@@ -32,43 +32,42 @@ module PuppetX
 end
 
 describe PuppetX::IIS::PowerShellManager do
-  
-before :each do
-  skip ('Not on Windows platform') unless Puppet::Util::Platform.windows? 
-  skip ('Powershell manager not supported') unless PuppetX::IIS::PowerShellManager.supported?
-  skip ("Powershell version is less than 3.0 or undetermined") unless (get_powershell_major_version.to_i >= 3)
-end
+  before :each do
+    skip 'Not on Windows platform' unless Puppet::Util::Platform.windows?
+    skip 'Powershell manager not supported' unless described_class.supported?
+    skip 'Powershell version is less than 3.0 or undetermined' unless get_powershell_major_version.to_i >= 3
+  end
 
-  let (:manager_args) {
+  let (:manager_args) do
     powershell = PuppetX::IIS::PowerShellCommon.powershell_path
     cli_args = PuppetX::IIS::PowerShellCommon.powershell_args.join(' ')
     "#{powershell} #{cli_args}"
-  }
+  end
 
   def create_manager
     PuppetX::IIS::PowerShellManager.instance(manager_args)
   end
 
-  let (:manager) { create_manager() }
+  let (:manager) { create_manager }
 
-  describe "when managing the powershell process" do
-    describe "the PowerShellManager::instance method" do
-      it "should return the same manager instance / process given the same cmd line" do
+  describe 'when managing the powershell process' do
+    describe 'the PowerShellManager::instance method' do
+      it 'returns the same manager instance / process given the same cmd line' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
-        manager_2 = create_manager()
+        manager_2 = create_manager
         second_pid = manager_2.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
         expect(manager_2).to eq(manager)
         expect(first_pid).to eq(second_pid)
       end
 
-      it "should fail if the manger is created with a short timeout" do
+      it 'fails if the manger is created with a short timeout' do
         expect {
-          PuppetX::IIS::PowerShellManager.new(manager_args, false, 0.01)
+          described_class.new(manager_args, false, 0.01)
         }.to raise_error do |e|
           expect(e).to be_a(RuntimeError)
-          expected_error = /Failure waiting for PowerShell process (\d+) to start pipe server/
+          expected_error = %r{Failure waiting for PowerShell process (\d+) to start pipe server}
           expect(e.message).to match expected_error
           pid = expected_error.match(e.message)[1].to_i
 
@@ -77,7 +76,7 @@ end
           # We have found that without an appropriate wait period, the kill call below
           # can return unexpected results and fail the test.
           sleep(1)
-          expect{Process.kill(0, pid)}.to raise_error(Errno::ESRCH)
+          expect { Process.kill(0, pid) }.to raise_error(Errno::ESRCH)
         end
       end
 
@@ -85,18 +84,19 @@ end
         # Ruby can do something like:
         # <Errno::EBADF: Bad file descriptor>
         # <Errno::EBADF: Bad file descriptor @ io_fillbuf - fd:10 >
-        @bad_file_descriptor_regex ||= (
-          ebadf = Errno::EBADF.new()
+        @bad_file_descriptor_regex ||= begin
+          ebadf = Errno::EBADF.new
           '^' + Regexp.escape("\#<#{ebadf.class}: #{ebadf.message}")
-        )
+        end
       end
 
       def pipe_error_regex
-        @pipe_error_regex ||= (
-          epipe = Errno::EPIPE.new()
+        @pipe_error_regex ||= begin
+          epipe = Errno::EPIPE.new
           '^' + Regexp.escape("\#<#{epipe.class}: #{epipe.message}")
-        )
+        end
       end
+
       # reason should be a string for an exact match
       # else an array of regex matches
       def expect_dead_manager(manager, reason, style = :exact)
@@ -122,26 +122,26 @@ end
 
       def expect_different_manager_returned_than(manager, pid)
         # acquire another manager instance
-        new_manager = create_manager()
+        new_manager = create_manager
 
         # which should be different than the one passed in
-        expect(new_manager).to_not eq(manager)
+        expect(new_manager).not_to eq(manager)
 
         # with a different PID
         second_pid = new_manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
-        expect(pid).to_not eq(second_pid)
+        expect(pid).not_to eq(second_pid)
       end
 
       def close_stream(stream, style = :inprocess)
         if style == :inprocess
           stream.close
         else style == :viahandle
-          handle = PuppetX::IIS::WindowsAPI.get_osfhandle(stream.fileno)
-          PuppetX::IIS::WindowsAPI.CloseHandle(handle)
+             handle = PuppetX::IIS::WindowsAPI.get_osfhandle(stream.fileno)
+             PuppetX::IIS::WindowsAPI.CloseHandle(handle)
         end
       end
 
-      it "should create a new PowerShell manager host if user code exits the first process" do
+      it 'creates a new PowerShell manager host if user code exits the first process' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
         exitcode = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Kill()')[:exitcode]
 
@@ -155,7 +155,7 @@ end
         expect_different_manager_returned_than(manager, first_pid)
       end
 
-      it "should create a new PowerShell manager host if the underlying PowerShell process is killed" do
+      it 'creates a new PowerShell manager host if the underlying PowerShell process is killed' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
         # kill the PID from Ruby
@@ -167,7 +167,7 @@ end
         expect_different_manager_returned_than(manager, first_pid)
       end
 
-      it "should create a new PowerShell manager host if the input stream is closed" do
+      it 'creates a new PowerShell manager host if the input stream is closed' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
         # closing pipe from the Ruby side tears down the process
@@ -178,7 +178,7 @@ end
         expect_different_manager_returned_than(manager, first_pid)
       end
 
-      it "should create a new PowerShell manager host if the input stream handle is closed" do
+      it 'creates a new PowerShell manager host if the input stream handle is closed' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
         # call CloseHandle against pipe, therby tearing down the PowerShell process
@@ -189,20 +189,20 @@ end
         expect_different_manager_returned_than(manager, first_pid)
       end
 
-      it "should create a new PowerShell manager host if the output stream is closed" do
+      it 'creates a new PowerShell manager host if the output stream is closed' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
         # closing stdout from the Ruby side allows process to run
         close_stream(manager.instance_variable_get(:@stdout), :inprocess)
 
         # fails with vanilla EPIPE or closed stream IOError depening on timing / Ruby version
-        msgs = [ Errno::EPIPE.new().inspect, IOError.new('closed stream').inspect ]
+        msgs = [Errno::EPIPE.new.inspect, IOError.new('closed stream').inspect]
         expect_dead_manager(manager, msgs, :exact)
 
         expect_different_manager_returned_than(manager, first_pid)
       end
 
-      it "should create a new PowerShell manager host if the output stream handle is closed" do
+      it 'creates a new PowerShell manager host if the output stream handle is closed' do
         # currently skipped as it can trigger an internal Ruby thread clean-up race
         # its unknown why this test fails, but not the identical test against @stderr
         skip('This test can cause intermittent segfaults in Ruby with w32_reset_event invalid handle')
@@ -213,28 +213,28 @@ end
 
         # fails with vanilla EPIPE or various EBADF depening on timing / Ruby version
         msgs = [
-          '^' + Regexp.escape(Errno::EPIPE.new().inspect),
-          bad_file_descriptor_regex
+          '^' + Regexp.escape(Errno::EPIPE.new.inspect),
+          bad_file_descriptor_regex,
         ]
         expect_dead_manager(manager, msgs, :regex)
 
         expect_different_manager_returned_than(manager, first_pid)
       end
 
-      it "should create a new PowerShell manager host if the error stream is closed" do
+      it 'creates a new PowerShell manager host if the error stream is closed' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
         # closing stderr from the Ruby side allows process to run
         close_stream(manager.instance_variable_get(:@stderr), :inprocess)
 
         # fails with vanilla EPIPE or closed stream IOError depening on timing / Ruby version
-        msgs = [ Errno::EPIPE.new().inspect, IOError.new('closed stream').inspect ]
+        msgs = [Errno::EPIPE.new.inspect, IOError.new('closed stream').inspect]
         expect_dead_manager(manager, msgs, :exact)
 
         expect_different_manager_returned_than(manager, first_pid)
       end
 
-      it "should create a new PowerShell manager host if the error stream handle is closed" do
+      it 'creates a new PowerShell manager host if the error stream handle is closed' do
         first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
         # call CloseHandle against stderr, which leaves PowerShell process running
@@ -242,8 +242,8 @@ end
 
         # fails with vanilla EPIPE or various EBADF depening on timing / Ruby version
         msgs = [
-          '^' + Regexp.escape(Errno::EPIPE.new().inspect),
-          bad_file_descriptor_regex
+          '^' + Regexp.escape(Errno::EPIPE.new.inspect),
+          bad_file_descriptor_regex,
         ]
         expect_dead_manager(manager, msgs, :regex)
 
@@ -256,13 +256,13 @@ end
   let(:powershell_parseexception_error) { '$ErrorActionPreference = "Stop";if (1 -badoperator 2) { Exit 1 }' }
   let(:powershell_incompleteparseexception_error) { '$ErrorActionPreference = "Stop";if (1 -eq 2) {  ' }
 
-  describe "when provided powershell commands" do
-    it "shows ps version" do
+  describe 'when provided powershell commands' do
+    it 'shows ps version' do
       result = manager.execute('$psversiontable')
       puts result[:stdout]
     end
 
-    it "should return simple output" do
+    it 'returns simple output' do
       result = manager.execute('write-output foo')
 
       # STDERR is interpolating the newlines thus it's \n instead of the usual Windows \r\n
@@ -270,7 +270,7 @@ end
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should return the exitcode specified" do
+    it 'returns the exitcode specified' do
       result = manager.execute('write-output foo; exit 55')
 
       # STDERR is interpolating the newlines thus it's \n instead of the usual Windows \r\n
@@ -278,14 +278,14 @@ end
       expect(result[:exitcode]).to eq(55)
     end
 
-    it "should return the exitcode 1 when exception is thrown" do
+    it 'returns the exitcode 1 when exception is thrown' do
       result = manager.execute('throw "foo"')
 
       expect(result[:stdout]).to eq(nil)
       expect(result[:exitcode]).to eq(1)
     end
 
-    it "should return the exitcode of the last command to set an exit code" do
+    it 'returns the exitcode of the last command to set an exit code' do
       result = manager.execute("$LASTEXITCODE = 0; write-output 'foo'; cmd.exe /c 'exit 99'; write-output 'bar'")
 
       # STDERR is interpolating the newlines thus it's \n instead of the usual Windows \r\n
@@ -293,7 +293,7 @@ end
       expect(result[:exitcode]).to eq(99)
     end
 
-    it "should return the exitcode of a script invoked with the call operator &" do
+    it 'returns the exitcode of a script invoked with the call operator &' do
       fixture_path = File.expand_path(File.dirname(__FILE__) + '../../../../../exit-27.ps1')
       result = manager.execute("& #{fixture_path}")
 
@@ -301,14 +301,14 @@ end
       expect(result[:exitcode]).to eq(27)
     end
 
-    it "should collect anything written to stderr" do
+    it 'collects anything written to stderr' do
       result = manager.execute('[System.Console]::Error.WriteLine("foo")')
 
       expect(result[:stderr][0]).to eq("foo\r\n")
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should collect multiline output written to stderr" do
+    it 'collects multiline output written to stderr' do
       # induce a failure in cmd.exe that emits a multi-iline error message
       result = manager.execute('cmd.exe /c foo.exe')
 
@@ -317,7 +317,7 @@ end
       expect(result[:exitcode]).to eq(1)
     end
 
-    it "should handle writting to stdout and stderr" do
+    it 'handles writting to stdout and stderr' do
       result = manager.execute('ps;[System.Console]::Error.WriteLine("foo")')
 
       expect(result[:stdout]).not_to eq(nil)
@@ -325,7 +325,7 @@ end
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle writing to stdout natively" do
+    it 'handles writing to stdout natively' do
       result = manager.execute('[System.Console]::Out.WriteLine("foo")')
 
       expect(result[:stdout]).to eq("foo\r\n")
@@ -334,7 +334,7 @@ end
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should properly interleave output written natively to stdout and via Write-XXX cmdlets" do
+    it 'properlies interleave output written natively to stdout and via Write-XXX cmdlets' do
       result = manager.execute('Write-Output "bar"; [System.Console]::Out.WriteLine("foo"); Write-Warning "baz";')
 
       expect(result[:stdout]).to eq("bar\r\nfoo\r\nWARNING: baz\r\n")
@@ -342,7 +342,7 @@ end
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle writing to regularly captured output AND stdout natively" do
+    it 'handles writing to regularly captured output AND stdout natively' do
       result = manager.execute('ps;[System.Console]::Out.WriteLine("foo")')
 
       expect(result[:stdout]).not_to eq("foo\r\n")
@@ -351,7 +351,7 @@ end
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle writing to regularly captured output, stderr AND stdout natively" do
+    it 'handles writing to regularly captured output, stderr AND stdout natively' do
       result = manager.execute('ps;[System.Console]::Out.WriteLine("foo");[System.Console]::Error.WriteLine("bar")')
 
       expect(result[:stdout]).not_to eq("foo\r\n")
@@ -360,7 +360,7 @@ end
       expect(result[:exitcode]).to eq(0)
     end
 
-    context "it should handle UTF-8" do
+    context 'it should handle UTF-8' do
       # different UTF-8 widths
       # 1-byte A
       # 2-byte ۿ - http://www.fileformat.info/info/unicode/char/06ff/index.htm - 0xDB 0xBF / 219 191
@@ -368,7 +368,7 @@ end
       # 4-byte 𠜎 - http://www.fileformat.info/info/unicode/char/2070E/index.htm - 0xF0 0xA0 0x9C 0x8E / 240 160 156 142
       let (:mixed_utf8) { "A\u06FF\u16A0\u{2070E}" } # Aۿᚠ𠜎
 
-      it "when writing basic text" do
+      it 'when writing basic text' do
         code = "Write-Output '#{mixed_utf8}'"
         result = manager.execute(code)
 
@@ -376,7 +376,7 @@ end
         expect(result[:exitcode]).to eq(0)
       end
 
-      it "when writing basic text to stderr" do
+      it 'when writing basic text to stderr' do
         code = "[System.Console]::Error.WriteLine('#{mixed_utf8}')"
         result = manager.execute(code)
 
@@ -385,34 +385,34 @@ end
       end
     end
 
-    it "should execute cmdlets" do
+    it 'executes cmdlets' do
       result = manager.execute('ls')
 
       expect(result[:stdout]).not_to eq(nil)
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should execute cmdlets with pipes" do
+    it 'executes cmdlets with pipes' do
       result = manager.execute('Get-Process | ? { $_.PID -ne $PID }')
 
       expect(result[:stdout]).not_to eq(nil)
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should execute multi-line" do
+    it 'executes multi-line' do
       result = manager.execute(<<-CODE
 $foo = ls
 $count = $foo.count
 $count
       CODE
-      )
+                              )
 
       expect(result[:stdout]).not_to eq(nil)
       expect(result[:exitcode]).to eq(0)
     end
 
-   it "should execute code with a try/catch, receiving the output of Write-Error" do
-     result = manager.execute(<<-CODE
+    it 'executes code with a try/catch, receiving the output of Write-Error' do
+      result = manager.execute(<<-CODE
 try{
  $foo = ls
  $count = $foo.count
@@ -421,13 +421,13 @@ try{
  Write-Error "foo"
 }
      CODE
-     )
+                              )
 
-     expect(result[:stdout]).not_to eq(nil)
-     expect(result[:exitcode]).to eq(0)
-   end
+      expect(result[:stdout]).not_to eq(nil)
+      expect(result[:exitcode]).to eq(0)
+    end
 
-    it "should be able to execute the code in a try block when using try/catch" do
+    it 'is able to execute the code in a try block when using try/catch' do
       result = manager.execute(<<-CODE
  try {
   $foo = @(1, 2, 3).count
@@ -436,15 +436,15 @@ try{
   exit 1
  }
       CODE
-      )
+                              )
 
       expect(result[:stdout]).to eq(nil)
       # using an explicit exit code ensures we've really executed correct block
       expect(result[:exitcode]).to eq(400)
     end
 
-   it "should be able to execute the code in a catch block when using try/catch" do
-     result = manager.execute(<<-CODE
+    it 'is able to execute the code in a catch block when using try/catch' do
+      result = manager.execute(<<-CODE
 try {
   throw "Error!"
   exit 0
@@ -452,56 +452,55 @@ try {
   exit 500
 }
      CODE
-     )
+                              )
 
-     expect(result[:stdout]).to eq(nil)
-     # using an explicit exit code ensures we've really executed correct block
-     expect(result[:exitcode]).to eq(500)
-   end
+      expect(result[:stdout]).to eq(nil)
+      # using an explicit exit code ensures we've really executed correct block
+      expect(result[:exitcode]).to eq(500)
+    end
 
-
-    it "should reuse the same PowerShell process for multiple calls" do
+    it 'reuses the same PowerShell process for multiple calls' do
       first_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
       second_pid = manager.execute('[Diagnostics.Process]::GetCurrentProcess().Id')[:stdout]
 
       expect(first_pid).to eq(second_pid)
     end
 
-    it "should remove psvariables between runs" do
+    it 'removes psvariables between runs' do
       manager.execute('$foo = "bar"')
       result = manager.execute('$foo')
 
       expect(result[:stdout]).to eq(nil)
     end
 
-    it "should remove env variables between runs" do
+    it 'removes env variables between runs' do
       manager.execute('[Environment]::SetEnvironmentVariable("foo", "bar", "process")')
       result = manager.execute('Test-Path env:\foo')
 
       expect(result[:stdout]).to eq("False\r\n")
     end
 
-    it "should set custom environment variables" do
-      result = manager.execute('Write-Output $ENV:foo',nil,nil,['foo=bar'])
+    it 'sets custom environment variables' do
+      result = manager.execute('Write-Output $ENV:foo', nil, nil, ['foo=bar'])
 
       expect(result[:stdout]).to eq("bar\r\n")
     end
 
-    it "should remove custom environment variables between runs" do
-      manager.execute('Write-Output $ENV:foo',nil,nil,['foo=bar'])
-      result = manager.execute('Write-Output $ENV:foo',nil,nil,[])
+    it 'removes custom environment variables between runs' do
+      manager.execute('Write-Output $ENV:foo', nil, nil, ['foo=bar'])
+      result = manager.execute('Write-Output $ENV:foo', nil, nil, [])
 
       expect(result[:stdout]).to be nil
     end
 
-    it "should ignore malformed custom environment variable" do
-      result = manager.execute('Write-Output $ENV:foo',nil,nil,['=foo','foo','foo='])
+    it 'ignores malformed custom environment variable' do
+      result = manager.execute('Write-Output $ENV:foo', nil, nil, ['=foo', 'foo', 'foo='])
 
       expect(result[:stdout]).to be nil
     end
 
-    it "should use last definition for duplicate custom environment variable" do
-      result = manager.execute('Write-Output $ENV:foo',nil,nil,['foo=one','foo=two','foo=three'])
+    it 'uses last definition for duplicate custom environment variable' do
+      result = manager.execute('Write-Output $ENV:foo', nil, nil, ['foo=one', 'foo=two', 'foo=three'])
 
       expect(result[:stdout]).to eq("three\r\n")
     end
@@ -511,101 +510,101 @@ try {
       # behavior of Write-Output introduces newlines after every width number
       # of characters as specified in the BufferSize of the custom console UI
       # Write-Host should usually be avoided, but works for this test in old PS2
-      get_powershell_major_version.to_i >= 3 ?
+      (get_powershell_major_version.to_i >= 3) ?
         'Write-Output' :
         'Write-Host'
     end
 
-    it "should be able to write more than the 64k default buffer size to the managers pipe without deadlocking the Ruby parent process or breaking the pipe" do
+    it 'is able to write more than the 64k default buffer size to the managers pipe without deadlocking the Ruby parent process or breaking the pipe' do
       # this was tested successfully up to 5MB of text
       buffer_string_96k = 'a' * ((1024 * 96) + 1)
       result = manager.execute(<<-CODE
 '#{buffer_string_96k}' | #{output_cmdlet}
         CODE
-        )
+                              )
 
       expect(result[:errormessage]).to eq(nil)
       expect(result[:exitcode]).to eq(0)
-      terminator = output_cmdlet == 'Write-Output' ? "\r\n" : "\n"
+      terminator = (output_cmdlet == 'Write-Output') ? "\r\n" : "\n"
       expect(result[:stdout]).to eq("#{buffer_string_96k}#{terminator}")
     end
 
-    it "should be able to write more than the 64k default buffer size to child process stdout without deadlocking the Ruby parent process" do
+    it 'is able to write more than the 64k default buffer size to child process stdout without deadlocking the Ruby parent process' do
       result = manager.execute(<<-CODE
 $bytes_in_k = (1024 * 64) + 1
 [Text.Encoding]::UTF8.GetString((New-Object Byte[] ($bytes_in_k))) | #{output_cmdlet}
         CODE
-        )
+                              )
 
       expect(result[:errormessage]).to eq(nil)
       expect(result[:exitcode]).to eq(0)
-      terminator = output_cmdlet == 'Write-Output' ? "\r\n" : "\n"
+      terminator = (output_cmdlet == 'Write-Output') ? "\r\n" : "\n"
       expected = "\x0" * (1024 * 64 + 1) + terminator
       expect(result[:stdout]).to eq(expected)
     end
 
-    it "should return a response with a timeout error if the execution timeout is exceeded" do
+    it 'returns a response with a timeout error if the execution timeout is exceeded' do
       timeout_ms = 100
       result = manager.execute('sleep 1', timeout_ms)
-      # TODO What is the real message now?
-      msg = /Catastrophic failure\: PowerShell module timeout \(#{timeout_ms} ms\) exceeded while executing\r\n/
+      # TODO: What is the real message now?
+      msg = %r{Catastrophic failure\: PowerShell module timeout \(#{timeout_ms} ms\) exceeded while executing\r\n}
       expect(result[:errormessage]).to match(msg)
     end
 
-    it "should return any available stdout / stderr prior to being terminated if a timeout error occurs" do
+    it 'returns any available stdout / stderr prior to being terminated if a timeout error occurs' do
       timeout_ms = 1500
       command = '$debugPreference = "Continue"; Write-Output "200 OK Glenn"; Write-Debug "304 Not Modified James"; Write-Error "404 Craig Not Found"; sleep 10'
       result = manager.execute(command, timeout_ms)
       expect(result[:exitcode]).to eq(1)
       # starts with Write-Output and Write-Debug messages
-      expect(result[:stdout]).to match(/^200 OK Glenn\r\nDEBUG: 304 Not Modified James\r\n/)
+      expect(result[:stdout]).to match(%r{^200 OK Glenn\r\nDEBUG: 304 Not Modified James\r\n})
       # then command may have \r\n injected, so remove those for comparison
-      expect(result[:stdout].gsub(/\r\n/, '')).to include(command)
+      expect(result[:stdout].gsub(%r{\r\n}, '')).to include(command)
       # and it should end with the Write-Error content
       expect(result[:stdout]).to end_with("404 Craig Not Found\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException\r\n \r\n")
     end
 
-    it "should not deadlock and return a valid response given invalid unparseable PowerShell code" do
+    it 'does not deadlock and return a valid response given invalid unparseable PowerShell code' do
       result = manager.execute(<<-CODE
         {
 
         CODE
-        )
+                              )
 
       expect(result[:errormessage]).not_to be_empty
     end
 
-    it "should error if working directory does not exist" do
+    it 'errors if working directory does not exist' do
       work_dir = 'C:/some/directory/that/does/not/exist'
 
-      result = manager.execute('(Get-Location).Path',nil,work_dir)
+      result = manager.execute('(Get-Location).Path', nil, work_dir)
 
-      expect(result[:exitcode]).to_not eq(0)
-      expect(result[:errormessage]).to match(/Working directory .+ does not exist/)
+      expect(result[:exitcode]).not_to eq(0)
+      expect(result[:errormessage]).to match(%r{Working directory .+ does not exist})
     end
 
-    it "should allow forward slashes in working directory" do
-      work_dir = ENV["WINDIR"]
-      forward_work_dir = work_dir.gsub('\\','/')
+    it 'allows forward slashes in working directory' do
+      work_dir = ENV['WINDIR']
+      forward_work_dir = work_dir.tr('\\', '/')
 
-      result = manager.execute('(Get-Location).Path',nil,work_dir)[:stdout]
+      result = manager.execute('(Get-Location).Path', nil, work_dir)[:stdout]
 
       expect(result).to eq("#{work_dir}\r\n")
     end
 
-    it "should use a specific working directory if set" do
-      work_dir = ENV["WINDIR"]
+    it 'uses a specific working directory if set' do
+      work_dir = ENV['WINDIR']
 
-      result = manager.execute('(Get-Location).Path',nil,work_dir)[:stdout]
+      result = manager.execute('(Get-Location).Path', nil, work_dir)[:stdout]
 
       expect(result).to eq("#{work_dir}\r\n")
     end
 
-    it "should not reuse the same working directory between runs" do
-      work_dir = ENV["WINDIR"]
+    it 'does not reuse the same working directory between runs' do
+      work_dir = ENV['WINDIR']
       current_work_dir = Dir.getwd
 
-      first_cwd = manager.execute('(Get-Location).Path',nil,work_dir)[:stdout]
+      first_cwd = manager.execute('(Get-Location).Path', nil, work_dir)[:stdout]
       second_cwd = manager.execute('(Get-Location).Path')[:stdout]
 
       # Paths should be case insensitive
@@ -613,120 +612,120 @@ $bytes_in_k = (1024 * 64) + 1
       expect(second_cwd.downcase).to eq("#{current_work_dir}\r\n".downcase)
     end
 
-    context "with runtime error" do
-      it "should not refer to 'EndInvoke' or 'throw' for a runtime error" do
+    context 'with runtime error' do
+      it "does not refer to 'EndInvoke' or 'throw' for a runtime error" do
         result = manager.execute(powershell_runtime_error)
 
         expect(result[:exitcode]).to eq(1)
-        expect(result[:errormessage]).not_to match(/EndInvoke/)
-        expect(result[:errormessage]).not_to match(/throw/)
+        expect(result[:errormessage]).not_to match(%r{EndInvoke})
+        expect(result[:errormessage]).not_to match(%r{throw})
       end
 
-      it "should display line and char information for a runtime error" do
+      it 'displays line and char information for a runtime error' do
         result = manager.execute(powershell_runtime_error)
 
         expect(result[:exitcode]).to eq(1)
-        expect(result[:errormessage]).to match(/At line\:\d+ char\:\d+/)
+        expect(result[:errormessage]).to match(%r{At line\:\d+ char\:\d+})
       end
     end
 
-    context "with ParseException error" do
-      it "should not refer to 'EndInvoke' or 'throw' for a ParseException error" do
+    context 'with ParseException error' do
+      it "does not refer to 'EndInvoke' or 'throw' for a ParseException error" do
         result = manager.execute(powershell_parseexception_error)
 
         expect(result[:exitcode]).to eq(1)
-        expect(result[:errormessage]).not_to match(/EndInvoke/)
-        expect(result[:errormessage]).not_to match(/throw/)
+        expect(result[:errormessage]).not_to match(%r{EndInvoke})
+        expect(result[:errormessage]).not_to match(%r{throw})
       end
 
-      it "should display line and char information for a ParseException error" do
+      it 'displays line and char information for a ParseException error' do
         result = manager.execute(powershell_parseexception_error)
 
         expect(result[:exitcode]).to eq(1)
-        expect(result[:errormessage]).to match(/At line\:\d+ char\:\d+/)
+        expect(result[:errormessage]).to match(%r{At line\:\d+ char\:\d+})
       end
     end
 
-    context "with IncompleteParseException error" do
-      it "should not refer to 'EndInvoke' or 'throw' for an IncompleteParseException error" do
+    context 'with IncompleteParseException error' do
+      it "does not refer to 'EndInvoke' or 'throw' for an IncompleteParseException error" do
         result = manager.execute(powershell_incompleteparseexception_error)
 
         expect(result[:exitcode]).to eq(1)
-        expect(result[:errormessage]).not_to match(/EndInvoke/)
-        expect(result[:errormessage]).not_to match(/throw/)
+        expect(result[:errormessage]).not_to match(%r{EndInvoke})
+        expect(result[:errormessage]).not_to match(%r{throw})
       end
 
-      it "should not display line and char information for an IncompleteParseException error" do
+      it 'does not display line and char information for an IncompleteParseException error' do
         result = manager.execute(powershell_incompleteparseexception_error)
 
         expect(result[:exitcode]).to eq(1)
-        expect(result[:errormessage]).not_to match(/At line\:\d+ char\:\d+/)
+        expect(result[:errormessage]).not_to match(%r{At line\:\d+ char\:\d+})
       end
     end
   end
 
-  describe "when output is written to a PowerShell Stream" do
-    it "should collect anything written to verbose stream" do
-      msg = SecureRandom.uuid.to_s.gsub('-', '')
+  describe 'when output is written to a PowerShell Stream' do
+    it 'collects anything written to verbose stream' do
+      msg = SecureRandom.uuid.to_s.delete('-')
       result = manager.execute("$VerbosePreference = 'Continue';Write-Verbose '#{msg}'")
 
-      expect(result[:stdout]).to match(/^VERBOSE\: #{msg}/)
+      expect(result[:stdout]).to match(%r{^VERBOSE\: #{msg}})
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should collect anything written to debug stream" do
-      msg = SecureRandom.uuid.to_s.gsub('-', '')
+    it 'collects anything written to debug stream' do
+      msg = SecureRandom.uuid.to_s.delete('-')
       result = manager.execute("$debugPreference = 'Continue';Write-debug '#{msg}'")
 
-      expect(result[:stdout]).to match(/^DEBUG: #{msg}/)
+      expect(result[:stdout]).to match(%r{^DEBUG: #{msg}})
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should collect anything written to Warning stream" do
-      msg = SecureRandom.uuid.to_s.gsub('-', '')
+    it 'collects anything written to Warning stream' do
+      msg = SecureRandom.uuid.to_s.delete('-')
       result = manager.execute("Write-Warning '#{msg}'")
 
-      expect(result[:stdout]).to match(/^WARNING: #{msg}/)
+      expect(result[:stdout]).to match(%r{^WARNING: #{msg}})
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should collect anything written to Error stream" do
-      msg = SecureRandom.uuid.to_s.gsub('-', '')
+    it 'collects anything written to Error stream' do
+      msg = SecureRandom.uuid.to_s.delete('-')
       result = manager.execute("Write-Error '#{msg}'")
 
       expect(result[:stdout]).to eq("Write-Error '#{msg}' : #{msg}\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException\r\n \r\n")
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle a Write-Error in the middle of code" do
+    it 'handles a Write-Error in the middle of code' do
       result = manager.execute('ls;Write-Error "Hello";ps')
 
       expect(result[:stdout]).not_to eq(nil)
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle a Out-Default in the user code" do
+    it 'handles a Out-Default in the user code' do
       result = manager.execute('\'foo\' | Out-Default')
 
       expect(result[:stdout]).to eq("foo\r\n")
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle lots of output from user code" do
+    it 'handles lots of output from user code' do
       result = manager.execute('1..1000 | %{ (65..90) + (97..122) | Get-Random -Count 5 | % {[char]$_} }')
 
       expect(result[:stdout]).not_to eq(nil)
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle a larger return of output from user code" do
+    it 'handles a larger return of output from user code' do
       result = manager.execute('1..1000 | %{ (65..90) + (97..122) | Get-Random -Count 5 | % {[char]$_} } | %{ $f="" } { $f+=$_ } {$f }')
 
       expect(result[:stdout]).not_to eq(nil)
       expect(result[:exitcode]).to eq(0)
     end
 
-    it "should handle shell redirection" do
+    it 'handles shell redirection' do
       # the test here is to ensure that this doesn't break. because we merge the streams regardless
       # the opposite of this test shows the same thing
       result = manager.execute('function test-error{ ps;write-error \'foo\' }; test-error 2>&1')
@@ -735,5 +734,4 @@ $bytes_in_k = (1024 * 64) + 1
       expect(result[:exitcode]).to eq(0)
     end
   end
-
 end

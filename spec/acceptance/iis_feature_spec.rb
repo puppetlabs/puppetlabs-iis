@@ -5,7 +5,7 @@ describe 'iis_feature' do
     context 'with default parameters' do
       before(:all) do
         @feature = 'Web-Scripting-Tools'
-        @manifest  = <<-HERE
+        @manifest = <<-HERE
           iis_feature { '#{@feature}':
             ensure => 'present'
           }
@@ -26,7 +26,7 @@ describe 'iis_feature' do
     context 'with invalid' do
       context 'name parameter defined' do
         before(:all) do
-          @manifest  = <<-HERE
+          @manifest = <<-HERE
           iis_feature { 'Foo':
             ensure => 'present'
           }
@@ -35,7 +35,6 @@ describe 'iis_feature' do
 
         it_behaves_like 'a failing manifest'
       end
-
     end
   end
 end

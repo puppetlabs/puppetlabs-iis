@@ -4,34 +4,34 @@ require 'puppet_x/puppetlabs/iis/iis_version'
 
 describe PuppetX::PuppetLabs::IIS::IISVersion do
   before(:each) do
-    skip ('Not on Windows platform') unless Puppet::Util::Platform.windows?
-    @ps = PuppetX::PuppetLabs::IIS::IISVersion
+    skip 'Not on Windows platform' unless Puppet::Util::Platform.windows?
+    @ps = described_class
   end
 
-  describe "when iis is installed" do
-    it "should detect a iis version" do
+  describe 'when iis is installed' do
+    it 'detects a iis version' do
       expect_any_instance_of(Win32::Registry).to receive(:open)
         .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
-        .and_yield({ 'MajorVersion' => 10, 'MinorVersion' => 0 })
+        .and_yield('MajorVersion' => 10, 'MinorVersion' => 0)
       version = @ps.installed_version
 
       expect(version).not_to be_nil
     end
 
-    it "should report true if iis supported version installed" do
+    it 'reports true if iis supported version installed' do
       expect_any_instance_of(Win32::Registry).to receive(:open)
         .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
-        .and_yield({ 'MajorVersion' => 10, 'MinorVersion' => 0 })
+        .and_yield('MajorVersion' => 10, 'MinorVersion' => 0)
 
       result = @ps.supported_version_installed?
 
       expect(result).to be_truthy
     end
 
-    it "should report false if no iis supported version installed" do
+    it 'reports false if no iis supported version installed' do
       expect_any_instance_of(Win32::Registry).to receive(:open)
         .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
-        .and_yield({ 'MajorVersion' => 6, 'MinorVersion' => 0 })
+        .and_yield('MajorVersion' => 6, 'MinorVersion' => 0)
 
       result = @ps.supported_version_installed?
 
@@ -39,8 +39,8 @@ describe PuppetX::PuppetLabs::IIS::IISVersion do
     end
   end
 
-  describe "when iis is not installed" do
-    it "should return nil and not throw" do
+  describe 'when iis is not installed' do
+    it 'returns nil and not throw' do
       expect_any_instance_of(Win32::Registry).to receive(:open)
         .with('SOFTWARE\Microsoft\InetStp', Win32::Registry::KEY_READ | 0x100)
         .and_raise(Win32::Registry::Error.new(2), 'nope')
@@ -49,6 +49,5 @@ describe PuppetX::PuppetLabs::IIS::IISVersion do
 
       expect(version).to eq nil
     end
-
   end
 end

@@ -1,6 +1,6 @@
-def has_app_pool(pool_name)
+def has_app_pool(_pool_name)
   command = format_powershell_iis_command("Get-WebAppPoolState -Name #{@pool_name}")
-  !(on(default, command).stdout =~ /Started/i).nil?
+  !(on(default, command).stdout =~ %r{Started}i).nil?
 end
 
 def create_app_pool(pool_name)

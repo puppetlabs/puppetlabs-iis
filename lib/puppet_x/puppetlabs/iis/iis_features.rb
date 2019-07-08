@@ -1,7 +1,6 @@
 module PuppetX
   module IIS
     module Features
-
       def is_iis_feature?(feature_name)
         # Note this code uses an array of the latest IIS features available to
         # install, but does not keep track of which subset is available in a given

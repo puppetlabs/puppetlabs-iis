@@ -1,18 +1,18 @@
 def is_local_path(path)
-  return (path =~ /^.:(\/|\\)/)
+  (path =~ /^.:(\/|\\)/)
 end
 
 def is_unc_path(path)
-  return (path =~ /^\\\\[^\\]+\\[^\\]+/)
+  (path =~ %r{^\\\\[^\\]+\\[^\\]+})
 end
 
 def verify_physicalpath
-  if @resource[:physicalpath].nil? or @resource[:physicalpath].empty?
-    fail("physicalpath is a required parameter")
+  if @resource[:physicalpath].nil? || @resource[:physicalpath].empty?
+    raise('physicalpath is a required parameter')
   end
   if is_local_path(@resource[:physicalpath])
-    if ! File.exists?(@resource[:physicalpath])
-      fail("physicalpath doesn't exist: #{@resource[:physicalpath]}")
-    end    
+    unless File.exist?(@resource[:physicalpath])
+      raise("physicalpath doesn't exist: #{@resource[:physicalpath]}")
+    end
   end
 end

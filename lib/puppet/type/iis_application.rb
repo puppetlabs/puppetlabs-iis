@@ -23,31 +23,31 @@ Puppet::Type.newtype(:iis_application) do
 
   ensurable
 
-  newparam(:applicationname, :namevar => true) do
+  newparam(:applicationname, namevar: true) do
     desc "The name of the application. The virtual path of the application is
           '/<applicationname>'."
   end
 
-  newproperty(:sitename, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
+  newproperty(:sitename, parent: PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of the site for the application.'
   end
 
-  newproperty(:physicalpath, :parent => PuppetX::PuppetLabs::IIS::Property::Path) do
+  newproperty(:physicalpath, parent: PuppetX::PuppetLabs::IIS::Property::Path) do
     desc 'The physical path to the application directory. This path must be
           fully qualified.'
     validate do |value|
-      if value.nil? or value.empty?
-        raise ArgumentError, "A non-empty physicalpath must be specified."
+      if value.nil? || value.empty?
+        raise ArgumentError, 'A non-empty physicalpath must be specified.'
       end
-      fail("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ or value =~ /^\/\/[^\/]+\/[^\/]+/
+      raise("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ || value =~ /^\/\/[^\/]+\/[^\/]+/
     end
   end
 
-  newproperty(:applicationpool, :parent => PuppetX::PuppetLabs::IIS::Property::Name) do
+  newproperty(:applicationpool, parent: PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of the application pool for the application.'
     validate do |value|
-      if value.nil? or value.empty?
-        raise ArgumentError, "A non-empty applicationpool name must be specified."
+      if value.nil? || value.empty?
+        raise ArgumentError, 'A non-empty applicationpool name must be specified.'
       end
       super value
     end
@@ -58,29 +58,29 @@ Puppet::Type.newtype(:iis_application) do
           Similar to iis_application, iis_virtual_directory uses composite
           namevars."
 
-    munge do | value |
-      value.start_with?("IIS:") ? value : File.join('IIS:/Sites',value)
+    munge do |value|
+      value.start_with?('IIS:') ? value : File.join('IIS:/Sites', value)
     end
   end
 
-  newproperty(:sslflags, :array_matching => :all) do
+  newproperty(:sslflags, array_matching: :all) do
     desc 'The SSL settings for the application. Valid options are an array of
           flags, with the following names: \'Ssl\', \'SslRequireCert\',
           \'SslNegotiateCert\', \'Ssl128\'.'
     newvalues(
-      "Ssl",
-      "SslRequireCert",
-      "SslNegotiateCert",
-      "Ssl128",
+      'Ssl',
+      'SslRequireCert',
+      'SslNegotiateCert',
+      'Ssl128',
     )
   end
 
-  newproperty(:authenticationinfo, :parent => PuppetX::PuppetLabs::IIS::Property::Hash) do
+  newproperty(:authenticationinfo, parent: PuppetX::PuppetLabs::IIS::Property::Hash) do
     desc 'Enable and disable IIS authentication schemas.'
     def insync?(is)
-      should.select do |k,v|
-        is[k] != v
-      end.empty?
+      should.reject { |k, v|
+        is[k] == v
+      }.empty?
     end
   end
 
@@ -89,16 +89,16 @@ Puppet::Type.newtype(:iis_application) do
           Valid protocols are: \'http\', \'https\', \'net.pipe\', \'net.tcp\', \'net.msmq\', \'msmq.formatname\'.'
     validate do |value|
       return if value.nil?
-      unless value.kind_of?(String)
-        fail("Invalid value '#{value}'. Should be a string")
+      unless value.is_a?(String)
+        raise("Invalid value '#{value}'. Should be a string")
       end
 
-      fail("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
+      raise("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
 
       protocols = value.split(',')
       protocols.each do |protocol|
         unless ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(protocol)
-          fail("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
+          raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
         end
       end
     end

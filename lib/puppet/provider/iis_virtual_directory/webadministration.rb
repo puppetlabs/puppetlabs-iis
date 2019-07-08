@@ -2,13 +2,13 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_common')
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
-  desc "IIS Virtual Directory provider using the PowerShell WebAdministration module"
+  desc 'IIS Virtual Directory provider using the PowerShell WebAdministration module'
 
-  confine     :feature         => :iis_web_server
-  confine     :operatingsystem => [ :windows ]
-  defaultfor :operatingsystem => :windows
+  confine     feature: :iis_web_server
+  confine     operatingsystem: [:windows]
+  defaultfor operatingsystem: :windows
 
-  commands :powershell => PuppetX::IIS::PowerShellCommon.powershell_path
+  commands powershell: PuppetX::IIS::PowerShellCommon.powershell_path
 
   mk_resource_methods
 
@@ -24,7 +24,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     cmd = []
     if is_local_path(@resource[:physicalpath])
       cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
-      fail("sitename is a required parameter") unless @resource[:sitename]
+      raise('sitename is a required parameter') unless @resource[:sitename]
       cmd << "-Site \"#{@resource[:sitename]}\" "
     else
       # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
@@ -33,12 +33,12 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     end
     cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
     cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
-    cmd << "-ErrorAction Stop;"
+    cmd << '-ErrorAction Stop;'
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;" if @resource[:user_name]
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;" if @resource[:password]
     cmd = cmd.join
 
-    result   = self.class.run(cmd)
+    result = self.class.run(cmd)
     Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
     @resource[:ensure] = :present
   end
@@ -56,28 +56,28 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{escape_string(@resource[:password])}';" if @resource[:password]
 
     cmd = cmd.join
-    result   = self.class.run(cmd)
+    result = self.class.run(cmd)
     Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
   end
 
   def destroy
     Puppet.debug "Destroying #{@resource[:name]}"
     test = self.class.run("Test-Path -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}'")
-    if test[:stdout].strip.downcase == 'true'
+    if test[:stdout].strip.casecmp('true').zero?
       cmd = []
-      cmd << "Remove-Item " 
+      cmd << 'Remove-Item '
       cmd << "-Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' "
-      cmd << "-Recurse "
-      cmd << "-ErrorAction Stop "
+      cmd << '-Recurse '
+      cmd << '-ErrorAction Stop '
       cmd = cmd.join
 
-      result   = self.class.run(cmd)
+      result = self.class.run(cmd)
       Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
     end
     @property_hash[:ensure] = :absent
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @property_flush = {}
   end
@@ -85,7 +85,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   def self.prefetch(resources)
     virt_dirs = instances
     resources.keys.each do |virt_dir|
-      if provider = virt_dirs.find{ |s| virt_dir.casecmp(s.name) == 0 }
+      if provider = virt_dirs.find { |s| virt_dir.casecmp(s.name) == 0 }
         resources[virt_dir].provider = provider
       end
     end
@@ -93,13 +93,13 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
   def self.instances
     cmd = ps_script_content('_getvirtualdirectories', @resource)
-    result   = run(cmd)
+    result = run(cmd)
     return [] if result.nil?
 
-    virt_dir_json = self.parse_json_result(result[:stdout])
+    virt_dir_json = parse_json_result(result[:stdout])
     return [] if virt_dir_json.nil?
 
-    virt_dir_json.collect do |virt_dir|
+    virt_dir_json.map do |virt_dir|
       virt_dir_hash = {}
 
       virt_dir_hash[:ensure]       = :present
@@ -115,7 +115,6 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   end
 
   def escape_string(value)
-    value.gsub("'","''")
+    value.gsub("'", "''")
   end
-
 end
