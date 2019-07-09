@@ -1,5 +1,5 @@
 def is_local_path(path)
-  (path =~ /^.:(\/|\\)/)
+  (path =~ %r{/^.:(\/|\\)/})
 end
 
 def is_unc_path(path)

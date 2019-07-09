@@ -19,6 +19,7 @@ if Puppet::Util::Platform.windows?
   module PuppetX
     module PuppetLabs
       module IIS
+        # IISVersion
         class IISVersion
           def self.supported_versions
             ['7.5', '8.0', '8.5', '10.0']
