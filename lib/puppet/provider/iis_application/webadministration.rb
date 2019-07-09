@@ -51,7 +51,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
       inst_cmd = self.class.ps_script_content('newapplication', @resource)
     end
     result = self.class.run(inst_cmd)
-    raise "Error creating application: #{result[:errormessage]}" unless result[:exitcode] == 0
+    raise "Error creating application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     raise "Error creating application: #{result[:errormessage]}" unless result[:errormessage].nil?
     @property_hash[:ensure] = :present
   end
@@ -60,7 +60,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     inst_cmd = "Remove-WebApplication -Site \"#{self.class.find_sitename(resource)}\" -Name \"#{app_name}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
     @property_hash.clear
-    raise "Error destroying application: #{result[:errormessage]}" unless result[:exitcode] == 0
+    raise "Error destroying application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     raise "Error destroying application: #{result[:errormessage]}" unless result[:errormessage].nil?
   end
 
@@ -95,7 +95,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
     inst_cmd = inst_cmd.join("\n")
     result   = self.class.run(inst_cmd)
-    raise "Error updating application: #{result[:errormessage]}" unless result[:exitcode] == 0
+    raise "Error updating application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     raise "Error updating application: #{result[:errormessage]}" unless result[:errormessage].nil?
   end
 

@@ -39,7 +39,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     cmd = cmd.join
 
     result = self.class.run(cmd)
-    Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     @resource[:ensure] = :present
   end
 
@@ -57,7 +57,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
     cmd = cmd.join
     result = self.class.run(cmd)
-    Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless (result[:exitcode]).zero?
   end
 
   def destroy
@@ -72,7 +72,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
       cmd = cmd.join
 
       result = self.class.run(cmd)
-      Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless result[:exitcode] == 0
+      Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     end
     @property_hash[:ensure] = :absent
   end
@@ -85,7 +85,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   def self.prefetch(resources)
     virt_dirs = instances
     resources.keys.each do |virt_dir|
-      if provider = virt_dirs.find { |s| virt_dir.casecmp(s.name) == 0 }
+      if provider = virt_dirs.find { |s| virt_dir.casecmp(s.name).zero? }
         resources[virt_dir].provider = provider
       end
     end
