@@ -1,6 +1,10 @@
+# @api private
 module PuppetX
+  # @api private
   module PuppetLabs
+    # @api private
     module IIS
+      # PowerShell Version
       class PowerShellVersion
       end
     end
@@ -12,6 +16,7 @@ if Puppet::Util::Platform.windows?
   module PuppetX
     module PuppetLabs
       module IIS
+        # PowerShellVersion
         class PowerShellVersion
           ACCESS_TYPE       = Win32::Registry::KEY_READ | 0x100
           HKLM              = Win32::Registry::HKEY_LOCAL_MACHINE

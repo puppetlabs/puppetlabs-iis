@@ -1,7 +1,12 @@
+# @api private
 module PuppetX
+  # @api private
   module PuppetLabs
+    # @api private
     module IIS
+      # @api private
       module Property
+        # PositiveInteger Property
         class PositiveInteger < Puppet::Property
           def insync?(is)
             is.to_i == should.to_i

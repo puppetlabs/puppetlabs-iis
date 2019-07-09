@@ -1,8 +1,12 @@
 require File.join(File.dirname(__FILE__), 'powershell_version')
 
+# @api private
 module PuppetX
+  # @api private
   module PuppetLabs
+    # @api private
     module IIS
+      # Compatible PowerShell Version
       class CompatiblePowerShellVersion
         def self.compatible_version?
           value = false

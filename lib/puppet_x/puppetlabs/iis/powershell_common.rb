@@ -1,4 +1,6 @@
+# @api private
 module PuppetX
+  # @api private
   module IIS
     # PowerShellCommon
     module PowerShellCommon

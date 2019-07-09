@@ -1,6 +1,10 @@
+# @api private
 module PuppetX
+  # @api private
   module PuppetLabs
+    # @api private
     module IIS
+      # IISVersion
       class IISVersion
         def self.supported_version_installed?
           false

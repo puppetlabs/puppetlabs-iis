@@ -1,7 +1,12 @@
+# @api private
 module PuppetX
+  # @api private
   module PuppetLabs
+    # @api private
     module IIS
+      # @api private
       module Property
+        # path Property
         class Path < Puppet::Property
           validate do |value|
             unless value =~ /^.:(\/|\\)/ || value =~ %r{^\\\\[^\\]+\\[^\\]+}
