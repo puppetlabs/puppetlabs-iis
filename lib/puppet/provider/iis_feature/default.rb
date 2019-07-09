@@ -18,7 +18,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   end
 
   def create
-    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.is_iis_feature?(resource[:name])
+    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.iis_feature?(resource[:name])
 
     if @resource[:include_management_tools] == true && self.class.is_windows2008 == true
       raise Puppet::Error, 'include_management_tools can only be used with Windows 2012 and above'
@@ -42,7 +42,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   end
 
   def destroy
-    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.is_iis_feature?(resource[:name])
+    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.iis_feature?(resource[:name])
 
     cmd = []
     cmd << "Import-Module ServerManager; Remove-WindowsFeature -Name #{resource[:name]}" if self.class.is_windows2008 == true
@@ -66,7 +66,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
     json = parse_json_result(result[:stdout])
     return [] if json.nil?
 
-    json.select { |feature| PuppetX::IIS::Features.is_iis_feature?(feature['Name']) }.map do |feature|
+    json.select { |feature| PuppetX::IIS::Features.iis_feature?(feature['Name']) }.map do |feature|
       feature_hash = {
         name: feature['Name'],
         ensure: (feature['Installed'] == true) ? :present : :absent,

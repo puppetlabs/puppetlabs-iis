@@ -22,7 +22,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     verify_physicalpath
 
     cmd = []
-    if is_local_path(@resource[:physicalpath])
+    if local_path?(@resource[:physicalpath])
       cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
       raise('sitename is a required parameter') unless @resource[:sitename]
       cmd << "-Site \"#{@resource[:sitename]}\" "

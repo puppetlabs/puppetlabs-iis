@@ -96,9 +96,9 @@ module PuppetX
           # explicitly set during a read / write failure, like broken pipe EPIPE
           @usable &&
           # an explicit failure state might not have been hit, but IO may be closed
-          self.class.is_stream_valid?(@pipe) &&
-          self.class.is_stream_valid?(@stdout) &&
-          self.class.is_stream_valid?(@stderr)
+          self.class.stream_valid?(@pipe) &&
+          self.class.stream_valid?(@stdout) &&
+          self.class.stream_valid?(@stderr)
       end
 
       def execute(powershell_code, timeout_ms = nil, working_dir = nil, environment_variables = [])
@@ -217,8 +217,8 @@ Invoke-PowerShellUserCode @params
 
       private
 
-      def self.is_readable?(stream, timeout = 0.5)
-        raise Errno::EPIPE unless is_stream_valid?(stream)
+      def self.readable?(stream, timeout = 0.5)
+        raise Errno::EPIPE unless stream_valid?(stream)
         read_ready = IO.select([stream], [], [], timeout)
         read_ready && stream == read_ready[0][0]
       end
@@ -228,7 +228,7 @@ Invoke-PowerShellUserCode @params
       # the .fileno will still return an int, and calling get_osfhandle against
       # it returns what the CRT thinks is a valid Windows HANDLE value, but
       # that may no longer exist
-      def self.is_stream_valid?(stream)
+      def self.stream_valid?(stream)
         # when a stream is closed, its obviously invalid, but Ruby doesn't always know
         !stream.closed? &&
           # so calling stat will yield an EBADF when underlying OS handle is bad
@@ -305,7 +305,7 @@ Invoke-PowerShellUserCode @params
       end
 
       def read_from_pipe(pipe, timeout = 0.1)
-        if self.class.is_readable?(pipe, timeout)
+        if self.class.readable?(pipe, timeout)
           l = pipe.readpartial(4096)
           Puppet.debug "#{Time.now} PIPE> #{l}"
           # since readpartial may return a nil at EOF, skip returning that value
@@ -322,7 +322,7 @@ Invoke-PowerShellUserCode @params
 
         # there's ultimately a bit of a race here
         # read one more time after signal is received
-        read_from_pipe(pipe, 0) { |s| output << s } while self.class.is_readable?(pipe)
+        read_from_pipe(pipe, 0) { |s| output << s } while self.class.readable?(pipe)
 
         # string has been binary up to this point, so force UTF-8 now
         (output == []) ?

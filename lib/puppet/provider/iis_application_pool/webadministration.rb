@@ -223,14 +223,14 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
   end
 
   def escape_value(value)
-    if is_number?(value)
+    if number?(value)
       value
     else
       "'#{value.to_s.gsub("'", "''")}\'"
     end
   end
 
-  def is_number?(value)
+  def number?(value)
     value.respond_to?(:to_i) ? value.to_s == value.to_i.to_s : false
   end
 end
