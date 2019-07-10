@@ -38,7 +38,7 @@ module PuppetX
               hive.open('SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5', Win32::Registry::KEY_READ | 0x100) do |_reg|
                 value = true
               end
-            rescue Win32::Registry::Error => e
+            rescue Win32::Registry::Error
               value = false
             end
           end

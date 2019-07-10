@@ -49,10 +49,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     end
 
     result = ps_manager.execute(command)
-
-    stdout      = result[:stdout]
-    stderr      = result[:stderr]
-    exit_code   = result[:exitcode]
+    stderr = result[:stderr]
 
     unless stderr.nil?
       stderr.each do |er|

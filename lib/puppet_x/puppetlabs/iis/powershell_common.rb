@@ -1,5 +1,6 @@
 module PuppetX
   module IIS
+    # PowerShellCommon
     module PowerShellCommon
       def powershell_path
         path = if File.exist?("#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe")
@@ -8,7 +9,7 @@ module PuppetX
                  "#{ENV['SYSTEMROOT']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe"
                else
                  'powershell.exe'
-              end
+               end
         path
       end
       module_function :powershell_path

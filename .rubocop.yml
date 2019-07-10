@@ -13,7 +13,7 @@ AllCops:
   - "**/Gemfile"
   - "**/Rakefile"
   - pkg/**/*
-  - spec/fixtures/**/*
+  - spec/**/**/*
   - vendor/**/*
   - "**/Puppetfile"
   - "**/Vagrantfile"
@@ -41,7 +41,7 @@ Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
 Style/ClassAndModuleChildren:
   Description: Compact style reduces the required amount of indentation.
-  EnforcedStyle: compact
+  Enabled: false
 Style/EmptyElse:
   Description: Enforce against empty else clauses, but allow `nil` for clarity.
   EnforcedStyle: empty
