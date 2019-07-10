@@ -9,7 +9,7 @@ module PuppetX
         # path Property
         class Path < Puppet::Property
           validate do |value|
-            unless value =~ %r{/^.:(\/|\\)/} || value =~ %r{^\\\\[^\\]+\\[^\\]+}
+            unless value =~ /^.:(\/|\\)/ || value =~ /^\\\\[^\\]+\\[^\\]+/
               raise("#{name} should be a path (local or UNC) not '#{value}'")
             end
           end
