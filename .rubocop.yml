@@ -136,3 +136,5 @@ Lint/AssignmentInCondition:
   Enabled: false
 Lint/IneffectiveAccessModifier:
   Enabled: false
+Style/RegexpLiteral:
+  Enabled: false

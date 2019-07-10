@@ -49,6 +49,3 @@ spec/default_facts.yml:
 
 .travis.yml:
   unmanaged: true
-
-appveyor.yml:
-  delete: true
