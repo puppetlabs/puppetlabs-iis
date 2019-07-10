@@ -511,7 +511,7 @@ describe Puppet::Type.type(:iis_site) do
         resource[:logperiod] = 'Daily'
         resource[:logtruncatesize] = 1_048_576
         resource.validate
-      }.to raise_error(Puppet::Error, %r{Cannot specify logperiod and logtruncatesize at the same time})
+      }.to raise_error(RuntimeError, %r{Cannot specify logperiod and logtruncatesize at the same time})
     end
 
     it 'does not allow logflags to be used without logformat set to W3C at same time' do
@@ -519,14 +519,14 @@ describe Puppet::Type.type(:iis_site) do
         resource[:logflags] = 'Date'
         resource[:logformat] = 'IIS'
         resource.validate
-      }.to raise_error(Puppet::Error, %r{Cannot specify logflags when logformat is not W3C})
+      }.to raise_error(RuntimeError, %r{Cannot specify logflags when logformat is not W3C})
     end
 
     it 'does not allow either serviceautostartprovidername or serviceautostartprovidertype to be specified without the other' do
       expect {
         resource[:serviceautostartprovidername] = 'foo'
         resource.validate
-      }.to raise_error(Puppet::Error, %r{Must specify serviceautostartprovidertype as well as serviceautostartprovidername})
+      }.to raise_error(RuntimeError, %r{Must specify serviceautostartprovidertype as well as serviceautostartprovidername})
     end
   end
   # context "parameter :state" do

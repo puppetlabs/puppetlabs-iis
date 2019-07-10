@@ -24,7 +24,7 @@ describe 'iis_application provider' do
         { title: 'foo\bar' }
       end
 
-      it { expect { subject.create }.to raise_error(Puppet::Error, %r{physicalpath}) }
+      it { expect { subject.create }.to raise_error(RuntimeError, %r{physicalpath}) }
     end
     context 'with nonexistent physicalpath' do
       let(:params) do
@@ -35,9 +35,9 @@ describe 'iis_application provider' do
       end
 
       before :each do
-        expect(File).to receive(:exists?).with('C:\noexist').and_return(false)
+        allow(File).to receive(:exists?).with('C:\noexist').and_return(false)
       end
-      it { expect { subject.create }.to raise_error(Puppet::Error, %r{doesn't exist}) }
+      it { expect { subject.create }.to raise_error(RuntimeError, %r{doesn't exist}) }
     end
     context 'with existent physicalpath' do
       let(:params) do
@@ -49,8 +49,8 @@ describe 'iis_application provider' do
       end
 
       before :each do
-        expect(File).to receive(:exists?).with('C:\exist').and_return(true)
-        expect(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
+        allow(File).to receive(:exist?).with('C:\exist').and_return(true)
+        allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
       end
       it { subject.create }
     end
