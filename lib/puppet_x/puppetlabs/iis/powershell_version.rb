@@ -9,7 +9,7 @@ module PuppetX
       end
     end
   end
-  end
+end
 
 if Puppet::Util::Platform.windows?
   require 'win32/registry'
