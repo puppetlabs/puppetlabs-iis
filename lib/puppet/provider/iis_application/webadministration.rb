@@ -71,26 +71,25 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     inst_cmd << "$webApplication = Get-WebApplication -Site '#{self.class.find_sitename(resource)}' -Name '#{app_name}'"
     if @property_flush[:physicalpath]
       # XXX Under what conditions would we have other paths?
-      inst_cmd << %{Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name physicalPath -Value '\
-        #{@resource[:physicalpath]}' -ErrorAction Stop}
+      inst_cmd << %{Set-WebConfigurationProperty -Filter "$($webApplication.ItemXPath)/virtualDirectory[@path='/']" -Name physicalPath -Value '#{@resource[:physicalpath]}' -ErrorAction Stop}
     end
 
     if @property_flush[:sslflags]
       flags = @property_flush[:sslflags].join(',')
-      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'\
-       -Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
+      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'"\
+      " -Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
     end
 
     if @property_flush[:authenticationinfo]
       @property_flush[:authenticationinfo].each do |auth, _enable|
-        inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'\
-         -Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
+        inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'"\
+        " -Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
       end
     end
 
     if @property_flush[:enabledprotocols]
-      inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"\
-      #{self.class.find_sitename(resource)}\"]/application[@path=\"/#{app_name}\"]' -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
+      inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{self.class.find_sitename(resource)}\"]/application[@path=\"/#{app_name}\"]'" \
+      "' -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
     end
 
     if @property_flush[:applicationpool]
