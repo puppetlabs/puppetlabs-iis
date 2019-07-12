@@ -4,6 +4,7 @@ describe 'iis_application' do
   subject do
     Puppet::Type.type(:iis_application).new(params)
   end
+
   context 'specifying title with sitename' do
     let(:params) do
       {
@@ -11,6 +12,7 @@ describe 'iis_application' do
         sitename: 'foo',
       }
     end
+
     it { expect(subject[:sitename]).to eq 'foo' }
     it { expect(subject[:applicationname]).to eq 'bar' }
   end
@@ -22,6 +24,7 @@ describe 'iis_application' do
         applicationname: 'bar',
       }
     end
+
     it { expect(subject[:sitename]).to eq 'foo' }
     it { expect(subject[:applicationname]).to eq 'bar' }
   end
@@ -32,6 +35,7 @@ describe 'iis_application' do
         virtual_directory: 'IIS:\Sites\foo\bar',
       }
     end
+
     it { expect(subject[:virtual_directory]).to eq 'IIS:\Sites\foo\bar' }
   end
   context 'specifying virtual_directory with no provider path' do
@@ -41,7 +45,8 @@ describe 'iis_application' do
         virtual_directory: 'foo\bar',
       }
     end
-    it {expect(subject[:virtual_directory]).to eq 'IIS:/Sites/foo\bar'}
+
+    it { expect(subject[:virtual_directory]).to eq 'IIS:/Sites/foo\bar' }
   end
   context 'specifying authenticationinfo' do
     let(:params) do
@@ -53,7 +58,8 @@ describe 'iis_application' do
         },
       }
     end
-    it { expect(subject[:authenticationinfo]).to eq({ 'basic' => true, 'anonymous' => true }) }
+
+    it { expect(subject[:authenticationinfo]).to eq('basic' => true, 'anonymous' => true) }
   end
   context 'specifying physicalpath' do
     let(:params) do
@@ -62,55 +68,60 @@ describe 'iis_application' do
         physicalpath: 'C:\test',
       }
     end
+
     it { expect(subject[:physicalpath]).to eq 'C:\test' }
   end
 
   describe 'parameter :applicationpool' do
-    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
+    ['value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period'].each do |value|
       context "when '#{value}'" do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationpool: value
+            applicationpool: value,
           }
         end
-        it { expect{subject}.not_to raise_error }
+
+        it { expect { subject }.not_to raise_error }
       end
     end
-    [ '*', '()', '[]', '!@' ].each do |value|
+    ['*', '()', '[]', '!@'].each do |value|
       context "when '#{value}'" do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationpool: value
+            applicationpool: value,
           }
         end
-        it {expect{subject}.to raise_error(Puppet::ResourceError, /is not a valid applicationpool/)}
+
+        it { expect { subject }.to raise_error(Puppet::ResourceError, %r{is not a valid applicationpool}) }
       end
     end
   end
 
   describe 'parameter :sitename' do
-    [ 'value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period' ].each do |value|
+    ['value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period'].each do |value|
       context "when '#{value}'" do
         let(:params) do
           {
             title: 'foo\bar',
-            sitename: value
+            sitename: value,
           }
         end
-        it { expect{subject}.not_to raise_error }
+
+        it { expect { subject }.not_to raise_error }
       end
     end
-    [ '*', '()', '[]', '!@' ].each do |value|
+    ['*', '()', '[]', '!@'].each do |value|
       context "when '#{value}'" do
         let(:params) do
           {
             title: 'foo\bar',
-            sitename: value
+            sitename: value,
           }
         end
-        it { expect{subject}.to raise_error(Puppet::ResourceError, /is not a valid sitename/) }
+
+        it { expect { subject }.to raise_error(Puppet::ResourceError, %r{is not a valid sitename}) }
       end
     end
   end
@@ -123,7 +134,8 @@ describe 'iis_application' do
           applicationpool: '',
         }
       end
-      it { expect{subject}.to raise_error(Puppet::Error, /applicationpool/) }
+
+      it { expect { subject }.to raise_error(Puppet::Error, %r{applicationpool}) }
     end
     context 'when invalid' do
       let(:params) do
@@ -132,7 +144,8 @@ describe 'iis_application' do
           applicationpool: 'sweet!',
         }
       end
-      it { expect{subject}.to raise_error(Puppet::Error, /applicationpool/) }
+
+      it { expect { subject }.to raise_error(Puppet::Error, %r{applicationpool}) }
     end
     context 'when valid' do
       let(:params) do
@@ -141,6 +154,7 @@ describe 'iis_application' do
           applicationpool: 'OtherPool',
         }
       end
+
       it { expect(subject[:applicationpool]).to eq 'OtherPool' }
     end
   end
@@ -152,6 +166,7 @@ describe 'iis_application' do
           sslflags: 'Ssl',
         }
       end
+
       it { expect(subject[:sslflags]).to eq([:Ssl]) }
     end
     context 'array of items' do
@@ -161,9 +176,10 @@ describe 'iis_application' do
           sslflags: [
             'Ssl',
             'SslNegotiateCert',
-          ]
+          ],
         }
       end
+
       it { expect(subject[:sslflags]).to eq([:Ssl, :SslNegotiateCert]) }
     end
     context 'array with invalid items' do
@@ -173,10 +189,11 @@ describe 'iis_application' do
           sslflags: [
             'SslOn',
             'SslNegotiateCert',
-          ]
+          ],
         }
       end
-      it { expect{subject}.to raise_error(Puppet::Error, /sslflags/) }
+
+      it { expect { subject }.to raise_error(Puppet::Error, %r{sslflags}) }
     end
   end
   describe 'enabledprotocols' do
@@ -187,6 +204,7 @@ describe 'iis_application' do
           enabledprotocols: 'http,https,net.pipe,net.tcp,net.msmq,msmq.formatname',
         }
       end
+
       it { expect(subject[:enabledprotocols]).to eq('http,https,net.pipe,net.tcp,net.msmq,msmq.formatname') }
     end
     context 'should not allow nil' do
@@ -196,7 +214,8 @@ describe 'iis_application' do
           enabledprotocols: nil,
         }
       end
-      it { expect{subject}.to raise_error(Puppet::Error, /Got nil value for enabledprotocols/) }
+
+      it { expect { subject }.to raise_error(Puppet::Error, %r{Got nil value for enabledprotocols}) }
     end
     context 'should not allow empty' do
       let(:params) do
@@ -205,7 +224,8 @@ describe 'iis_application' do
           enabledprotocols: '',
         }
       end
-      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname/) }
+
+      it { expect { subject }.to raise_error(Puppet::ResourceError, %r{Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname}) }
     end
     context 'should not accept invalid string value' do
       let(:params) do
@@ -214,7 +234,8 @@ describe 'iis_application' do
           enabledprotocols: 'woot',
         }
       end
-      it { expect{subject}.to raise_error(Puppet::ResourceError, /Invalid protocol 'woot'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname/) }
+
+      it { expect { subject }.to raise_error(Puppet::ResourceError, %r{Invalid protocol 'woot'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname}) }
     end
   end
 end

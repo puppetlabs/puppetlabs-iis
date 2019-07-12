@@ -1,8 +1,10 @@
+# @api private
 module PuppetX
+  # @api private
   module IIS
+    # @api private
     module Features
-
-      def is_iis_feature?(feature_name)
+      def iis_feature?(feature_name)
         # Note this code uses an array of the latest IIS features available to
         # install, but does not keep track of which subset is available in a given
         # IIS distribution. We could have kept track but since there are only a
@@ -12,7 +14,7 @@ module PuppetX
         # present in which IIS version and only keep track of the larger list.
         IIS_INSTALLABLE_FEATURES.include?(feature_name.downcase)
       end
-      module_function :is_iis_feature?
+      module_function :iis_feature?
 
       # Note - In order to make comparisions easier, all text should be lowercase.
       IIS_INSTALLABLE_FEATURES = [

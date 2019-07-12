@@ -1,6 +1,10 @@
+# @api private
 module PuppetX
+  # @api private
   module PuppetLabs
+    # @api private
     module IIS
+      # IISVersion
       class IISVersion
         def self.supported_version_installed?
           false
@@ -15,16 +19,15 @@ if Puppet::Util::Platform.windows?
   module PuppetX
     module PuppetLabs
       module IIS
+        # IISVersion
         class IISVersion
-
           def self.supported_versions
-            ['7.5', '8.0', '8.5','10.0']
+            ['7.5', '8.0', '8.5', '10.0']
           end
 
           def self.installed_version
             version = nil
             begin
-
               hklm        = Win32::Registry::HKEY_LOCAL_MACHINE
               reg_path    = 'SOFTWARE\Microsoft\InetStp'
               access_type = Win32::Registry::KEY_READ | 0x100
@@ -38,8 +41,7 @@ if Puppet::Util::Platform.windows?
               end
 
               version = "#{major_version}.#{minor_version}"
-
-            rescue Exception => e
+            rescue StandardError
               version = nil
             end
             version
@@ -48,7 +50,6 @@ if Puppet::Util::Platform.windows?
           def self.supported_version_installed?
             supported_versions.include? installed_version
           end
-
         end
       end
     end

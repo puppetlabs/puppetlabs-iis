@@ -1,13 +1,13 @@
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
-  desc "IIS Application Pool provider using the PowerShell WebAdministration module"
+  desc 'IIS Application Pool provider using the PowerShell WebAdministration module'
 
-  confine     :feature         => :iis_web_server
-  confine     :operatingsystem => [ :windows ]
-  defaultfor :operatingsystem => :windows
+  confine     feature: :iis_web_server
+  confine     operatingsystem: [:windows]
+  defaultfor operatingsystem: :windows
 
-  commands :powershell => PuppetX::IIS::PowerShellCommon.powershell_path
+  commands powershell: PuppetX::IIS::PowerShellCommon.powershell_path
 
   mk_resource_methods
 
@@ -19,7 +19,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     Puppet.debug "Creating #{@resource[:name]}"
     inst_cmd = "New-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
-    Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error creating apppool: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     Puppet.err "Error creating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
     @resource[:ensure] = :present
   end
@@ -28,7 +28,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     Puppet.debug "Updating #{@resource[:name]}"
     cmd = []
 
-    @resource.properties.select{|rp| rp.name != :ensure && rp.name != :state}.each do |property|
+    @resource.properties.select { |rp| rp.name != :ensure && rp.name != :state }.each do |property|
       property_name = iis_properties[property.name.to_s]
       Puppet.debug "Changing #{property_name} to #{property.value}"
       if property.value.is_a?(Array)
@@ -41,7 +41,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       end
     end
 
-    if !@resource[:state].nil?
+    unless @resource[:state].nil?
       Puppet.debug "Changing #{@resource[:name]} to #{@resource[:state]}"
       case @resource[:state].downcase
       when :stopped
@@ -52,8 +52,8 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     end
 
     cmd = cmd.join("\n")
-    result   = self.class.run(cmd)
-    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
+    result = self.class.run(cmd)
+    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
   end
 
@@ -61,13 +61,13 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     Puppet.debug "Creating #{@resource[:name]}"
     inst_cmd = "Remove-WebAppPool -Name \"#{@resource[:name]}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
-    Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     Puppet.err "Error destroying apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
-    
-    @resource[:ensure]  = :absent
+
+    @resource[:ensure] = :absent
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @property_flush = {}
   end
@@ -75,7 +75,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
   def self.prefetch(resources)
     pools = instances
     resources.keys.each do |pool|
-      if provider = pools.find{ |s| s.name == pool }
+      if provider = pools.find { |s| s.name == pool }
         resources[pool].provider = provider
       end
     end
@@ -86,16 +86,16 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     result   = run(inst_cmd)
     return [] if result.nil?
 
-    pool_json = self.parse_json_result(result[:stdout])
+    pool_json = parse_json_result(result[:stdout])
     return [] if pool_json.nil?
 
-    pool_json.collect do |pool|
+    pool_json.map do |pool|
       pool_hash = {}
 
       pool_hash[:ensure] = :present
       pool_hash[:name]   = pool['name']
       pool_hash[:state]  = pool['state'].to_s.downcase
-      
+
       pool_hash[:auto_start]                    = pool['auto_start'].to_s.downcase
       pool_hash[:clr_config_file]               = pool['clr_config_file']
       pool_hash[:enable32_bit_app_on_win64]     = pool['enable32_bit_app_on_win64'].to_s.downcase
@@ -152,8 +152,9 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       new(pool_hash)
     end
   end
-  
+
   private
+
   def iis_properties
     # most of these are found with appcmd list apppool /text:*
     iis_properties = {
@@ -194,7 +195,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       'startup_time_limit'         => 'processModel.startupTimeLimit',
       'user_name'                  => 'processModel.userName',
       'password'                   => 'processModel.password',
-      
+
       'orphan_action_exe'          => 'failure.orphanActionExe',
       'orphan_action_params'       => 'failure.orphanActionParams',
       'orphan_worker_process'      => 'failure.orphanWorkerProcess',
@@ -215,21 +216,21 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       'restart_private_memory_limit'       => 'recycling.periodicRestart.privateMemory',
       'restart_requests_limit'             => 'recycling.periodicRestart.requests',
       'restart_time_limit'                 => 'recycling.periodicRestart.time',
-      'restart_schedule'                   => 'recycling.periodicRestart.schedule'
+      'restart_schedule'                   => 'recycling.periodicRestart.schedule',
     }
-    
+
     iis_properties
   end
 
   def escape_value(value)
-    if is_number?(value)
+    if number?(value)
       value
     else
-      "'#{value.to_s.gsub("'","''")}\'"
+      "'#{value.to_s.gsub("'", "''")}\'"
     end
   end
 
-  def is_number?(value)
+  def number?(value)
     value.respond_to?(:to_i) ? value.to_s == value.to_i.to_s : false
   end
 end

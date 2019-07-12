@@ -1,15 +1,15 @@
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_PowerShell) do
-  desc "IIS feature provider"
+  desc 'IIS feature provider'
 
   require Pathname.new(__FILE__).dirname + '..' + '..' + '..' + 'puppet_x' + 'puppetlabs' + 'iis' + 'iis_features'
   include PuppetX::IIS::Features
 
-  confine    :operatingsystem  => [ :windows ]
-  defaultfor :operatingsystem  => :windows
+  confine    operatingsystem: [:windows]
+  defaultfor operatingsystem: :windows
 
-  commands :powershell => PuppetX::IIS::PowerShellCommon.powershell_path
+  commands powershell: PuppetX::IIS::PowerShellCommon.powershell_path
 
   mk_resource_methods
 
@@ -18,7 +18,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   end
 
   def create
-    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.is_iis_feature?(resource[:name])
+    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.iis_feature?(resource[:name])
 
     if @resource[:include_management_tools] == true && self.class.is_windows2008 == true
       raise Puppet::Error, 'include_management_tools can only be used with Windows 2012 and above'
@@ -42,7 +42,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   end
 
   def destroy
-    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.is_iis_feature?(resource[:name])
+    raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.iis_feature?(resource[:name])
 
     cmd = []
     cmd << "Import-Module ServerManager; Remove-WindowsFeature -Name #{resource[:name]}" if self.class.is_windows2008 == true
@@ -56,20 +56,20 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
 
   def self.instances
     cmd = []
-    cmd << 'Import-Module ServerManager; ' if self.is_windows2008 == true
+    cmd << 'Import-Module ServerManager; ' if is_windows2008 == true
     cmd << 'Get-WindowsFeature | Sort Name | Select Name,Installed | ConvertTo-Json -Depth 4'
-    
-    result = self.run(cmd.join)
+
+    result = run(cmd.join)
 
     return [] if result.nil?
 
-    json = self.parse_json_result(result[:stdout])
+    json = parse_json_result(result[:stdout])
     return [] if json.nil?
 
-    json.select { |feature| PuppetX::IIS::Features.is_iis_feature?(feature['Name']) }.collect do |feature|
+    json.select { |feature| PuppetX::IIS::Features.iis_feature?(feature['Name']) }.map do |feature|
       feature_hash = {
-        :name   => feature['Name'],
-        :ensure => feature['Installed'] == true ? :present : :absent,
+        name: feature['Name'],
+        ensure: (feature['Installed'] == true) ? :present : :absent,
       }
 
       new(feature_hash)
@@ -79,14 +79,14 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   def self.prefetch(resources)
     features = instances
     resources.keys.each do |name|
-      if provider = features.find { |feature| name.casecmp(feature.name) == 0 }
+      if provider = features.find { |feature| name.casecmp(feature.name).zero? }
         resources[name].provider = provider
       end
     end
   end
-  
+
   def self.is_windows2008
-    self.os_major_version == '6.1'
+    os_major_version == '6.1'
   end
 
   def self.os_major_version

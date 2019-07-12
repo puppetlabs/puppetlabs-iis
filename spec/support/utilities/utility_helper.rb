@@ -1,26 +1,26 @@
 def format_powershell_iis_command(ps_command)
   command = []
-  command << "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -noninteractive -noprofile -executionpolicy bypass -command "
-  command << "\"& {"
-  command << "Import-Module WebAdministration -ErrorAction Stop;"
-  command << "cd iis: ;"
+  command << 'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -noninteractive -noprofile -executionpolicy bypass -command '
+  command << '"& {'
+  command << 'Import-Module WebAdministration -ErrorAction Stop;'
+  command << 'cd iis: ;'
   command << ps_command
-  command << "}\" < /dev/null"
-  return command.join
+  command << '}" < /dev/null'
+  command.join
 end
 
 def create_selfsigned_cert(dnsname)
   # Due to most self-signed certificate methods don't work on 2008, instead use a test file with a fixed
   # hostname of www.puppet.local.  The helper method will still keep the variable so that when 2008 is dropped
   # only this helper needs to be updated, not the tests.
-  fail 'Unable to create a self signed cert for DNS Name of #{dnsname}.  Only www.puppet.local is allowed' unless dnsname == 'www.puppet.local'
+  raise 'Unable to create a self signed cert for DNS Name of #{dnsname}.  Only www.puppet.local is allowed' unless dnsname == 'www.puppet.local'
 
   # Test Certificate fixture
   cert_filename_source       = File.dirname(__FILE__) + "/../files/#{dnsname}.pfx"
   cert_filename_dest         = "/cygdrive/c/#{dnsname}.pfx"
   cert_filename_dest_windows = "C:/#{dnsname}.pfx"
 
-  Beaker::DSL::Helpers::HostHelpers::scp_to(default, cert_filename_source, cert_filename_dest)
+  Beaker::DSL::Helpers::HostHelpers.scp_to(default, cert_filename_source, cert_filename_dest)
 
   # Defaults to personal machine store
   command = format_powershell_iis_command("& CERTUTIL -f -p puppet -importpfx '#{cert_filename_dest_windows}' NoRoot ")

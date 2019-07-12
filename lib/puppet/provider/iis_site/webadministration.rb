@@ -7,13 +7,13 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 # puppet run
 
 Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
-  desc "IIS Provider using the PowerShell WebAdministration module"
+  desc 'IIS Provider using the PowerShell WebAdministration module'
 
-  confine     :feature         => :iis_web_server
-  confine     :operatingsystem => [:windows ]
-  defaultfor :operatingsystem => :windows
+  confine     feature: :iis_web_server
+  confine     operatingsystem: [:windows]
+  defaultfor operatingsystem: :windows
 
-  commands :powershell => PuppetX::IIS::PowerShellCommon.powershell_path
+  commands powershell: PuppetX::IIS::PowerShellCommon.powershell_path
 
   mk_resource_methods
 
@@ -26,10 +26,10 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     result = self.class.run(inst_cmd)
 
-    Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error creating website: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
-    return exists?
+    exists?
   end
 
   def update
@@ -50,12 +50,12 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
 
     if @resource[:authenticationinfo]
-      @resource[:authenticationinfo].each do |auth,enable|
-        args = Array.new
+      @resource[:authenticationinfo].each do |auth, _enable|
+        args = []
         args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
         args << "-PSPath 'IIS:\\'"
         args << "-Location '#{@resource[:name]}'"
-        args << "-Name enabled"
+        args << '-Name enabled'
         args << "-Value #{@resource[:authenticationinfo][auth]}"
         cmd << "Set-WebConfigurationProperty #{args.join(' ')} -ErrorAction Stop\n"
       end
@@ -65,18 +65,18 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     result = self.class.run(inst_cmd)
 
-    Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error updating website: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
-    return exists?
+    exists?
   end
 
   def destroy
     inst_cmd = "Remove-Website -Name \"#{@resource[:name]}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
-    Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:exitcode] == 0
+    Puppet.err "Error destroying website: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:errormessage].nil?
-    return exists?
+    exists?
   end
 
   def exists?
@@ -84,32 +84,32 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     result   = self.class.run(inst_cmd)
 
-    return result[:exitcode] == 0
+    (result[:exitcode]).zero?
   end
 
   def start
-    create if ! exists?
+    create unless exists?
 
     inst_cmd = "Start-Website -Name \"#{@resource[:name]}\" -ErrorVariable errvar;if($errvar){ throw \"$($errvar). Perhaps there is another website with this port or configuration setting\" }"
     result   = self.class.run(inst_cmd)
 
-    fail "Error starting website: #{result[:errormessage]}" unless result[:errormessage].nil? || result[:exitcode] == 0
+    raise "Error starting website: #{result[:errormessage]}" unless result[:errormessage].nil? || (result[:exitcode]).zero?
 
-    return true
+    true
   end
 
   def stop
-    create if ! exists?
+    create unless exists?
 
     inst_cmd = "Stop-Website -Name \"#{@resource[:name]}\" -ErrorVariable errvar;if($errvar){ throw \"$($errvar).\" }"
     result   = self.class.run(inst_cmd)
 
-    fail "Error stopping website: #{result[:errormessage]}" unless result[:errormessage].nil? || result[:exitcode] == 0
+    raise "Error stopping website: #{result[:errormessage]}" unless result[:errormessage].nil? || (result[:exitcode]).zero?
 
-    return true
+    true
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @property_flush = {}
   end
@@ -117,12 +117,11 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def self.prefetch(resources)
     sites = instances
     resources.keys.each do |site|
-      if !sites.nil? && provider = sites.find { |s| s.name == site }
-        if !resources[site]['authenticationinfo'].nil?
-          resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])
-        end
-        resources[site].provider = provider
+      next unless !sites.nil? && provider = sites.find { |s| s.name == site }
+      unless resources[site]['authenticationinfo'].nil?
+        resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])
       end
+      resources[site].provider = provider
     end
   end
 
@@ -131,16 +130,16 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     result   = run(inst_cmd)
     return [] if result.nil?
 
-    site_json = self.parse_json_result(result[:stdout])
+    site_json = parse_json_result(result[:stdout])
     return [] if site_json.nil?
 
-    return site_json.collect do |site|
+    site_json.map do |site|
       site_hash = {}
 
       # In PowerShell 2.0, empty strings come in as nil which then fail insync? tests.
       # Convert nil's to empty strings for all properties which we know are String types
-      ['name','physicalpath','applicationpool','hostheader','state','serverautostart','enabledprotocols',
-       'logformat','logpath','logperiod','logtruncatesize','loglocaltimerollover','logextfileflags'].each do |setting|
+      ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
+       'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].each do |setting|
         site[setting] = '' if site[setting].nil?
       end
       site['bindings'] = [] if site['bindings'].nil?
@@ -170,7 +169,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       site_hash[:logtruncatesize]      = site['logtruncatesize']
       site_hash[:loglocaltimerollover] = to_bool(site['loglocaltimerollover'])
       site_hash[:logformat]            = site['logformat']
-      site_hash[:logflags]             = site['logextfileflags'].split(/,\s*/).sort
+      site_hash[:logflags]             = site['logextfileflags'].split(%r{,\s*}).sort
       site_hash[:preloadenabled]       = to_bool(site['preloadenabled']) unless site['preloadenabled'].nil?
       site_hash[:authenticationinfo]   = site['authenticationinfo']
 
@@ -179,23 +178,23 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   end
 
   def self.to_bool(value)
-    return :true   if value == true   || value =~ (/(true|t|yes|y|1)$/i)
-    return :false  if value == false  || value =~ (/(^$|false|f|no|n|0)$/i)
-    raise ArgumentError.new("invalid value for Boolean: \"#{value}\"")
+    return :true   if value == true   || value =~ %r{(true|t|yes|y|1)$}i
+    return :false  if value == false  || value =~ %r{(^$|false|f|no|n|0)$}i
+    raise ArgumentError, "invalid value for Boolean: \"#{value}\""
   end
 
   def binding_information
-    if @resource[:bindings] && (["http","https"].include?(@resource['bindings'].first['protocol']))
+    if @resource[:bindings] && ['http', 'https'].include?(@resource['bindings'].first['protocol'])
       binding = @resource[:bindings].first
-      matches = binding['bindinginformation'].match(/^(?<ip_dns>.+):(?<port>\d*):(?<host_header>(.*))/)
-      return matches[:ip_dns], matches[:port], matches[:host_header]
+      matches = binding['bindinginformation'].match(%r{^(?<ip_dns>.+):(?<port>\d*):(?<host_header>(.*))})
+      [matches[:ip_dns], matches[:port], matches[:host_header]]
     end
   end
 
   def ssl?
-    bindings_ssl  = !resource[:bindings].find {|x| x['protocol'] == 'https'}.nil? unless resource[:bindings].nil?
-    port_443      = binding_information[1] == '443' unless binding_information.nil?
+    bindings_ssl = !resource[:bindings].find { |x| x['protocol'] == 'https' }.nil? unless resource[:bindings].nil?
+    port443 = binding_information[1] == '443' unless binding_information.nil?
 
-    bindings_ssl || port_443
+    bindings_ssl || port443
   end
 end

@@ -3,7 +3,7 @@ require 'spec_helper_acceptance'
 describe 'iis_application' do
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
-    remove_all_sites();
+    remove_all_sites
   end
 
   context 'when creating an application' do
@@ -49,8 +49,8 @@ describe 'iis_application' do
             HERE
           end
 
-          it 'should run with no changes' do
-            execute_manifest(@manifest, :catch_changes => true)
+          it 'runs with no changes' do
+            execute_manifest(@manifest, catch_changes: true)
           end
         end
       end
@@ -112,11 +112,11 @@ describe 'iis_application' do
 
       it_behaves_like 'an idempotent resource'
 
-      describe "application validation" do
-        it "should create the correct application" do
+      describe 'application validation' do
+        it 'creates the correct application' do
           @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/#{@app_name}"))
           expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/#{@app_name}':/)
-          expect(@result.stdout).to match(/ensure\s*=> 'present',/)
+          expect(@result.stdout).to match(%r{ensure\s*=> 'present',})
         end
       end
 
@@ -143,11 +143,11 @@ describe 'iis_application' do
 
       it_behaves_like 'an idempotent resource'
 
-      describe "application validation" do
-        it "should create the correct application" do
+      describe 'application validation' do
+        it 'creates the correct application' do
           @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/#{@app_name}"))
           expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/#{@app_name}':/)
-          expect(@result.stdout).to match(/ensure\s*=> 'present',/)
+          expect(@result.stdout).to match(%r{ensure\s*=> 'present',})
         end
       end
 
@@ -225,11 +225,11 @@ describe 'iis_application' do
 
       it_behaves_like 'an idempotent resource'
 
-      describe "application validation" do
-        it "should create the correct application" do
+      describe 'application validation' do
+        it 'creates the correct application' do
           @result = on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\subFolder/sub2/#{@app_name}"))
           expect(@result.stdout).to match(/iis_application { '#{@site_name}\\subFolder\/sub2\/#{@app_name}':/)
-          expect(@result.stdout).to match(/ensure\s*=> 'present',/)
+          expect(@result.stdout).to match(%r{ensure\s*=> 'present',})
         end
       end
 
@@ -362,7 +362,6 @@ describe 'iis_application' do
     end
   end
 
-
   context 'with multiple sites with same application name' do
     before(:all) do
       remove_all_sites
@@ -400,27 +399,26 @@ describe 'iis_application' do
       HERE
     end
 
-    it 'should run without errors' do
-      execute_manifest(@manifest, :catch_failures => true)
+    it 'runs without errors' do
+      execute_manifest(@manifest, catch_failures: true)
     end
 
-    it 'should run a second time without changes' do
-      execute_manifest(@manifest, :catch_changes => true)
+    it 'runs a second time without changes' do
+      execute_manifest(@manifest, catch_changes: true)
     end
-
 
     it 'contains two sites with the same app name' do
       on(default, puppet('resource', 'iis_application', "#{@site_name}\\\\#{@app_name}")) do |result|
-        expect(result.stdout).to match(/#{@site_name}\\#{@app_name}/)
-        expect(result.stdout).to match(/ensure\s*=> 'present',/)
-        expect(result.stdout).to match (/C:\\inetpub\\#{@site_name}\\#{@app_name}/)
-        expect(result.stdout).to match (/applicationpool\s*=> 'DefaultAppPool'/)
+        expect(result.stdout).to match(%r{#{@site_name}\\#{@app_name}})
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
+        expect(result.stdout).to match %r{C:\\inetpub\\#{@site_name}\\#{@app_name}}
+        expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
       end
       on(default, puppet('resource', 'iis_application', "#{@site_name2}\\\\#{@app_name}")) do |result|
-        expect(result.stdout).to match(/#{@site_name2}\\#{@app_name}/)
-        expect(result.stdout).to match(/ensure\s*=> 'present',/)
-        expect(result.stdout).to match (/C:\\inetpub\\#{@site_name2}\\#{@app_name}/)
-        expect(result.stdout).to match (/applicationpool\s*=> 'DefaultAppPool'/)
+        expect(result.stdout).to match(%r{#{@site_name2}\\#{@app_name}})
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
+        expect(result.stdout).to match %r{C:\\inetpub\\#{@site_name2}\\#{@app_name}}
+        expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
       end
     end
 
