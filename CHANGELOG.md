@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [5.0.0] - 2019-07-16
+
 ### Changed
 
 - Increase the named pipe timeout to 180 seconds to prevent runs from failing waiting for a pipe to open ([MODULES-9087](https://tickets.puppetlabs.com/browse/MODULES-9087)).
+- Update minimum Puppet version to 5.5.10 ([MODULES-9349](https://tickets.puppetlabs.com/browse/MODULES-9349))
 
 ### Fixed
 
