@@ -5,15 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [5.0.0] - 2019-07-16
+
 ### Changed
 
 - Increase the named pipe timeout to 180 seconds to prevent runs from failing waiting for a pipe to open ([MODULES-9087](https://tickets.puppetlabs.com/browse/MODULES-9087)).
+- Update minimum Puppet version to 5.5.10 ([MODULES-9349](https://tickets.puppetlabs.com/browse/MODULES-9349))
 
 ### Fixed
 
 - Ensure setting `iis_application_pool` state is idempotent ([MODULES-7700](https://tickets.puppetlabs.com/browse/MODULES-7700)).
 - Ensure setting `:managed_runtime_version` to `''` results in `iis_app_pool` being set to `No Managed Code` idempotently ([MODULES-7820](https://tickets.puppetlabs.com/browse/MODULES-7820)).
 - Ensure ability to specify timespans which include days, such as `1.05:00:00` ([MODULES-8381]. (https://tickets.puppetlabs.com/browse/MODULES-8381)). Thanks, Trey Dockendorf ([@treydock](https://github.com/treydock))!
+- Ensure iis_feature source property is used when provided in a manifest ([MODULES-8254](https://tickets.puppetlabs.com/browse/MODULES-8254))
 
 ## [4.5.1] - 2019-03-02
 
