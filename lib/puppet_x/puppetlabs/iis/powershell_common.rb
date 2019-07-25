@@ -1,9 +1,10 @@
-# @api private
+# The Puppet Extensions Module
 module PuppetX
-  # @api private
+  # IIS
   module IIS
     # PowerShellCommon
     module PowerShellCommon
+      # powershell_path returns powershell's path
       def powershell_path
         path = if File.exist?("#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe")
                  "#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe"
@@ -16,6 +17,7 @@ module PuppetX
       end
       module_function :powershell_path
 
+      # powershell_args can be ['-NoProfile', '-NonInteractive', '-NoLogo', '-ExecutionPolicy', 'Bypass']
       def powershell_args
         ps_args = ['-NoProfile', '-NonInteractive', '-NoLogo', '-ExecutionPolicy', 'Bypass']
         ps_args

@@ -4,14 +4,15 @@ require 'open3'
 require 'base64'
 require File.join(File.dirname(__FILE__), 'compatible_powershell_version')
 
-# @api private
+# The Puppet Extensions Module
 module PuppetX
-  # @api private
+  # IIS
   module IIS
-    # PowerShell manager
+    # PowerShellManager - Responsible for managing PowerShell
     class PowerShellManager
       @@instances = {}
 
+      # powershell manager instance
       def self.instance(cmd, debug = false, pipe_timeout = 180)
         key = cmd + debug.to_s
         manager = @@instances[key]
@@ -29,16 +30,19 @@ module PuppetX
         @@instances[key]
       end
 
+      # verify if win32console is enabled
       def self.win32console_enabled?
         @win32console_enabled ||= defined?(Win32) &&
                                   defined?(Win32::Console) &&
                                   Win32::Console.class == Class
       end
 
+      # verify the compatibility of powershell's version
       def self.compatible_version_of_powershell?
         @compatible_powershell_version ||= PuppetX::PuppetLabs::IIS::CompatiblePowerShellVersion.compatible_version?
       end
 
+      # verify if powershell's version is supported
       def self.supported?
         Puppet::Util::Platform.windows? &&
           compatible_version_of_powershell? &&
@@ -90,6 +94,7 @@ module PuppetX
         at_exit { exit }
       end
 
+      # verify that powershell process is still running
       def alive?
         # powershell process running
         @ps_process.alive? &&
@@ -101,6 +106,7 @@ module PuppetX
           self.class.stream_valid?(@stderr)
       end
 
+      # execute powershell code
       def execute(powershell_code, timeout_ms = nil, working_dir = nil, environment_variables = [])
         code = make_ps_code(powershell_code, timeout_ms, working_dir, environment_variables)
 
@@ -121,6 +127,7 @@ module PuppetX
         out
       end
 
+      # shutdown PowerShellManager
       def exit
         @usable = false
 
@@ -145,6 +152,7 @@ module PuppetX
         @ps_process.join(2)
       end
 
+      # init path
       def self.init_path
         # a PowerShell -File compatible path to bootstrap the instance
         path = File.expand_path('../../../templates/iis', __FILE__)
@@ -155,6 +163,7 @@ module PuppetX
         "\"#{path}\""
       end
 
+      # make powershell code
       def make_ps_code(powershell_code, timeout_ms = nil, working_dir = nil, environment_variables = [])
         begin
           timeout_ms = Integer(timeout_ms)

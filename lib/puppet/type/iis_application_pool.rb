@@ -320,6 +320,10 @@ Puppet::Type.newtype(:iis_application_pool) do
   end
 
   newproperty(:pinging_enabled, boolean: true) do
+    desc "The pinging_enabled property specifies whether the WWW Service should periodically
+      monitor the health of a worker process. Setting the value of this property to true
+      indicates to the WWW service to monitor the worker processes to ensure that the
+      they are running and healthy."
     newvalues(:true, :false)
 
     munge do |value|

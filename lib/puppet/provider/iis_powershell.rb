@@ -15,6 +15,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
                        end
   end
 
+  # Match resources with existing providers
   def self.prefetch(resources)
     nodes = instances
     resources.keys.each do |name|
@@ -28,12 +29,14 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     @property_hash[:ensure] == :present
   end
 
+  # update if exists
   def flush
     if exists?
       update
     end
   end
 
+  # run command
   def self.run(command, _check = false)
     Puppet.debug("COMMAND: #{command}")
 
@@ -63,6 +66,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     result
   end
 
+  # PowerShellManager - Responsible for managing PowerShell
   def self.ps_manager
     PuppetX::IIS::PowerShellManager.instance("#{command(:powershell)} #{PuppetX::IIS::PowerShellCommon.powershell_args.join(' ')}")
   end
@@ -77,14 +81,19 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     @powershell_major_version
   end
 
+  # define PS_ONE_REG_PATH
   PS_ONE_REG_PATH   = 'SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'.freeze
+  # define PS_THREE_REG_PATH
   PS_THREE_REG_PATH = 'SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine'.freeze
+  # define PS_REG_KEY
   PS_REG_KEY        = 'PowerShellVersion'.freeze
 
+  # powershell_version
   def self.powershell_version
     Puppet::Util::Platform.windows? ? powershell_three_version || powershell_one_version : nil
   end
 
+  # powershell_one_version
   def self.powershell_one_version
     version = nil
     reg_access = Win32::Registry::KEY_READ | 0x100
@@ -99,6 +108,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     version
   end
 
+  # powershell_three_version
   def self.powershell_three_version
     version = nil
     reg_access = Win32::Registry::KEY_READ | 0x100
@@ -113,6 +123,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     version
   end
 
+  # parse json result
   def self.parse_json_result(raw)
     return nil if raw.nil?
     # Unfortunately PowerShell tends to automatically insert CRLF characters mid-string (Console Width)
@@ -150,6 +161,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     result.is_a?(Array) ? result : [result]
   end
 
+  # powershell script content
   def self.ps_script_content(template, resource)
     @param_hash = resource
     template_path = File.expand_path('../templates', __FILE__)

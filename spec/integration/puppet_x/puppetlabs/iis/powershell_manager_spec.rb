@@ -3,10 +3,14 @@ require 'puppet/type'
 require 'puppet_x/puppetlabs/iis/powershell_manager'
 require 'puppet_x/puppetlabs/iis/powershell_common'
 
+# @api private
 module PuppetX
+  # @api private
   module IIS
+    # @api private
     class PowerShellManager; end
     if Puppet::Util::Platform.windows?
+      # @api private
       module WindowsAPI
         require 'ffi'
         extend FFI::Library

@@ -1,8 +1,8 @@
-# @api private
+# The Puppet Extensions Module
 module PuppetX
-  # @api private
+  # PuppetLabs
   module PuppetLabs
-    # @api private
+    # IIS
     module IIS
       # IISVersion
       class IISVersion
@@ -13,18 +13,23 @@ module PuppetX
     end
   end
 end
-
 if Puppet::Util::Platform.windows?
+  # util
   require 'win32/registry'
+  # The Puppet Extensions Module
   module PuppetX
+    # PuppetLabs
     module PuppetLabs
+      # IIS
       module IIS
         # IISVersion
         class IISVersion
+          # define iis supported_versions
           def self.supported_versions
             ['7.5', '8.0', '8.5', '10.0']
           end
 
+          # get iis installed_version
           def self.installed_version
             version = nil
             begin
@@ -47,6 +52,7 @@ if Puppet::Util::Platform.windows?
             version
           end
 
+          # verify if iis supported version is installed
           def self.supported_version_installed?
             supported_versions.include? installed_version
           end

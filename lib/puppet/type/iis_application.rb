@@ -5,21 +5,24 @@ require_relative '../../puppet_x/puppetlabs/iis/property/hash'
 require_relative '../../puppet_x/puppetlabs/iis/property/path'
 
 Puppet::Type.newtype(:iis_application) do
-  @doc = "Allows creation of a new IIS Application and configuration of
+  desc <<-DOC
+    @summary
+      Allows creation of a new IIS Application and configuration of
           application parameters.
 
-          The iis_application type uses an applicationname and a sitename to
-          create an IIS Application. When specifying an application you must
-          specify both. You can specify the sitename by putting it in the title
-          as in \"$site_name\\$application_name\", or you can use the named
-          parameters. If converting a virtual directory to an app, you can use
-          the virtual_directory parameter to specify the site and omit the
-          sitename parameter. To manage two applications of the same name within
-          different websites on an IIS instance, you must ensure the resource
-          title is unique. You can do this by entering both the sitename and
-          applicationname in the title, or using a descriptive title for the
-          resource and using the named parameters for sitename and
-          applicationname"
+    The iis_application type uses an applicationname and a sitename to
+    create an IIS Application. When specifying an application you must
+    specify both. You can specify the sitename by putting it in the title
+    as in \"$site_name\\$application_name\", or you can use the named
+    parameters. If converting a virtual directory to an app, you can use
+    the virtual_directory parameter to specify the site and omit the
+    sitename parameter. To manage two applications of the same name within
+    different websites on an IIS instance, you must ensure the resource
+    title is unique. You can do this by entering both the sitename and
+    applicationname in the title, or using a descriptive title for the
+    resource and using the named parameters for sitename and
+    applicationname
+  DOC
 
   ensurable
 
