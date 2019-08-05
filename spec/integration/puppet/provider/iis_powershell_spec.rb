@@ -21,7 +21,7 @@ describe Puppet::Provider::IIS_PowerShell do
       end
 
       it 'calls the powershell three registry path' do
-        reg_key = double('bob')
+        reg_key = instance_double('bob')
         expect(reg_key).to receive(:[]).with('PowerShellVersion').and_return('5.0.10514.6')
         expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).once.and_yield(reg_key)
         expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).never
@@ -48,7 +48,7 @@ describe Puppet::Provider::IIS_PowerShell do
       end
 
       it 'calls powershell one registry path' do
-        reg_key = double('bob')
+        reg_key = instance_double('bob')
         expect(reg_key).to receive(:[]).with('PowerShellVersion').and_return('2.0')
         expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).once.and_raise(Win32::Registry::Error.new(2), 'nope')
         expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).once.and_yield(reg_key)

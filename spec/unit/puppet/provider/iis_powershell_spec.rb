@@ -1,13 +1,12 @@
-#! /usr/bin/env ruby
 require 'spec_helper'
 require 'puppet/type'
 require 'puppet/provider/iis_powershell'
 
 describe Puppet::Provider::IIS_PowerShell do
-  let (:subject) { described_class }
+  let(:subject) { described_class }
 
   describe 'run' do
-    let(:ps_manager) { double('PSManager') }
+    let(:ps_manager) { instance_double('PSManager') }
     let(:command) { 'command' }
     let(:execute_response) do
       {
@@ -22,7 +21,7 @@ describe Puppet::Provider::IIS_PowerShell do
 
     describe 'When on PowerShell 2.0' do
       before(:each) do
-        expect(subject).to receive(:ps_major_version).and_return(2)
+        allow(subject).to receive(:ps_major_version).and_return(2)
       end
 
       it 'appends Importing the WebAdministration module' do
@@ -53,8 +52,9 @@ describe Puppet::Provider::IIS_PowerShell do
 
     [3, 4, 5, 6].each do |testcase|
       describe "When on PowerShell #{testcase}.0" do
+        # it 'receives powershell major version' do
         before(:each) do
-          expect(subject).to receive(:ps_major_version).and_return(testcase)
+          allow(subject).to receive(:ps_major_version).and_return(testcase)
         end
 
         it 'does not modify the command' do

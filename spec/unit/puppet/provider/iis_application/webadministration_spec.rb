@@ -64,7 +64,7 @@ describe 'iis_application provider' do
     end
 
     before :each do
-      expect(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{ConvertTo-WebApplication}).and_return(exitcode: 0)
+      allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{ConvertTo-WebApplication}).and_return(exitcode: 0)
     end
     it { subject.create }
   end
