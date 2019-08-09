@@ -4,7 +4,7 @@
   "author": "puppetlabs",
   "summary": "Manage IIS for Windows Server 2008R2, 2012, 2012R2 and 2016. Maintain application sites, pools, installation, and many other IIS settings.",
   "license": "Apache-2.0",
-  "source": "https://github.com/puppetlabs/puppetlabs-iis.git",
+  "source": "git://github.com/puppetlabs/puppetlabs-iis",
   "project_page": "https://github.com/puppetlabs/puppetlabs-iis",
   "issues_url": "https://tickets.puppet.com/browse/MODULES",
   "dependencies": [
