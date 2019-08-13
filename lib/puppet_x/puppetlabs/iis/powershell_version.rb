@@ -1,10 +1,10 @@
-# @api private
+# The Puppet Extensions Module
 module PuppetX
-  # @api private
+  # PuppetLabs
   module PuppetLabs
-    # @api private
+    # IIS
     module IIS
-      # PowerShell Version
+      # PowerShell Version - determines the installed version of powershell
       class PowerShellVersion
       end
     end
@@ -16,18 +16,25 @@ if Puppet::Util::Platform.windows?
   module PuppetX
     module PuppetLabs
       module IIS
-        # PowerShellVersion
+        # PowerShell Version - determines the installed version of powershell
         class PowerShellVersion
+          # define ACCESS_TYPE
           ACCESS_TYPE       = Win32::Registry::KEY_READ | 0x100
+          # define HKLM
           HKLM              = Win32::Registry::HKEY_LOCAL_MACHINE
+          # define PS_ONE_REG_PATH
           PS_ONE_REG_PATH   = 'SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'.freeze
+          # define PS_THREE_REG_PATH
           PS_THREE_REG_PATH = 'SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine'.freeze
+          # define REG_KEY
           REG_KEY           = 'PowerShellVersion'.freeze
 
+          # returns powershell version
           def self.version
             powershell_three_version || powershell_one_version
           end
 
+          # powershell_one_version
           def self.powershell_one_version
             version = nil
             begin
@@ -40,6 +47,7 @@ if Puppet::Util::Platform.windows?
             version
           end
 
+          # powershell_three_version
           def self.powershell_three_version
             version = nil
             begin

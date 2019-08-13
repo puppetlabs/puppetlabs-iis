@@ -5,6 +5,7 @@ Puppet::Type.newtype(:iis_feature) do
   @doc = 'Allows installation and removal of IIS Features.'
 
   ensurable do
+    desc 'Manage the state of this rule.'
     defaultvalues
     defaultto :present
   end

@@ -1,10 +1,10 @@
-# @api private
+# The Puppet Extensions Module
 module PuppetX
-  # @api private
+  # PuppetLabs
   module PuppetLabs
-    # @api private
+    # IIS
     module IIS
-      # @api private
+      # Property
       module Property
         # PositiveInteger Property
         class PositiveInteger < Puppet::Property

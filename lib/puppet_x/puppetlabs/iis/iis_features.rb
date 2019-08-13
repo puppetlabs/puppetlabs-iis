@@ -1,8 +1,8 @@
-# @api private
+# The Puppet Extensions Module
 module PuppetX
-  # @api private
+  # IIS
   module IIS
-    # @api private
+    # Features
     module Features
       def iis_feature?(feature_name)
         # Note this code uses an array of the latest IIS features available to

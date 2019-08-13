@@ -3,10 +3,10 @@ require_relative '../../puppet_x/puppetlabs/iis/property/path'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 
 Puppet::Type.newtype(:iis_virtual_directory) do
-  @doc = "Allows creation of a new IIS Virtual Directory and configuration of
-          virtual directory parameters."
+  @doc = 'Allows creation of a new IIS Virtual Directory and configuration of virtual directory parameters.'
 
   ensurable do
+    desc 'Manage the state of this rule.'
     defaultvalues
     defaultto :present
   end
