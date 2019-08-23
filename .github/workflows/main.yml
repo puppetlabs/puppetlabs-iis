@@ -1,0 +1,50 @@
+name: main
+
+on: [pull_request]
+
+jobs:
+  tests:
+
+    runs-on: windows-2016
+
+    strategy:
+      matrix:
+        ruby_version: [2.4.x, 2.5.x]
+        check: [parallel_spec, 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop']
+        include:
+        - ruby_version: 2.4.x
+          puppet_gem_version: ~> 5.0
+        - ruby_version: 2.5.x
+          puppet_gem_version: ~> 6.0
+        exclude:
+        - ruby_version: 2.5.x
+          check: 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop'
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby_version }}
+
+    - name: Install bundle
+      shell: powershell
+      env:
+        PUPPET_GEM_VERSION: ${{ matrix.puppet_gem_version }}
+        TARGET_HOST: localhost
+      run: |
+        git config --system core.longpaths true 
+        gem install bundler
+        bundle install --jobs 4 --retry 2
+        type Gemfile.lock
+
+    - name: Run check
+      shell: powershell
+      run: |
+        bundle exec puppet -V
+        ruby -v
+        gem -v
+        bundle -v
+        bundle exec rake spec_prep
+        bundle exec rake ${{ matrix.check }}
