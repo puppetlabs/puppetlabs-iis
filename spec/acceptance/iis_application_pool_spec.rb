@@ -4,21 +4,16 @@ describe 'iis_application_pool' do
   context 'when configuring an application pool' do
     context 'with default parameters' do
       pool_name = SecureRandom.hex(10).to_s
+      manifest  = <<-HERE
+        iis_application_pool { '#{pool_name}':
+          ensure => 'present'
+        }
+      HERE
 
-      describe "apply manifest twice" do
-        manifest  = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure => 'present'
-          }
-        HERE
+      idempotent_apply('create app pool', manifest)
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
-
-      context 'when puppet resource is run' do
-        it 'resource iis_application_pool is present' do
-          puppet_resource_should_show('ensure', 'present', resource('iis_application_pool', pool_name))
-        end
+      it 'resource iis_application_pool is present' do
+        puppet_resource_should_show('ensure', 'present', resource('iis_application_pool', pool_name))
       end
 
       after(:all) do
@@ -29,57 +24,54 @@ describe 'iis_application_pool' do
     context 'with valid parameters defined' do
       pool_name = SecureRandom.hex(10).to_s
 
-      describe "apply manifest twice" do
-        manifest  = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure                  => 'present',
-            managed_pipeline_mode   => 'Integrated',
-            managed_runtime_version => '',
-            state                   => 'stopped'
-          }
-        HERE
+      manifest  = <<-HERE
+        iis_application_pool { '#{pool_name}':
+          ensure                  => 'present',
+          managed_pipeline_mode   => 'Integrated',
+          managed_runtime_version => '',
+          state                   => 'stopped'
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app pool',manifest)
 
-      context 'when puppet resource is run' do
-        it "has all properties correctly configured" do
-          # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
-          resource_data = resource('iis_application_pool', pool_name)
-            [
-              'ensure', 'present',
-              'managed_pipeline_mode', 'Integrated',
-              'state', 'stopped',
-              'auto_start', :true,
-              'enable32_bit_app_on_win64', :false,
-              'enable_configuration_override', :true,
-              'pass_anonymous_token', :true,
-              'start_mode', 'OnDemand',
-              'queue_length', '1000',
-              'cpu_action', 'NoAction',
-              'cpu_limit', '0',
-              'cpu_reset_interval', '00:05:00',
-              'cpu_smp_affinitized', :false,
-              'cpu_smp_processor_affinity_mask', '4294967295',
-              'cpu_smp_processor_affinity_mask2', '4294967295',
-              'identity_type', 'ApplicationPoolIdentity',
-              'idle_timeout', '00:20:00',
-              'load_user_profile', :false,
-              'logon_type', 'LogonBatch',
-              'manual_group_membership', :false,
-              'max_processes', '1',
-              'pinging_enabled', :true,
-              'ping_interval', '00:00:30',
-              'ping_response_time', '00:01:30',
-              'set_profile_environment', :true,
-              'shutdown_time_limit', '00:01:30',
-              'startup_time_limit', '00:01:30',
-            ].each_slice(2) do | key, value |
-              puppet_resource_should_show(key, value, resource_data)
-            end
+      it "has all properties correctly configured" do
+        # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
+        resource_data = resource('iis_application_pool', pool_name)
+        [
+          'ensure', 'present',
+          'managed_pipeline_mode', 'Integrated',
+          'state', 'stopped',
+          'auto_start', :true,
+          'enable32_bit_app_on_win64', :false,
+          'enable_configuration_override', :true,
+          'pass_anonymous_token', :true,
+          'start_mode', 'OnDemand',
+          'queue_length', '1000',
+          'cpu_action', 'NoAction',
+          'cpu_limit', '0',
+          'cpu_reset_interval', '00:05:00',
+          'cpu_smp_affinitized', :false,
+          'cpu_smp_processor_affinity_mask', '4294967295',
+          'cpu_smp_processor_affinity_mask2', '4294967295',
+          'identity_type', 'ApplicationPoolIdentity',
+          'idle_timeout', '00:20:00',
+          'load_user_profile', :false,
+          'logon_type', 'LogonBatch',
+          'manual_group_membership', :false,
+          'max_processes', '1',
+          'pinging_enabled', :true,
+          'ping_interval', '00:00:30',
+          'ping_response_time', '00:01:30',
+          'set_profile_environment', :true,
+          'shutdown_time_limit', '00:01:30',
+          'startup_time_limit', '00:01:30',
+        ].each_slice(2) do | key, value |
+          puppet_resource_should_show(key, value, resource_data)
         end
-        # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
-        unless ['6.2', '6.1'].include?(fact('kernelmajversion'))
+      end
+      # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
+      unless ['6.2', '6.1'].include?(fact('kernelmajversion'))
         it "has all properties correctly configured" do
           resource_data = resource('iis_application_pool', pool_name)
           [
@@ -88,7 +80,6 @@ describe 'iis_application_pool' do
           ].each_slice(2) do | key, value |
             puppet_resource_should_show(key, value, resource_data)
           end
-        end
         end
       end
 
@@ -102,32 +93,29 @@ describe 'iis_application_pool' do
         skip 'is skipped due to version being lower than puppet 5'
       else
         pool_name = SecureRandom.hex(10).to_s
-        describe "apply manifest twice" do
-          manifest  = <<-HERE
-            iis_application_pool { '#{pool_name}':
-              ensure    => 'present',
-              user_name => 'user',
-              password  => Sensitive('#@\\\'454sdf'),
-            }
-          HERE
+        manifest  = <<-HERE
+          iis_application_pool { '#{pool_name}':
+            ensure    => 'present',
+            user_name => 'user',
+            password  => Sensitive('#@\\\'454sdf'),
+          }
+        HERE
 
-          it_behaves_like 'an idempotent resource', manifest
+        idempotent_apply('create app pool', manifest)
+
+        it "has all properties correctly configured" do
+          resource_data = resource('iis_application_pool', pool_name)
+          [
+            'ensure', 'present',
+            'user_name', 'user',
+            'password', '#@\\\'454sdf',
+          ].each_slice(2) do | key, value |
+            puppet_resource_should_show(key, value, resource_data)
+          end
         end
 
-        context 'when puppet resource is run' do
-          it "has all properties correctly configured" do
-            resource_data = resource('iis_application_pool', pool_name)
-            [
-              'ensure', 'present',
-              'user_name', 'user',
-              'password', '#@\\\'454sdf',
-            ].each_slice(2) do | key, value |
-              puppet_resource_should_show(key, value, resource_data)
-            end
-          end
-          after(:all) do
-            remove_app_pool(pool_name)
-          end
+        after(:all) do
+          remove_app_pool(pool_name)
         end
       end
     end
@@ -135,21 +123,17 @@ describe 'iis_application_pool' do
     context 'with invalid' do
       context 'state parameter defined' do
         pool_name = SecureRandom.hex(10).to_s
-        describe "apply fainling manifest" do
-          manifest  = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure  => 'present',
-            state   => 'AnotherTypo'
-          }
-          HERE
+        manifest  = <<-HERE
+        iis_application_pool { '#{pool_name}':
+          ensure  => 'present',
+          state   => 'AnotherTypo'
+        }
+        HERE
 
-          it_behaves_like 'a failing manifest', manifest
-        end
+        apply_failing_manifest('creat app pool', manifest)
 
-        context 'when puppet resource is run' do
-          it "iis_application_pool is absent" do
-            puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
-          end
+        it "iis_application_pool is absent" do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
         end
 
         after(:all) do
@@ -159,21 +143,17 @@ describe 'iis_application_pool' do
 
       context 'managed_pipeline_mode parameter defined' do
         pool_name = SecureRandom.hex(10).to_s
-        describe "apply failing manifest" do
-          manifest  = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure              => 'present',
-            managed_pipeline_mode => 'ClassicTypo'
-          }
-          HERE
+        manifest  = <<-HERE
+        iis_application_pool { '#{pool_name}':
+          ensure              => 'present',
+          managed_pipeline_mode => 'ClassicTypo'
+        }
+        HERE
 
-          it_behaves_like 'a failing manifest', manifest
-        end
+        apply_failing_manifest('create app pool', manifest)
 
-        context 'when puppet resource is run' do
-          it "iis_application_pool is absent" do
-            puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
-          end
+        it "iis_application_pool is absent" do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
         end
 
         after(:all) do
@@ -185,31 +165,27 @@ describe 'iis_application_pool' do
 
   context 'when starting a stopped application pool' do
     pool_name = SecureRandom.hex(10).to_s
+    manifest = <<-HERE
+      iis_application_pool { '#{pool_name}':
+        ensure  => 'present',
+        state   => 'started'
+      }
+    HERE
+
     before(:all) do
       create_app_pool(pool_name)
       stop_app_pool(pool_name)
     end
-    describe "applt manifest twice" do
 
-      manifest = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure  => 'present',
-            state   => 'started'
-          }
-      HERE
+    idempotent_apply('start the app pool', manifest)
 
-      it_behaves_like 'an idempotent resource', manifest
-    end
-
-    context 'when puppet resource is run' do
-      it "iis_application_pool is present and has the correct state" do
-        resource_data = resource('iis_application_pool', pool_name)
-          [
-            'ensure', 'present',
-            'state', 'started',
-          ].each_slice(2) do | key, value |
-            puppet_resource_should_show(key, value, resource_data)
-          end
+    it "iis_application_pool is present and has the correct state" do
+      resource_data = resource('iis_application_pool', pool_name)
+      [
+        'ensure', 'present',
+        'state', 'started',
+      ].each_slice(2) do | key, value |
+        puppet_resource_should_show(key, value, resource_data)
       end
     end
 
@@ -220,55 +196,48 @@ describe 'iis_application_pool' do
 
   context 'when removing an application pool' do
     pool_name = SecureRandom.hex(10).to_s
+    manifest = <<-HERE
+      iis_application_pool { '#{pool_name}':
+        ensure => 'absent'
+      }
+    HERE
+
     before(:all) do
       create_app_pool(pool_name)
     end
-    describe "apply manifest twice" do
-      manifest = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure => 'absent'
-          }
-      HERE
 
-      it_behaves_like 'an idempotent resource', manifest
-    end
+    idempotent_apply('remove the app pool', manifest)
 
-    context 'when puppet resource is run' do
-      it "iis_application_pool is absent" do
-        puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
-      end
+    it "iis_application_pool is absent" do
+      puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
     end
   end
 
   context 'when application pool restart_memory_limit set' do
     pool_name = SecureRandom.hex(10).to_s
+    manifest = <<-HERE
+      iis_application_pool { '#{pool_name}':
+        ensure               => 'present',
+        state                => 'started',
+        restart_memory_limit => '3500000',
+      }
+    HERE
+
     before(:all) do
       create_app_pool(pool_name)
       stop_app_pool(pool_name)
     end
 
-    describe "apply manifest twice" do
-      manifest = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure               => 'present',
-            state                => 'started',
-            restart_memory_limit => '3500000',
-          }
-      HERE
+    idempotent_apply('set memory limit', manifest)
 
-      it_behaves_like 'an idempotent resource', manifest
-    end
-
-    context 'when puppet resource is run' do
-      it "has all properties correctly configured" do
-        resource_data = resource('iis_application_pool', pool_name)
-          [
-            'ensure', 'present',
-            'state', 'started',
-            'restart_memory_limit', '3500000',
-          ].each_slice(2) do | key, value |
-            puppet_resource_should_show(key, value, resource_data)
-          end
+    it "has all properties correctly configured" do
+      resource_data = resource('iis_application_pool', pool_name)
+      [
+        'ensure', 'present',
+        'state', 'started',
+        'restart_memory_limit', '3500000',
+      ].each_slice(2) do | key, value |
+        puppet_resource_should_show(key, value, resource_data)
       end
     end
 
@@ -279,85 +248,80 @@ describe 'iis_application_pool' do
 
   context 'when building a kitchen sink' do
     pool_name = SecureRandom.hex(10).to_s
-    describe "apply manifest twice" do
-      manifest = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure                           => 'present',
-            state                            => 'started',
-            restart_memory_limit             => '3500000',
-            managed_pipeline_mode            => 'Integrated',
-            managed_runtime_version          => 'v4.0',
-            auto_start                       => true,
-            enable32_bit_app_on_win64        => false,
-            enable_configuration_override    => true,
-            pass_anonymous_token             => true,
-            start_mode                       => 'OnDemand',
-            queue_length                     => '1000',
-            cpu_action                       => 'NoAction',
-            cpu_limit                        => '100000',
-            cpu_reset_interval               => '00:05:00',
-            cpu_smp_affinitized              => false,
-            cpu_smp_processor_affinity_mask  => '4294967295',
-            cpu_smp_processor_affinity_mask2 => '4294967295',
-            identity_type                    => 'ApplicationPoolIdentity',
-            idle_timeout                     => '00:20:00',
-            load_user_profile                => false,
-            logon_type                       => 'LogonBatch',
-            manual_group_membership          => false,
-            max_processes                    => '1',
-            pinging_enabled                  => true,
-            ping_interval                    => '00:00:30',
-            ping_response_time               => '00:01:30',
-            set_profile_environment          => true,
-            shutdown_time_limit              => '00:01:30',
-            startup_time_limit               => '00:01:30',
-            orphan_action_exe                => 'foo.exe',
-            orphan_action_params             => '-wakka',
-            orphan_worker_process            => true,
-          }
-      HERE
+    manifest = <<-HERE
+      iis_application_pool { '#{pool_name}':
+        ensure                           => 'present',
+        state                            => 'started',
+        restart_memory_limit             => '3500000',
+        managed_pipeline_mode            => 'Integrated',
+        managed_runtime_version          => 'v4.0',
+        auto_start                       => true,
+        enable32_bit_app_on_win64        => false,
+        enable_configuration_override    => true,
+        pass_anonymous_token             => true,
+        start_mode                       => 'OnDemand',
+        queue_length                     => '1000',
+        cpu_action                       => 'NoAction',
+        cpu_limit                        => '100000',
+        cpu_reset_interval               => '00:05:00',
+        cpu_smp_affinitized              => false,
+        cpu_smp_processor_affinity_mask  => '4294967295',
+        cpu_smp_processor_affinity_mask2 => '4294967295',
+        identity_type                    => 'ApplicationPoolIdentity',
+        idle_timeout                     => '00:20:00',
+        load_user_profile                => false,
+        logon_type                       => 'LogonBatch',
+        manual_group_membership          => false,
+        max_processes                    => '1',
+        pinging_enabled                  => true,
+        ping_interval                    => '00:00:30',
+        ping_response_time               => '00:01:30',
+        set_profile_environment          => true,
+        shutdown_time_limit              => '00:01:30',
+        startup_time_limit               => '00:01:30',
+        orphan_action_exe                => 'foo.exe',
+        orphan_action_params             => '-wakka',
+        orphan_worker_process            => true,
+      }
+    HERE
 
-      it_behaves_like 'an idempotent resource', manifest
-    end
+    idempotent_apply('create app pool', manifest)
 
-    context 'when puppet resource is run' do
-
-      it "has all properties correctly configured" do
-        resource_data = resource('iis_application_pool', pool_name)
-          [
-            'ensure', 'present',
-            'state', 'started',
-            'restart_memory_limit', '3500000',
-            'managed_pipeline_mode', 'Integrated',
-            'managed_runtime_version', 'v4.0',
-            'auto_start', :true,
-            'enable32_bit_app_on_win64', :false,
-            'enable_configuration_override', :true,
-            'pass_anonymous_token', :true,
-            'start_mode', 'OnDemand',
-            'queue_length', '1000',
-            'cpu_action', 'NoAction',
-            'cpu_limit', '100000',
-            'cpu_reset_interval', '00:05:00',
-            'cpu_smp_affinitized', :false,
-            'cpu_smp_processor_affinity_mask', '4294967295',
-            'cpu_smp_processor_affinity_mask2', '4294967295',
-            'identity_type', 'ApplicationPoolIdentity',
-            'idle_timeout', '00:20:00',
-            'load_user_profile', :false,
-            'logon_type', 'LogonBatch',
-            'manual_group_membership', :false,
-            'max_processes', '1',
-            'pinging_enabled', :true,
-            'ping_interval', '00:00:30',
-            'ping_response_time', '00:01:30',
-            'set_profile_environment', :true,
-            'shutdown_time_limit', '00:01:30',
-            'startup_time_limit', '00:01:30',
-          ].each_slice(2) do | key, value |
-            puppet_resource_should_show(key, value, resource_data)
-          end
-        end
+    it "has all properties correctly configured" do
+      resource_data = resource('iis_application_pool', pool_name)
+      [
+        'ensure', 'present',
+        'state', 'started',
+        'restart_memory_limit', '3500000',
+        'managed_pipeline_mode', 'Integrated',
+        'managed_runtime_version', 'v4.0',
+        'auto_start', :true,
+        'enable32_bit_app_on_win64', :false,
+        'enable_configuration_override', :true,
+        'pass_anonymous_token', :true,
+        'start_mode', 'OnDemand',
+        'queue_length', '1000',
+        'cpu_action', 'NoAction',
+        'cpu_limit', '100000',
+        'cpu_reset_interval', '00:05:00',
+        'cpu_smp_affinitized', :false,
+        'cpu_smp_processor_affinity_mask', '4294967295',
+        'cpu_smp_processor_affinity_mask2', '4294967295',
+        'identity_type', 'ApplicationPoolIdentity',
+        'idle_timeout', '00:20:00',
+        'load_user_profile', :false,
+        'logon_type', 'LogonBatch',
+        'manual_group_membership', :false,
+        'max_processes', '1',
+        'pinging_enabled', :true,
+        'ping_interval', '00:00:30',
+        'ping_response_time', '00:01:30',
+        'set_profile_environment', :true,
+        'shutdown_time_limit', '00:01:30',
+        'startup_time_limit', '00:01:30',
+      ].each_slice(2) do | key, value |
+        puppet_resource_should_show(key, value, resource_data)
+      end
     end
 
     after(:all) do
