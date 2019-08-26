@@ -4,7 +4,7 @@ describe 'iis_application_pool' do
   context 'when configuring an application pool' do
     context 'with default parameters' do
       pool_name = SecureRandom.hex(10).to_s
-      
+
       describe "apply manifest twice" do
         manifest  = <<-HERE
           iis_application_pool { '#{pool_name}':
@@ -28,7 +28,7 @@ describe 'iis_application_pool' do
 
     context 'with valid parameters defined' do
       pool_name = SecureRandom.hex(10).to_s
-      
+
       describe "apply manifest twice" do
         manifest  = <<-HERE
           iis_application_pool { '#{pool_name}':
@@ -44,6 +44,7 @@ describe 'iis_application_pool' do
 
       context 'when puppet resource is run' do
         it "has all properties correctly configured" do
+          # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
           resource_data = resource('iis_application_pool', pool_name)
             [
               'ensure', 'present',
@@ -97,7 +98,7 @@ describe 'iis_application_pool' do
     end
 
     context 'with a password wrapped in Sensitive() defined' do
-      if get_puppet_version.to_i < 5
+      if installed_puppet_version.to_i < 5
         skip 'is skipped due to version being lower than puppet 5'
       else
         pool_name = SecureRandom.hex(10).to_s

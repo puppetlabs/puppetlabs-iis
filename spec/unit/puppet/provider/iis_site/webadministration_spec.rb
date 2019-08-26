@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:iis_site).provider(:webadministration) do
+  subject(:webadministration) { described_class.new }
+
   let(:resource) do
     result = Puppet::Type.type(:iis_site).new(name: 'iis_site')
-    result.provider = subject
+    result.provider = webadministration
     result
   end
 
@@ -26,7 +28,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
           'certificatehash'      => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
           'certificatestorename' => 'My',
         }
-        expect(subject.ssl?).to be true
+        expect(webadministration.ssl?).to be true
       end
 
       it 'returns true bindings is an array' do
@@ -41,7 +43,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
                                  'protocol'             => 'http',
                                  'bindinginformation'   => '*:8080:',
                                }]
-        expect(subject.ssl?).to be true
+        expect(webadministration.ssl?).to be true
       end
 
       it 'returns false if no https bindings are specified' do
@@ -49,7 +51,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
           'protocol'             => 'http',
           'bindinginformation'   => '*:8080:',
         }
-        expect(subject.ssl?).to be false
+        expect(webadministration.ssl?).to be false
       end
     end
   end

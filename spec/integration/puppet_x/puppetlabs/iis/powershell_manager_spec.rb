@@ -39,7 +39,7 @@ describe PuppetX::IIS::PowerShellManager do
   before :each do
     skip 'Not on Windows platform' unless Puppet::Util::Platform.windows?
     skip 'Powershell manager not supported' unless described_class.supported?
-    skip 'Powershell version is less than 3.0 or undetermined' unless get_powershell_major_version.to_i >= 3
+    skip 'Powershell version is less than 3.0 or undetermined' unless installed_powershell_major_version.to_i >= 3
   end
 
   let (:manager_args) do
@@ -514,7 +514,7 @@ try {
       # behavior of Write-Output introduces newlines after every width number
       # of characters as specified in the BufferSize of the custom console UI
       # Write-Host should usually be avoided, but works for this test in old PS2
-      (get_powershell_major_version.to_i >= 3) ?
+      (installed_powershell_major_version.to_i >= 3) ?
         'Write-Output' :
         'Write-Host'
     end

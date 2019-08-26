@@ -38,8 +38,6 @@ RSpec/BeforeAfterAll:
 RSpec/HookArgument:
   Description: Prefer explicit :each argument, matching existing module's style
   EnforcedStyle: each
-RSpec/NamedSubject:
-  Enabled: false
 Style/BlockDelimiters:
   Description: Prefer braces for chaining. Mostly an aesthetical choice. Better to
     be consistent then.
@@ -81,8 +79,6 @@ Style/SymbolArray:
   EnforcedStyle: brackets
 RSpec/MessageSpies:
   EnforcedStyle: receive
-Style/AccessorMethodName:
-  Enabled: false
 Style/Documentation:
   Exclude:
   - lib/puppet/parser/functions/**/*
@@ -125,8 +121,6 @@ RSpec/MultipleExpectations:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
-RSpec/AnyInstance:
-  Enabled: false
 Style/AsciiComments:
   Enabled: false
 Style/ClassVars:
@@ -147,10 +141,3 @@ Lint/IneffectiveAccessModifier:
   Enabled: false
 Style/RegexpLiteral:
   Enabled: false
-RSpec/ExpectInHook:
-  Enabled: false
-Lint/Void:
-  Enabled: false
-RSpec/FilePath:
-  Enabled: false
-  

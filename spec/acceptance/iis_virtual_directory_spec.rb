@@ -17,7 +17,6 @@ describe 'iis_virtual_directory' do
       before (:all) do
         create_path('C:\foo')
       end
-      puts "BEFORE virt_dir_name"
       virt_dir_name = SecureRandom.hex(10).to_s
       # create_site(site_name, true)
       describe "apply manifest twice" do
@@ -35,7 +34,6 @@ describe 'iis_virtual_directory' do
           }
         HERE
 
-        puts manifest
         it_behaves_like 'an idempotent resource', manifest
       end
 
@@ -80,13 +78,13 @@ describe 'iis_virtual_directory' do
         end
       end
 
-      it "remove virt dir name" do
+      after(:all) do
         remove_vdir(virt_dir_name)
       end
     end
 
     context 'with a password wrapped in Sensitive()' do
-      if get_puppet_version.to_i < 5
+      if installed_puppet_version.to_i < 5
         skip 'is skipped due to version being lower than puppet 5'
       else
         virt_dir_name = SecureRandom.hex(10).to_s
@@ -108,10 +106,15 @@ describe 'iis_virtual_directory' do
         end
 
         context 'when puppet resource is run' do
-          it "all the properties to be configured" do
-            puppet_resource_should_show('ensure', 'present', resource('iis_virtual_directory', virt_dir_name))
-            puppet_resource_should_show('user_name', 'user', resource('iis_virtual_directory', virt_dir_name))
-            puppet_resource_should_show('password', '#@\\\'454sdf', resource('iis_virtual_directory', virt_dir_name))
+          it "all parameters are configured" do
+            resource_data = resource('iis_virtual_directory', virt_dir_name)
+            [
+              'ensure', 'present',
+              'user_name', 'user',
+              'password', '#@\\\'454sdf',
+            ].each_slice(2) do | key, value |
+              puppet_resource_should_show(key, value, resource_data)
+            end
           end
         end
 
@@ -143,7 +146,7 @@ describe 'iis_virtual_directory' do
         end
       end
 
-      it "remove virt dir name" do
+      after(:all) do
         remove_vdir(virt_dir_name)
       end
     end
@@ -166,7 +169,7 @@ describe 'iis_virtual_directory' do
           }->
           iis_virtual_directory { 'test_vdir\deeper':
             name         => 'test_vdir\deeper',
-            ensure	     => 'present',
+            ensure       => 'present',
             sitename     => '#{site_name}',
             physicalpath => 'c:\\inetpub\\deeper',
           }
@@ -174,7 +177,7 @@ describe 'iis_virtual_directory' do
           it_behaves_like 'an idempotent resource', manifest
         end
 
-        it "remove virt dir name" do
+        after(:all) do
           remove_vdir(virt_dir_name)
         end
       end
@@ -200,7 +203,7 @@ describe 'iis_virtual_directory' do
           end
         end
 
-        it "remove virt dir name" do
+        after(:all) do
           remove_vdir(virt_dir_name)
         end
       end
@@ -223,11 +226,10 @@ describe 'iis_virtual_directory' do
           end
         end
 
-        it "remove virt dir name" do
+        after(:all) do
           remove_vdir(virt_dir_name)
         end
       end
-
     end
   end
 end

@@ -2,10 +2,7 @@ require 'spec_helper'
 require 'puppet_x/puppetlabs/iis/powershell_manager'
 
 describe 'iis_application provider' do
-  before :each do
-    expect(PuppetX::IIS::PowerShellManager).not_to receive(:new)
-  end
-  subject do
+  subject(:iis_application_provider) do
     resource = Puppet::Type.type(:iis_application).new(params)
     resource.provider = Puppet::Type.type(:iis_application).provider(:webadministration).new
     resource.provider
@@ -18,13 +15,17 @@ describe 'iis_application provider' do
     }
   end
 
+  it 'does not receive new' do
+    expect(PuppetX::IIS::PowerShellManager).not_to receive(:new)
+  end
+
   describe 'creating from scratch' do
     context 'without physicalpath' do
       let(:params) do
         { title: 'foo\bar' }
       end
 
-      it { expect { subject.create }.to raise_error(RuntimeError, %r{physicalpath}) }
+      it { expect { iis_application_provider.create }.to raise_error(RuntimeError, %r{physicalpath}) }
     end
     context 'with nonexistent physicalpath' do
       let(:params) do
@@ -37,7 +38,7 @@ describe 'iis_application provider' do
       before :each do
         allow(File).to receive(:exists?).with('C:\noexist').and_return(false)
       end
-      it { expect { subject.create }.to raise_error(RuntimeError, %r{doesn't exist}) }
+      it { expect { iis_application_provider.create }.to raise_error(RuntimeError, %r{doesn't exist}) }
     end
     context 'with existent physicalpath' do
       let(:params) do
@@ -52,7 +53,7 @@ describe 'iis_application provider' do
         allow(File).to receive(:exist?).with('C:\exist').and_return(true)
         allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
       end
-      it { subject.create }
+      it { iis_application_provider.create }
     end
   end
   describe 'converting virtual_directory' do
@@ -66,7 +67,7 @@ describe 'iis_application provider' do
     before :each do
       allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{ConvertTo-WebApplication}).and_return(exitcode: 0)
     end
-    it { subject.create }
+    it { iis_application_provider.create }
   end
   describe 'updating physicalpath'
   describe 'updating sslflags'

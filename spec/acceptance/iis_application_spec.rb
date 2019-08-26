@@ -104,10 +104,6 @@ describe 'iis_application' do
         end
       end
 
-      # it 'removes app' do
-      #   remove_app(app_name)
-      #   remove_all_sites
-      # end
       after(:all) do
         remove_app(app_name)
         remove_all_sites
@@ -457,13 +453,11 @@ let(:result2) { on(default, puppet('resource', 'iis_application', "#{site_name2}
 
 
     it 'contains two sites with the same app name' do
-      # on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) do |result|
         expect(result.stdout).to match(%r{#{site_name}\\#{app_name}})
         expect(result.stdout).to match(%r{ensure\s*=> 'present',})
         expect(result.stdout).to match %r{C:\\inetpub\\#{site_name}\\#{app_name}}
         expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
       end
-      # on(default, puppet('resource', 'iis_application', "#{site_name2}\\\\#{app_name}")) do |result|
       it 'contains two sites with the same app name' do
         expect(result2.stdout).to match(%r{#{site_name2}\\#{app_name}})
         expect(result2.stdout).to match(%r{ensure\s*=> 'present',})
