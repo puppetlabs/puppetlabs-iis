@@ -123,8 +123,6 @@ RSpec/NestedGroups:
   Enabled: false
 RSpec/AnyInstance:
   Enabled: false
-RSpec/FilePath:
-  Enabled: false
 Style/AsciiComments:
   Enabled: false
 Style/ClassVars:

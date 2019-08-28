@@ -14,30 +14,40 @@ describe 'iis_application' do
         create_path('C:\inetpub\basic')
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-          iis_site { '#{site_name}':
-            ensure          => 'started',
-            physicalpath    => 'C:\\inetpub\\basic',
-            applicationpool => 'DefaultAppPool',
-          }
-          iis_application { '#{app_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'C:\\inetpub\\basic',
-          }
-        HERE
+      manifest = <<-HERE
+        iis_site { '#{site_name}':
+          ensure          => 'started',
+          physicalpath    => 'C:\\inetpub\\basic',
+          applicationpool => 'DefaultAppPool',
+        }
+        iis_application { '#{app_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'C:\\inetpub\\basic',
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
 
+
+      # include_context 'with a puppet resource run'# do
       context 'when puppet resource is run' do
         let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) }
+        it 'returns successfully' do
+          expect(result.exit_code).to eq 0
+        end
 
-        include_context 'with a puppet resource run'# do
+        it 'does not return an error' do
+          expect(result.stderr).not_to match(%r{\b})
+        end
+        it 'returns successfully' do
+          expect(result.exit_code).to eq 0
+        end
 
+        it 'does not return an error' do
+          expect(result.stderr).not_to match(%r{\b})
+        end
         it "iis_application is absent" do
-        
           [
             'physicalpath', 'C:\inetpub\basic',
             'applicationpool', 'DefaultAppPool',
@@ -45,21 +55,19 @@ describe 'iis_application' do
             puppet_resource_should_show(key, value, result)
           end
         end
+    end
 
-        context 'when case is changed in a manifest' do
-          manifest = <<-HERE
-              iis_application { '#{app_name}':
-                ensure       => 'present',
-                sitename     => '#{site_name}',
-                # Change the capitalization of the T to see if it breaks.
-                physicalpath => 'C:\\ineTpub\\basic',
-              }
-            HERE
+      manifest = <<-HERE
+          iis_application { '#{app_name}':
+            ensure       => 'present',
+            sitename     => '#{site_name}',
+            # Change the capitalization of the T to see if it breaks.
+            physicalpath => 'C:\\ineTpub\\basic',
+          }
+        HERE
 
-          it 'runs with no changes' do
-            execute_manifest(manifest, catch_changes: true)
-          end
-        end
+      it 'runs with no changes' do
+        execute_manifest(manifest, catch_changes: true)
       end
 
       after(:all) do
@@ -77,24 +85,27 @@ describe 'iis_application' do
         create_virtual_directory(site_name, app_name, 'C:\inetpub\vdir')
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-          iis_application { '#{site_name}\\#{app_name}':
-            ensure            => 'present',
-            virtual_directory => 'IIS:\\Sites\\#{site_name}\\#{app_name}',
-          }
-        HERE
+      manifest = <<-HERE
+        iis_application { '#{site_name}\\#{app_name}':
+          ensure            => 'present',
+          virtual_directory => 'IIS:\\Sites\\#{site_name}\\#{app_name}',
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
 
       context 'when puppet resource is run' do
-        let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) } 
-        
-        include_context 'with a puppet resource run'
+        let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) }
+
+        it 'returns successfully' do
+          expect(result.exit_code).to eq 0
+        end
+
+        it 'does not return an error' do
+          expect(result.stderr).not_to match(%r{\b})
+        end
 
         it "iis_application is absent" do
-          # result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
           [
             'physicalpath', 'C:\inetpub\vdir',
             'applicationpool', 'DefaultAppPool',
@@ -118,25 +129,21 @@ describe 'iis_application' do
         create_path("c:\\inetpub\\wwwroot\\subFolder\\#{app_name}")
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-          iis_application{'subFolder/#{app_name}':
-            ensure => 'present',
-            applicationname => 'subFolder/#{app_name}',
-            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
-            sitename => '#{site_name}'
-          }
-        HERE
+      manifest = <<-HERE
+        iis_application{'subFolder/#{app_name}':
+          ensure => 'present',
+          applicationname => 'subFolder/#{app_name}',
+          physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
+          sitename => '#{site_name}'
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
 
-      describe 'application validation' do
-        it 'creates the correct application' do
-          result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/#{app_name}"))
-          expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
-          expect(result.stdout).to match(%r{ensure\s*=> 'present',})
-        end
+      it 'creates the correct application' do
+        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/#{app_name}"))
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
 
       after(:all) do
@@ -153,24 +160,20 @@ describe 'iis_application' do
         create_path("c:\\inetpub\\wwwroot\\subFolder\\#{app_name}")
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-          iis_application{'subFolder/#{app_name}':
-            ensure => 'present',
-            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
-            sitename => '#{site_name}'
-          }
-        HERE
+      manifest = <<-HERE
+        iis_application{'subFolder/#{app_name}':
+          ensure => 'present',
+          physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
+          sitename => '#{site_name}'
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
 
-      describe 'application validation' do
-        it 'creates the correct application' do
-          result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/#{app_name}"))
-          expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
-          expect(result.stdout).to match(%r{ensure\s*=> 'present',})
-        end
+      it 'creates the correct application' do
+        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/#{app_name}"))
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
 
       after(:all) do
@@ -188,18 +191,16 @@ describe 'iis_application' do
           create_path("c:\\inetpub\\wwwroot\\subFolder\\#{app_name}")
         end
 
-        describe 'applies the manifest twice' do
-          manifest = <<-HERE
-            iis_application{'subFolder/#{app_name}':
-              ensure => 'present',
-              applicationname => '/subFolder/#{app_name}',
-              physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
-              sitename => '#{site_name}'
-            }
-          HERE
+        manifest = <<-HERE
+          iis_application{'subFolder/#{app_name}':
+            ensure => 'present',
+            applicationname => '/subFolder/#{app_name}',
+            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
+            sitename => '#{site_name}'
+          }
+        HERE
 
-          it_behaves_like 'an idempotent resource', manifest
-        end
+        idempotent_apply('create app', manifest)
 
         after(:all) do
           remove_app(app_name)
@@ -216,18 +217,16 @@ describe 'iis_application' do
         create_path("c:\\inetpub\\wwwroot\\subFolder\\#{app_name}")
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-            iis_application{'subFolder\\#{app_name}':
-              ensure => 'present',
-              applicationname => 'subFolder/#{app_name}',
-              physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
-              sitename => '#{site_name}'
-            }
-        HERE
+      manifest = <<-HERE
+          iis_application{'subFolder\\#{app_name}':
+            ensure => 'present',
+            applicationname => 'subFolder/#{app_name}',
+            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\#{app_name}',
+            sitename => '#{site_name}'
+          }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
 
       after(:all) do
         remove_app(app_name)
@@ -243,25 +242,21 @@ describe 'iis_application' do
         create_path("c:\\inetpub\\wwwroot\\subFolder\\sub2\\#{app_name}")
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-          iis_application{'subFolder/sub2/#{app_name}':
-            ensure => 'present',
-            applicationname => 'subFolder/sub2/#{app_name}',
-            physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\sub2\\#{app_name}',
-            sitename => '#{site_name}'
-          }
-        HERE
+      manifest = <<-HERE
+        iis_application{'subFolder/sub2/#{app_name}':
+          ensure => 'present',
+          applicationname => 'subFolder/sub2/#{app_name}',
+          physicalpath => 'c:\\inetpub\\wwwroot\\subFolder\\sub2\\#{app_name}',
+          sitename => '#{site_name}'
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
 
-      describe 'application validation' do
-        let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/sub2/#{app_name}")) }
-        it 'creates the correct application' do
-          expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/sub2\/#{app_name}':/)
-          expect(result.stdout).to match(%r{ensure\s*=> 'present',})
-        end
+      it 'creates the correct application' do
+        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/sub2/#{app_name}"))
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/sub2\/#{app_name}':/)
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
 
       after(:all) do
@@ -284,7 +279,6 @@ describe 'iis_application' do
         @certificate_hash = create_selfsigned_cert('www.puppet.local').downcase
       end
 
-    describe 'applies the manifest twice' do
       manifest = <<-HERE
         iis_site { '#{site_name}':
           ensure          => 'started',
@@ -312,9 +306,8 @@ describe 'iis_application' do
         }
       HERE
 
-      it_behaves_like 'an idempotent resource', manifest
+      idempotent_apply('create app', manifest)
     end
-  end
 
     describe 'authenticationinfo' do
       site_name = SecureRandom.hex(10).to_s
@@ -326,21 +319,19 @@ describe 'iis_application' do
         create_app(site_name, app_name, 'C:\inetpub\auth')
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-          iis_application { '#{app_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'C:\\inetpub\\auth',
-            authenticationinfo => {
-              'basic'     => true,
-              'anonymous' => false,
-            },
-          }
-        HERE
+      manifest = <<-HERE
+        iis_application { '#{app_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'C:\\inetpub\\auth',
+          authenticationinfo => {
+            'basic'     => true,
+            'anonymous' => false,
+          },
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
     end
 
     describe 'applicationpool' do
@@ -354,18 +345,16 @@ describe 'iis_application' do
         create_app_pool('foo_pool')
       end
 
-      describe 'applies the manifest twice' do
-        manifest = <<-HERE
-          iis_application { '#{app_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'C:\\inetpub\\auth',
-            applicationpool => 'foo_pool'
-          }
-        HERE
+      manifest = <<-HERE
+        iis_application { '#{app_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'C:\\inetpub\\auth',
+          applicationpool => 'foo_pool'
+        }
+      HERE
 
-        it_behaves_like 'an idempotent resource', manifest
-      end
+      idempotent_apply('create app', manifest)
     end
   end
 
@@ -379,27 +368,31 @@ describe 'iis_application' do
       create_app(site_name, app_name, 'C:\inetpub\remove')
     end
 
-    describe 'applies the manifest twice' do
-      manifest = <<-HERE
-        iis_application { '#{app_name}':
-          ensure       => 'absent',
-          sitename     => '#{site_name}',
-          physicalpath => 'C:\\inetpub\\remove',
-        }
-      HERE
+    manifest = <<-HERE
+      iis_application { '#{app_name}':
+        ensure       => 'absent',
+        sitename     => '#{site_name}',
+        physicalpath => 'C:\\inetpub\\remove',
+      }
+    HERE
 
-      it_behaves_like 'an idempotent resource', manifest
-    end
+    idempotent_apply('create app', manifest)
 
     context 'when puppet resource is run' do
       let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) }
-      include_context 'with a puppet resource run'
+
+      it 'returns successfully' do
+        expect(result.exit_code).to eq 0
+      end
+
+      it 'does not return an error' do
+        expect(result.stderr).not_to match(%r{\b})
+      end
+
       it "iis_application is absent" do
-        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
         puppet_resource_should_show('ensure', 'absent', result)
       end
     end
-
     after(:all) do
       remove_app(app_name)
     end
@@ -415,55 +408,49 @@ describe 'iis_application' do
       create_path("C:\\inetpub\\#{site_name2}\\#{app_name}")
     end
 
-    describe 'applies the manifest twice' do
-      manifest = <<-HERE
-        iis_site { '#{site_name}':
-          ensure          => 'started',
-          physicalpath    => 'C:\\inetpub\\#{site_name}',
-          applicationpool => 'DefaultAppPool',
-          bindings        => [
-          {
-            'bindinginformation' => '*:8081:',
-            'protocol'           => 'http',
-          }]
-        }
-        iis_application { '#{site_name}\\#{app_name}':
-          ensure            => 'present',
-          sitename        => '#{site_name}',
-          physicalpath => 'C:\\inetpub\\#{site_name}\\#{app_name}',
-        }
-        iis_site { '#{site_name2}':
-          ensure          => 'started',
-          physicalpath    => 'C:\\inetpub\\#{site_name2}',
-          applicationpool => 'DefaultAppPool',
-        }
-        iis_application { '#{site_name2}\\#{app_name}':
-          ensure            => 'present',
-          sitename        => '#{site_name2}',
-          physicalpath => 'C:\\inetpub\\#{site_name2}\\#{app_name}',
-        }
-        HERE
+    manifest = <<-HERE
+      iis_site { '#{site_name}':
+        ensure          => 'started',
+        physicalpath    => 'C:\\inetpub\\#{site_name}',
+        applicationpool => 'DefaultAppPool',
+        bindings        => [
+        {
+          'bindinginformation' => '*:8081:',
+          'protocol'           => 'http',
+        }]
+      }
+      iis_application { '#{site_name}\\#{app_name}':
+        ensure            => 'present',
+        sitename        => '#{site_name}',
+        physicalpath => 'C:\\inetpub\\#{site_name}\\#{app_name}',
+      }
+      iis_site { '#{site_name2}':
+        ensure          => 'started',
+        physicalpath    => 'C:\\inetpub\\#{site_name2}',
+        applicationpool => 'DefaultAppPool',
+      }
+      iis_application { '#{site_name2}\\#{app_name}':
+        ensure            => 'present',
+        sitename        => '#{site_name2}',
+        physicalpath => 'C:\\inetpub\\#{site_name2}\\#{app_name}',
+      }
+    HERE
 
-      it_behaves_like 'an idempotent resource', manifest
-    end
-
-    context 'when puppet resource is run' do
-      let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) }
-let(:result2) { on(default, puppet('resource', 'iis_application', "#{site_name2}\\\\#{app_name}")) }
-
+    idempotent_apply('create app', manifest)
 
     it 'contains two sites with the same app name' do
-        expect(result.stdout).to match(%r{#{site_name}\\#{app_name}})
-        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
-        expect(result.stdout).to match %r{C:\\inetpub\\#{site_name}\\#{app_name}}
-        expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
-      end
-      it 'contains two sites with the same app name' do
-        expect(result2.stdout).to match(%r{#{site_name2}\\#{app_name}})
-        expect(result2.stdout).to match(%r{ensure\s*=> 'present',})
-        expect(result2.stdout).to match %r{C:\\inetpub\\#{site_name2}\\#{app_name}}
-        expect(result2.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
-      end
+      result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+      expect(result.stdout).to match(%r{#{site_name}\\#{app_name}})
+      expect(result.stdout).to match(%r{ensure\s*=> 'present',})
+      expect(result.stdout).to match %r{C:\\inetpub\\#{site_name}\\#{app_name}}
+      expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
+    end
+    it 'contains two sites with the same app name' do
+      result2 = on(default, puppet('resource', 'iis_application', "#{site_name2}\\\\#{app_name}"))
+      expect(result2.stdout).to match(%r{#{site_name2}\\#{app_name}})
+      expect(result2.stdout).to match(%r{ensure\s*=> 'present',})
+      expect(result2.stdout).to match %r{C:\\inetpub\\#{site_name2}\\#{app_name}}
+      expect(result2.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
     end
 
     after(:all) do

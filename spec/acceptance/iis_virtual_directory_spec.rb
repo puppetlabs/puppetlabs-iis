@@ -34,7 +34,7 @@ describe 'iis_virtual_directory' do
           }
         HERE
 
-        it_behaves_like 'an idempotent resource', manifest
+        idempotent_apply('create iis virtual dir', manifest)
       end
 
       context 'when puppet resource is run' do
@@ -68,7 +68,7 @@ describe 'iis_virtual_directory' do
           }
           HERE
 
-          it_behaves_like 'an idempotent resource', manifest
+          idempotent_apply('create iis virtual dir', manifest)
         end
 
         context 'when puppet resource is run' do
@@ -88,33 +88,29 @@ describe 'iis_virtual_directory' do
         skip 'is skipped due to version being lower than puppet 5'
       else
         virt_dir_name = SecureRandom.hex(10).to_s
-        describe "apply manifest twice" do
-          manifest = <<-HERE
-            file{ 'c:/foo':
-              ensure => 'directory'
-            }->
-            iis_virtual_directory { '#{virt_dir_name}':
-              ensure       => 'present',
-              sitename     => '#{site_name}',
-              physicalpath => 'c:\\foo',
-              user_name    => 'user',
-              password     => Sensitive('#@\\\'454sdf'),
-            }
-          HERE
+        manifest = <<-HERE
+          file{ 'c:/foo':
+            ensure => 'directory'
+          }->
+          iis_virtual_directory { '#{virt_dir_name}':
+            ensure       => 'present',
+            sitename     => '#{site_name}',
+            physicalpath => 'c:\\foo',
+            user_name    => 'user',
+            password     => Sensitive('#@\\\'454sdf'),
+          }
+        HERE
 
-          it_behaves_like 'an idempotent resource', manifest
-        end
+        idempotent_apply('create iis virtual dir', manifest)
 
-        context 'when puppet resource is run' do
-          it "all parameters are configured" do
-            resource_data = resource('iis_virtual_directory', virt_dir_name)
-            [
-              'ensure', 'present',
-              'user_name', 'user',
-              'password', '#@\\\'454sdf',
-            ].each_slice(2) do | key, value |
-              puppet_resource_should_show(key, value, resource_data)
-            end
+        it "all parameters are configured" do
+          resource_data = resource('iis_virtual_directory', virt_dir_name)
+          [
+            'ensure', 'present',
+            'user_name', 'user',
+            'password', '#@\\\'454sdf',
+          ].each_slice(2) do | key, value |
+            puppet_resource_should_show(key, value, resource_data)
           end
         end
 
@@ -131,19 +127,15 @@ describe 'iis_virtual_directory' do
         create_vdir(virt_dir_name, 'foo', 'c:/foo')
       end
 
-      describe "apply manifest twice" do
-        manifest = <<-HERE
-          iis_virtual_directory { '#{virt_dir_name}':
-            ensure       => 'absent'
-          }
-          HERE
-          it_behaves_like 'an idempotent resource', manifest
-      end
+      manifest = <<-HERE
+        iis_virtual_directory { '#{virt_dir_name}':
+          ensure       => 'absent'
+        }
+        HERE
+      idempotent_apply('create iis virtual dir', manifest)
 
-      context 'when puppet resource is run' do
-        it "iis_virtual_directory to be absent" do
-          puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
-        end
+      it "iis_virtual_directory to be absent" do
+        puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
       end
 
       after(:all) do
@@ -160,22 +152,20 @@ describe 'iis_virtual_directory' do
           create_path('c:\inetpub\deeper')
           create_site(site_name, true)
         end
-        describe "apply manifest twice" do
-          manifest = <<-HERE
-          iis_virtual_directory{ "test_vdir":
-            ensure       => 'present',
-            sitename     => "#{site_name}",
-            physicalpath => 'c:\\inetpub\\test_vdir',
-          }->
-          iis_virtual_directory { 'test_vdir\deeper':
-            name         => 'test_vdir\deeper',
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'c:\\inetpub\\deeper',
-          }
-          HERE
-          it_behaves_like 'an idempotent resource', manifest
-        end
+        manifest = <<-HERE
+        iis_virtual_directory{ "test_vdir":
+          ensure       => 'present',
+          sitename     => "#{site_name}",
+          physicalpath => 'c:\\inetpub\\test_vdir',
+        }->
+        iis_virtual_directory { 'test_vdir\deeper':
+          name         => 'test_vdir\deeper',
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'c:\\inetpub\\deeper',
+        }
+        HERE
+        idempotent_apply('create iis virtual dir', manifest)
 
         after(:all) do
           remove_vdir(virt_dir_name)
@@ -186,21 +176,17 @@ describe 'iis_virtual_directory' do
     context 'with invalid' do
       context 'physicalpath parameter defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
-        describe "apply failing manifest" do
-          manifest = <<-HERE
-          iis_virtual_directory { '#{virt_dir_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'c:\\wakka'
-          }
-          HERE
-          it_behaves_like 'a failing manifest', manifest
-        end
+        manifest = <<-HERE
+        iis_virtual_directory { '#{virt_dir_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'c:\\wakka'
+        }
+        HERE
+        apply_failing_manifest('apply failing manifest', manifest)
 
-        context 'when puppet resource is run' do
-          it "iis_virtual_directory to be absent" do
-            puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
-          end
+        it "iis_virtual_directory to be absent" do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
         end
 
         after(:all) do
@@ -210,20 +196,16 @@ describe 'iis_virtual_directory' do
 
       context 'physicalpath parameter not defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
-        describe "apply manifest twice" do
-          manifest = <<-HERE
-          iis_virtual_directory { '#{virt_dir_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}'
-          }
-          HERE
-          it_behaves_like 'a failing manifest', manifest
-        end
+        manifest = <<-HERE
+        iis_virtual_directory { '#{virt_dir_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}'
+        }
+        HERE
+        apply_failing_manifest('apply failing manifest', manifest)
 
-        context 'when puppet resource is run' do
-          it "iis_virtual_directory to be absent" do
-            puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
-          end
+        it "iis_virtual_directory to be absent" do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
         end
 
         after(:all) do

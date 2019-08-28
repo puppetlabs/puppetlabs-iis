@@ -130,7 +130,7 @@ describe 'iis_application_pool' do
         }
         HERE
 
-        apply_failing_manifest('creat app pool', manifest)
+        apply_failing_manifest('apply failing manifest', manifest)
 
         it "iis_application_pool is absent" do
           puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))

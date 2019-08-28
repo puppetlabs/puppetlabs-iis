@@ -2,13 +2,13 @@ require 'spec_helper'
 require 'puppet/type'
 require 'puppet_x/puppetlabs/iis/iis_version'
 
-describe PuppetX::PuppetLabs::IIS::IISVersion do
+describe 'iis_version' do
   before(:each) do
     skip 'Not on Windows platform' unless Puppet::Util::Platform.windows?
   end
 
   describe 'when iis is installed' do
-    let(:ps) { described_class }
+    let(:ps) { PuppetX::PuppetLabs::IIS::IISVersion }
 
     it 'detects a iis version' do
       expect_any_instance_of(Win32::Registry).to receive(:open)
@@ -41,7 +41,7 @@ describe PuppetX::PuppetLabs::IIS::IISVersion do
   end
 
   describe 'when iis is not installed' do
-    let(:ps) { described_class }
+    let(:ps) { PuppetX::PuppetLabs::IIS::IISVersion }
 
     it 'returns nil and not throw' do
       expect_any_instance_of(Win32::Registry).to receive(:open)

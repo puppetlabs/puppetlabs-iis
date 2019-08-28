@@ -47,3 +47,13 @@ def apply_failing_manifest(work_description, manifest)
     execute_manifest(manifest, expect_failures: true)
   end
 end
+
+def puppet_resource_run(result)
+  it 'returns successfully' do
+    expect(result.exit_code).to eq 0
+  end
+
+  it 'does not return an error' do
+    expect(result.stderr).not_to match(%r{\b})
+  end
+end
