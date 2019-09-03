@@ -31,42 +31,27 @@ describe 'iis_application' do
 
 
       # include_context 'with a puppet resource run'# do
-      context 'when puppet resource is run' do
-        let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) }
-        it 'returns successfully' do
-          expect(result.exit_code).to eq 0
+      it "iis_application is absent" do
+        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+        [
+          'physicalpath', 'C:\inetpub\basic',
+          'applicationpool', 'DefaultAppPool',
+        ].each_slice(2) do | key, value |
+          puppet_resource_should_show(key, value, result)
         end
-
-        it 'does not return an error' do
-          expect(result.stderr).not_to match(%r{\b})
-        end
-        it 'returns successfully' do
-          expect(result.exit_code).to eq 0
-        end
-
-        it 'does not return an error' do
-          expect(result.stderr).not_to match(%r{\b})
-        end
-        it "iis_application is absent" do
-          [
-            'physicalpath', 'C:\inetpub\basic',
-            'applicationpool', 'DefaultAppPool',
-          ].each_slice(2) do | key, value |
-            puppet_resource_should_show(key, value, result)
-          end
-        end
-    end
+      end
 
       manifest = <<-HERE
-          iis_application { '#{app_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            # Change the capitalization of the T to see if it breaks.
-            physicalpath => 'C:\\ineTpub\\basic',
-          }
-        HERE
+        iis_application { '#{app_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          # Change the capitalization of the T to see if it breaks.
+          physicalpath => 'C:\\ineTpub\\basic',
+        }
+      HERE
 
       it 'runs with no changes' do
+        require 'pry'; binding.pry;
         execute_manifest(manifest, catch_changes: true)
       end
 
@@ -94,24 +79,13 @@ describe 'iis_application' do
 
       idempotent_apply('create app', manifest)
 
-      context 'when puppet resource is run' do
-        let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) }
-
-        it 'returns successfully' do
-          expect(result.exit_code).to eq 0
-        end
-
-        it 'does not return an error' do
-          expect(result.stderr).not_to match(%r{\b})
-        end
-
-        it "iis_application is absent" do
-          [
-            'physicalpath', 'C:\inetpub\vdir',
-            'applicationpool', 'DefaultAppPool',
-          ].each_slice(2) do | key, value |
-            puppet_resource_should_show(key, value, result)
-          end
+      it "iis_application is absent" do
+        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+        [
+          'physicalpath', 'C:\inetpub\vdir',
+          'applicationpool', 'DefaultAppPool',
+        ].each_slice(2) do | key, value |
+          puppet_resource_should_show(key, value, result)
         end
       end
 
@@ -378,20 +352,9 @@ describe 'iis_application' do
 
     idempotent_apply('create app', manifest)
 
-    context 'when puppet resource is run' do
-      let(:result) { on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}")) }
-
-      it 'returns successfully' do
-        expect(result.exit_code).to eq 0
-      end
-
-      it 'does not return an error' do
-        expect(result.stderr).not_to match(%r{\b})
-      end
-
-      it "iis_application is absent" do
-        puppet_resource_should_show('ensure', 'absent', result)
-      end
+    it "iis_application is absent" do
+      result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+      puppet_resource_should_show('ensure', 'absent', result)
     end
     after(:all) do
       remove_app(app_name)
@@ -438,14 +401,14 @@ describe 'iis_application' do
 
     idempotent_apply('create app', manifest)
 
-    it 'contains two sites with the same app name' do
+    it 'contains the first site with the same app name' do
       result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
       expect(result.stdout).to match(%r{#{site_name}\\#{app_name}})
       expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       expect(result.stdout).to match %r{C:\\inetpub\\#{site_name}\\#{app_name}}
       expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
     end
-    it 'contains two sites with the same app name' do
+    it 'contains the second site with the same app name' do
       result2 = on(default, puppet('resource', 'iis_application', "#{site_name2}\\\\#{app_name}"))
       expect(result2.stdout).to match(%r{#{site_name2}\\#{app_name}})
       expect(result2.stdout).to match(%r{ensure\s*=> 'present',})
