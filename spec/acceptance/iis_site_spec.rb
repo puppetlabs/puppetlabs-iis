@@ -660,8 +660,8 @@ describe 'iis_site' do
       HERE
 
       idempotent_apply('create iis site', manifest)
-      
-      
+
+
 
       it 'runs the first site on port 80 with no host header' do
         first_site = resource('iis_site', site_name)
