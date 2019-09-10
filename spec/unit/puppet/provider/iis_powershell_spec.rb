@@ -1,13 +1,13 @@
-#! /usr/bin/env ruby
 require 'spec_helper'
 require 'puppet/type'
 require 'puppet/provider/iis_powershell'
 
-describe Puppet::Provider::IIS_PowerShell do
-  let (:subject) { described_class }
-
+# describe Puppet::Provider::IIS_PowerShell do
+describe 'test' do
   describe 'run' do
-    let(:ps_manager) { double('PSManager') }
+    subject(:iis_powershell_type) { Puppet::Provider::IIS_PowerShell }
+
+    let(:ps_manager) { instance_double('PSManager') }
     let(:command) { 'command' }
     let(:execute_response) do
       {
@@ -16,50 +16,50 @@ describe Puppet::Provider::IIS_PowerShell do
     end
 
     before(:each) do
-      allow(subject).to receive(:ps_manager).and_return(ps_manager)
+      allow(Puppet::Provider::IIS_PowerShell).to receive(:ps_manager).and_return(ps_manager)
       allow(ps_manager).to receive(:execute).and_return(execute_response)
     end
 
     describe 'When on PowerShell 2.0' do
       before(:each) do
-        expect(subject).to receive(:ps_major_version).and_return(2)
+        allow(Puppet::Provider::IIS_PowerShell).to receive(:ps_major_version).and_return(2)
       end
 
       it 'appends Importing the WebAdministration module' do
         expect(ps_manager).to receive(:execute).with(%r{Import-Module WebAdministration}).and_return(execute_response)
-        subject.run(command)
+        iis_powershell_type.run(command)
       end
 
       it 'appends changing the working directory to IIS' do
         expect(ps_manager).to receive(:execute).with(%r{cd iis:}).and_return(execute_response)
-        subject.run(command)
+        iis_powershell_type.run(command)
       end
 
       it 'appends a JSON converter' do
         expect(ps_manager).to receive(:execute).with(%r{ConvertTo\-JSON}).and_return(execute_response)
-        subject.run(command)
+        iis_powershell_type.run(command)
       end
 
       it 'sets Confirmation Preference' do
         expect(ps_manager).to receive(:execute).with(%r{\$ConfirmPreference = 'high'}).and_return(execute_response)
-        subject.run(command)
+        iis_powershell_type.run(command)
       end
 
       it 'appends the original command at the end' do
         expect(ps_manager).to receive(:execute).with(%r{#{command}$}).and_return(execute_response)
-        subject.run(command)
+        iis_powershell_type.run(command)
       end
     end
 
     [3, 4, 5, 6].each do |testcase|
       describe "When on PowerShell #{testcase}.0" do
         before(:each) do
-          expect(subject).to receive(:ps_major_version).and_return(testcase)
+          allow(Puppet::Provider::IIS_PowerShell).to receive(:ps_major_version).and_return(testcase)
         end
 
         it 'does not modify the command' do
           expect(ps_manager).to receive(:execute).with(command).and_return(execute_response)
-          subject.run(command)
+          iis_powershell_type.run(command)
         end
       end
     end
@@ -67,6 +67,8 @@ describe Puppet::Provider::IIS_PowerShell do
 
   describe 'parse_json_result' do
     # Single Object text
+    subject(:iis_powershell_type) { Puppet::Provider::IIS_PowerShell }
+
     let(:single_rawtext) do
       <<-HERE
 {
@@ -304,43 +306,43 @@ HERE
 
     describe 'When given invalid raw text' do
       it 'returns nil when given nil' do
-        expect(subject.parse_json_result(nil)).to be_nil
+        expect(iis_powershell_type.parse_json_result(nil)).to be_nil
       end
 
       it 'raises when given invalid JSON' do
-        expect { subject.parse_json_result('invalid json') }.to raise_error(JSON::ParserError)
+        expect { iis_powershell_type.parse_json_result('invalid json') }.to raise_error(JSON::ParserError)
       end
 
       it 'raises when given an empty string' do
-        expect { subject.parse_json_result('') }.to raise_error(JSON::ParserError)
+        expect { iis_powershell_type.parse_json_result('') }.to raise_error(JSON::ParserError)
       end
     end
 
     describe 'When given valid JSON from PowerShell 3+' do
       it 'returns a Ruby representation of the JSON text for a single object' do
-        result = subject.parse_json_result(single_rawtext)
+        result = iis_powershell_type.parse_json_result(single_rawtext)
         expect(result).to eq(single_expected_object)
       end
 
       it 'returns a Ruby representation of the JSON text for multiple objects' do
-        result = subject.parse_json_result(multi_rawtext)
+        result = iis_powershell_type.parse_json_result(multi_rawtext)
         expect(result).to eq(multi_expected_object)
       end
 
       it 'shoulds ignore CR and LF characters' do
-        result = subject.parse_json_result(single_rawtext_with_crlf)
+        result = iis_powershell_type.parse_json_result(single_rawtext_with_crlf)
         expect(result).to eq(single_expected_object)
       end
     end
 
     describe 'When given JSON from PowerShell 2' do
       it 'returns a Ruby representation of the JSON text' do
-        result = subject.parse_json_result(single_ps2_rawtext)
+        result = iis_powershell_type.parse_json_result(single_ps2_rawtext)
         expect(result).to eq(single_expected_object)
       end
 
       it 'returns a Ruby representation of the JSON text for multiple objects' do
-        result = subject.parse_json_result(multi_ps2_rawtext)
+        result = iis_powershell_type.parse_json_result(multi_ps2_rawtext)
         expect(result).to eq(multi_expected_object)
       end
 
@@ -350,7 +352,7 @@ HERE
         end
 
         it 'raises an error' do
-          expect { subject.parse_json_result(raw_text) }.to raise_error(%r{JSON encoding})
+          expect { iis_powershell_type.parse_json_result(raw_text) }.to raise_error(%r{JSON encoding})
         end
       end
     end

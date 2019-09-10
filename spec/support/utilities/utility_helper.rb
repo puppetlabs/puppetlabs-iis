@@ -31,3 +31,29 @@ def create_selfsigned_cert(dnsname)
   result = on(default, command)
   result.stdout.chomp
 end
+
+def idempotent_apply(work_description, manifest)
+  it "#{work_description} runs without errors" do
+    execute_manifest(manifest, catch_failures: true)
+  end
+
+  it "#{work_description} runs a second time without changes" do
+    execute_manifest(manifest, catch_changes: true)
+  end
+end
+
+def apply_failing_manifest(work_description, manifest)
+  it "#{work_description} runs with errors" do
+    execute_manifest(manifest, expect_failures: true)
+  end
+end
+
+def puppet_resource_run(result)
+  it 'returns successfully' do
+    expect(result.exit_code).to eq 0
+  end
+
+  it 'does not return an error' do
+    expect(result.stderr).not_to match(%r{\b})
+  end
+end

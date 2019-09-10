@@ -1,6 +1,6 @@
 ---
 HOSTS:
-  windows2012-64-1:
+   windows2012-64-1:
     pe_dir:
     pe_ver:
     pe_upgrade_dir:

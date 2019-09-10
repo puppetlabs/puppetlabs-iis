@@ -18,64 +18,53 @@ describe 'iis_virtual_directory' do
         create_path('C:\foo')
       end
       virt_dir_name = SecureRandom.hex(10).to_s
-      # create_site(site_name, true)
-      describe "apply manifest twice" do
-        manifest = <<-HERE
-          file{ 'c:/foo':
-            ensure => 'directory'
-          }->
-          file{ 'c:/foo2':
+      manifest = <<-HERE
+        file{ 'c:/foo':
           ensure => 'directory'
-          }->
-          iis_virtual_directory { '#{virt_dir_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'c:\\foo'
-          }
-        HERE
+        }->
+        file{ 'c:/foo2':
+        ensure => 'directory'
+        }->
+        iis_virtual_directory { '#{virt_dir_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'c:\\foo'
+        }
+      HERE
 
-        idempotent_apply('create iis virtual dir', manifest)
+      manifest2 = <<-HERE
+        iis_virtual_directory { '#{virt_dir_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          # Change capitalization to see if it breaks idempotency
+          physicalpath => 'c:\\Foo'
+        }
+      HERE
+
+      manifest3 = <<-HERE
+        iis_virtual_directory { '#{virt_dir_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'c:\\foo2'
+        }
+      HERE
+
+      idempotent_apply('create iis virtual dir', manifest)
+
+      it "iis_virtual_directory should be present" do
+        puppet_resource_should_show('ensure', 'present', resource('iis_virtual_directory', virt_dir_name))
       end
 
-      context 'when puppet resource is run' do
-        it "iis_virtual_directory should be present" do
-          puppet_resource_should_show('ensure', 'present', resource('iis_virtual_directory', virt_dir_name))
-        end
-
-        context 'when capitalization of paths change' do
-          manifest = <<-HERE
-            iis_virtual_directory { '#{virt_dir_name}':
-              ensure       => 'present',
-              sitename     => '#{site_name}',
-              # Change capitalization to see if it breaks idempotency
-              physicalpath => 'c:\\Foo'
-            }
-          HERE
-
-          it 'runs with no changes' do
-            execute_manifest(manifest, catch_changes: true)
-          end
-        end
+      it 'runs with no changes if capitolization changes' do
+        require 'pry'; binding.pry;
+        execute_manifest(manifest2, catch_changes: true)
       end
 
-      context 'when physical path changes' do
-        describe "apply manifest twice" do
-          manifest = <<-HERE
-          iis_virtual_directory { '#{virt_dir_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'c:\\foo2'
-          }
-          HERE
+      idempotent_apply('change physical path', manifest3)
 
-          idempotent_apply('create iis virtual dir', manifest)
-        end
-
-        context 'when puppet resource is run' do
-          it "physicalpath to be configured" do
-            puppet_resource_should_show('physicalpath', 'c:\\foo2', resource('iis_virtual_directory', virt_dir_name))
-          end
-        end
+      it "physicalpath to be configured" do
+        require 'pry'; binding.pry;
+        puppet_resource_should_show('physicalpath', 'c:\\foo2', resource('iis_virtual_directory', virt_dir_name))
       end
 
       after(:all) do
@@ -131,7 +120,8 @@ describe 'iis_virtual_directory' do
         iis_virtual_directory { '#{virt_dir_name}':
           ensure       => 'absent'
         }
-        HERE
+      HERE
+
       idempotent_apply('create iis virtual dir', manifest)
 
       it "iis_virtual_directory to be absent" do
@@ -144,32 +134,30 @@ describe 'iis_virtual_directory' do
     end
 
     context 'name allows slashes' do
-      context 'simple case' do
-        virt_dir_name = SecureRandom.hex(10).to_s
-        before(:all) do
-          create_path('c:\inetpub\test_site')
-          create_path('c:\inetpub\test_vdir')
-          create_path('c:\inetpub\deeper')
-          create_site(site_name, true)
-        end
-        manifest = <<-HERE
-        iis_virtual_directory{ "test_vdir":
-          ensure       => 'present',
-          sitename     => "#{site_name}",
-          physicalpath => 'c:\\inetpub\\test_vdir',
-        }->
-        iis_virtual_directory { 'test_vdir\deeper':
-          name         => 'test_vdir\deeper',
-          ensure       => 'present',
-          sitename     => '#{site_name}',
-          physicalpath => 'c:\\inetpub\\deeper',
-        }
-        HERE
-        idempotent_apply('create iis virtual dir', manifest)
+      virt_dir_name = SecureRandom.hex(10).to_s
+      before(:all) do
+        create_path('c:\inetpub\test_site')
+        create_path('c:\inetpub\test_vdir')
+        create_path('c:\inetpub\deeper')
+        create_site(site_name, true)
+      end
+      manifest = <<-HERE
+      iis_virtual_directory{ "test_vdir":
+        ensure       => 'present',
+        sitename     => "#{site_name}",
+        physicalpath => 'c:\\inetpub\\test_vdir',
+      }->
+      iis_virtual_directory { 'test_vdir\deeper':
+        name         => 'test_vdir\deeper',
+        ensure       => 'present',
+        sitename     => '#{site_name}',
+        physicalpath => 'c:\\inetpub\\deeper',
+      }
+      HERE
+      idempotent_apply('create iis virtual dir', manifest)
 
-        after(:all) do
-          remove_vdir(virt_dir_name)
-        end
+      after(:all) do
+        remove_vdir(virt_dir_name)
       end
     end
 
@@ -177,11 +165,11 @@ describe 'iis_virtual_directory' do
       context 'physicalpath parameter defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
         manifest = <<-HERE
-        iis_virtual_directory { '#{virt_dir_name}':
-          ensure       => 'present',
-          sitename     => '#{site_name}',
-          physicalpath => 'c:\\wakka'
-        }
+          iis_virtual_directory { '#{virt_dir_name}':
+            ensure       => 'present',
+            sitename     => '#{site_name}',
+            physicalpath => 'c:\\wakka'
+          }
         HERE
         apply_failing_manifest('apply failing manifest', manifest)
 
@@ -197,10 +185,10 @@ describe 'iis_virtual_directory' do
       context 'physicalpath parameter not defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
         manifest = <<-HERE
-        iis_virtual_directory { '#{virt_dir_name}':
-          ensure       => 'present',
-          sitename     => '#{site_name}'
-        }
+          iis_virtual_directory { '#{virt_dir_name}':
+            ensure       => 'present',
+            sitename     => '#{site_name}'
+          }
         HERE
         apply_failing_manifest('apply failing manifest', manifest)
 

@@ -13,7 +13,10 @@ AllCops:
   - "**/Gemfile"
   - "**/Rakefile"
   - pkg/**/*
-  - spec/**/**/*
+  - spec/fixtures/**/*
+  - spec/integration/**/*
+  - spec/support/**/*
+  - spec/acceptance/**/*
   - vendor/**/*
   - "**/Puppetfile"
   - "**/Vagrantfile"
@@ -117,6 +120,8 @@ RSpec/MessageExpectation:
 RSpec/MultipleExpectations:
   Enabled: false
 RSpec/NestedGroups:
+  Enabled: false
+RSpec/AnyInstance:
   Enabled: false
 Style/AsciiComments:
   Enabled: false

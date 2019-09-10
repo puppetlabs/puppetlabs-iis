@@ -98,31 +98,26 @@ describe 'iis_application_pool' do
     expect(params + [:provider]).to include(*type_class.parameters)
   end
 
-  [
-    :state,
-    :managed_pipeline_mode,
-    :managed_runtime_version,
-    :start_mode,
-    :cpu_action,
-    :idle_timeout_action,
-    :logon_type,
-    :load_balancer_capabilities,
-    :identity_type,
+  [:state,
+   :managed_pipeline_mode,
+   :managed_runtime_version,
+   :start_mode,
+   :cpu_action,
+   :idle_timeout_action,
+   :logon_type,
+   :load_balancer_capabilities,
+   :identity_type].freeze
 
-  ]
-
-  [
-    :name,
-    :clr_config_file,
-    :managed_runtime_loader,
-    :log_event_on_process_model,
-    :orphan_action_exe,
-    :orphan_action_params,
-    :rapid_fail_protection,
-    :auto_shutdown_exe,
-    :auto_shutdown_params,
-    :log_event_on_recycle,
-  ].each do |property|
+  [:name,
+   :clr_config_file,
+   :managed_runtime_loader,
+   :log_event_on_process_model,
+   :orphan_action_exe,
+   :orphan_action_params,
+   :rapid_fail_protection,
+   :auto_shutdown_exe,
+   :auto_shutdown_params,
+   :log_event_on_recycle].each do |property|
     it "should require #{property} to be a string" do
       expect(type_class).to require_string_for(property)
     end
@@ -197,14 +192,6 @@ describe 'iis_application_pool' do
     it "should require #{prop} to be a number" do
       expect(type_class).to require_integer_for(prop)
     end
-
-    # it "should require #{prop} to be greater than 0" do
-    #   expect do
-    #     config = {name: 'sample'}
-    #     config[prop] = 0
-    #     type_class.new(config)
-    #   end.to raise_error(Puppet::Error, /#{prop} should be greater than 0/)
-    # end
 
     next unless upper_limit
     it "should require #{prop} to be less than #{upper_limit}" do
@@ -293,24 +280,6 @@ describe 'iis_application_pool' do
       }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})
     end
   end
-
-  # [
-  #   :cpu_smp_processor_affinity_mask,
-  #   :cpu_smp_processor_affinity_mask2,
-  #   :max_processes,
-  #   :rapid_fail_protection_max_crashes,
-  #   :restart_memory_limit,
-  #   :restart_private_memory_limit,
-  #   :restart_requests_limit,
-  # ].each do |property|
-  #   it "should require #{property} to be less than 2147483647" do
-  #     expect do
-  #       config = {name: 'sample'}
-  #       config[property] = 0
-  #       type_class.new(config)
-  #     end.to raise_error(Puppet::Error, /#{property} should be greater than 0/)
-  #   end
-  # end
 
   it 'defaults ensure to present' do
     pool = type_class.new(

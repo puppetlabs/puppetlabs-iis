@@ -26,10 +26,10 @@ unless ENV['MODULE_provision'] == 'no'
 end
 
 def windows_hosts
-  hosts.select { |host| host.platform =~ %r{windows}i }
+  hosts.select { |host| host.platform =~ %r{windows} }
 end
 
-def get_puppet_version
+def installed_puppet_version
   (on default, puppet('--version')).output.chomp
 end
 

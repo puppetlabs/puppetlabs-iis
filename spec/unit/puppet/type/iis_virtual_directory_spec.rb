@@ -4,6 +4,7 @@ describe Puppet::Type.type(:iis_virtual_directory) do
   subject { resource }
 
   let(:type_class) { Puppet::Type.type(:iis_virtual_directory) }
+  let(:resource) { described_class.new(name: 'iis_virtual_directory') }
 
   let :params do
     [
@@ -37,8 +38,6 @@ describe Puppet::Type.type(:iis_virtual_directory) do
   it 'does not have unexpected parameters' do
     expect(params + [:provider]).to include(*type_class.parameters)
   end
-
-  let(:resource) { described_class.new(name: 'iis_virtual_directory') }
 
   describe 'parameter :name' do
     subject { resource.parameters[:name] }
