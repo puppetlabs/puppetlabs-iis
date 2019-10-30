@@ -157,7 +157,7 @@ For information on the classes and types, see the [REFERENCE.md](https://github.
 
 #### OS Compatibility
 
-This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2`, `Windows Server 2016` and `Windows Server 2016 Core`.
+This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2`, `Windows Server 2016`,`Windows Server 2016 Core` and `Windows Server 2019`.
 
 #### IIS Compatibility
 
