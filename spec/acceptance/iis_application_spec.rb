@@ -51,7 +51,6 @@ describe 'iis_application' do
       HERE
 
       it 'runs with no changes' do
-        require 'pry'; binding.pry;
         execute_manifest(manifest, catch_changes: true)
       end
 
