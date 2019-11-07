@@ -56,14 +56,12 @@ describe 'iis_virtual_directory' do
       end
 
       it 'runs with no changes if capitolization changes' do
-        require 'pry'; binding.pry;
         execute_manifest(manifest2, catch_changes: true)
       end
 
       idempotent_apply('change physical path', manifest3)
 
       it "physicalpath to be configured" do
-        require 'pry'; binding.pry;
         puppet_resource_should_show('physicalpath', 'c:\\foo2', resource('iis_virtual_directory', virt_dir_name))
       end
 
