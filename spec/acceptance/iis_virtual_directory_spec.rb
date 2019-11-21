@@ -2,13 +2,13 @@ require 'spec_helper_acceptance'
 
 describe 'iis_virtual_directory' do
   site_name = SecureRandom.hex(10)
-  before(:all) do
+  before(:context) do
     # Remove 'Default Web Site' to start from a clean slate
     remove_all_sites
     create_site(site_name, true)
   end
 
-  after(:all) do
+  after(:context) do
     remove_all_sites
   end
 
@@ -17,6 +17,7 @@ describe 'iis_virtual_directory' do
       before (:all) do
         create_path('C:\foo')
       end
+
       virt_dir_name = SecureRandom.hex(10).to_s
       # create_site(site_name, true)
       describe 'apply manifest twice' do
@@ -53,7 +54,7 @@ describe 'iis_virtual_directory' do
           HERE
 
           it 'runs with no changes' do
-            execute_manifest(manifest, catch_changes: true)
+            apply_manifest(manifest, catch_changes: true)
           end
         end
       end
@@ -79,44 +80,40 @@ describe 'iis_virtual_directory' do
       end
 
       after(:all) do
-        remove_vdir(virt_dir_name)
+        remove_vdir(virt_dir_name, site_name)
       end
     end
 
     context 'with a password wrapped in Sensitive()' do
-      if installed_puppet_version.to_i < 5
-        skip 'is skipped due to version being lower than puppet 5'
-      else
-        virt_dir_name = SecureRandom.hex(10).to_s
-        manifest = <<-HERE
-          file{ 'c:/foo':
-            ensure => 'directory'
-          }->
-          iis_virtual_directory { '#{virt_dir_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'c:\\foo',
-            user_name    => 'user',
-            password     => Sensitive('#@\\\'454sdf'),
-          }
-        HERE
+      virt_dir_name = SecureRandom.hex(10).to_s
+      manifest = <<-HERE
+        file{ 'c:/foo':
+          ensure => 'directory'
+        }->
+        iis_virtual_directory { '#{virt_dir_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'c:\\foo',
+          user_name    => 'user',
+          password     => Sensitive('#@\\\'454sdf'),
+        }
+      HERE
 
-        idempotent_apply('create iis virtual dir', manifest)
+      idempotent_apply('create iis virtual dir', manifest)
 
-        it 'all parameters are configured' do
-          resource_data = resource('iis_virtual_directory', virt_dir_name)
-          [
-            'ensure', 'present',
-            'user_name', 'user',
-            'password', '#@\\\'454sdf'
-          ].each_slice(2) do |key, value|
-            puppet_resource_should_show(key, value, resource_data)
-          end
+      it 'all parameters are configured' do
+        resource_data = resource('iis_virtual_directory', virt_dir_name)
+        [
+          'ensure', 'present',
+          'user_name', 'user',
+          'password', '#@\\\'454sdf'
+        ].each_slice(2) do |key, value|
+          puppet_resource_should_show(key, value, resource_data)
         end
+      end
 
-        it 'remove virt dir name' do
-          remove_vdir(virt_dir_name)
-        end
+      it 'remove virt dir name' do
+        remove_vdir(virt_dir_name, site_name)
       end
     end
 
@@ -124,15 +121,16 @@ describe 'iis_virtual_directory' do
       virt_dir_name = SecureRandom.hex(10).to_s
       before(:all) do
         create_path('c:/foo')
-        create_vdir(virt_dir_name, 'foo', 'c:/foo')
+        create_vdir(virt_dir_name, site_name, 'c:/foo')
       end
 
       manifest = <<-HERE
         iis_virtual_directory { '#{virt_dir_name}':
+          sitename     => '#{site_name}',
           ensure       => 'absent'
         }
         HERE
-      idempotent_apply('create iis virtual dir', manifest)
+      idempotent_apply('remove iis virtual dir', manifest)
 
       it 'iis_virtual_directory to be absent' do
         puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
@@ -150,7 +148,7 @@ describe 'iis_virtual_directory' do
           create_path('c:\inetpub\test_site')
           create_path('c:\inetpub\test_vdir')
           create_path('c:\inetpub\deeper')
-          create_site(site_name, true)
+          # create_site(site_name, true)
         end
         manifest = <<-HERE
         iis_virtual_directory{ "test_vdir":

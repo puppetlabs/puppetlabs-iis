@@ -21,9 +21,8 @@ describe 'iis_site' do
       HERE
 
       it 'runs without errors' do
-        expect_failure('Expected to fail due to MODULES-6869') do
-          execute_manifest(manifest, catch_failures: true)
-        end
+        # Expected to fail due to MODULES-6869
+        expect { apply_manifest(manifest, catch_failures: true) }.to raise_exception
       end
 
       def verify_iis_site(iis_site_name)
@@ -33,16 +32,10 @@ describe 'iis_site' do
         powershell
       end
 
-      windows_hosts = hosts.select { |host| host.platform =~ %r{windows}i }
-
-      windows_hosts.each do |host|
-        it 'Verify that IIS site name is present' do
-          on(host, powershell(verify_iis_site(site_name), 'EncodedCommand' => true)) do |result|
-            expect_failure('Expected to fail due to MODULES-6869') do
-              assert_match(%r{^1$}, result.stdout, 'Expected IIS site was not present!')
-            end
-          end
-        end
+      it 'Verify that IIS site name is present' do
+        result = run_shell(interpolate_powershell(verify_iis_site(site_name)))
+        # Expected to fail due to MODULES-6869'
+        expect { assert_match(%r{^1$}, result.stdout, 'Expected IIS site was not present!') }.to raise_exception
       end
 
       after(:all) do
