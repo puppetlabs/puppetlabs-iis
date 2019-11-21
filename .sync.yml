@@ -35,8 +35,6 @@ Gemfile:
       condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
 Rakefile:
   unmanaged: true
-spec/default_facts.yml:
-  unmanaged: true
 spec/spec_helper.rb:
   mock_with: ":rspec"
   coverage_report: true
