@@ -1,7 +1,8 @@
 ---
 ".gitlab-ci.yml":
   delete: true
-".travis.yml": 
+".travis.yml":
+  simplecov: true
 appveyor.yml:
   matrix_extras:
   - PUPPET_GEM_VERSION: "~> 6.0"
@@ -10,6 +11,7 @@ appveyor.yml:
   - PUPPET_GEM_VERSION: "~> 6.0"
     RUBY_VERSION: 25-x64
     CHECK: parallel_spec
+  simplecov: true
 Gemfile:
   required:
     ":system_tests":
