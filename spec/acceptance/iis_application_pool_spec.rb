@@ -33,9 +33,9 @@ describe 'iis_application_pool' do
         }
       HERE
 
-      idempotent_apply('create app pool',manifest)
+      idempotent_apply('create app pool', manifest)
 
-      it "has all properties correctly configured" do
+      it 'has all properties correctly configured' do
         # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
         resource_data = resource('iis_application_pool', pool_name)
         [
@@ -65,19 +65,19 @@ describe 'iis_application_pool' do
           'ping_response_time', '00:01:30',
           'set_profile_environment', :true,
           'shutdown_time_limit', '00:01:30',
-          'startup_time_limit', '00:01:30',
-        ].each_slice(2) do | key, value |
+          'startup_time_limit', '00:01:30'
+        ].each_slice(2) do |key, value|
           puppet_resource_should_show(key, value, resource_data)
         end
       end
       # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
       unless ['6.2', '6.1'].include?(fact('kernelmajversion'))
-        it "has all properties correctly configured" do
+        it 'has all properties correctly configured' do
           resource_data = resource('iis_application_pool', pool_name)
           [
             'idle_timeout_action', 'Terminate',
-            'log_event_on_process_model', 'IdleTimeout',
-          ].each_slice(2) do | key, value |
+            'log_event_on_process_model', 'IdleTimeout'
+          ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
         end
@@ -103,13 +103,13 @@ describe 'iis_application_pool' do
 
         idempotent_apply('create app pool', manifest)
 
-        it "has all properties correctly configured" do
+        it 'has all properties correctly configured' do
           resource_data = resource('iis_application_pool', pool_name)
           [
             'ensure', 'present',
             'user_name', 'user',
-            'password', '#@\\\'454sdf',
-          ].each_slice(2) do | key, value |
+            'password', '#@\\\'454sdf'
+          ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
         end
@@ -132,7 +132,7 @@ describe 'iis_application_pool' do
 
         apply_failing_manifest('apply failing manifest', manifest)
 
-        it "iis_application_pool is absent" do
+        it 'iis_application_pool is absent' do
           puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
         end
 
@@ -152,7 +152,7 @@ describe 'iis_application_pool' do
 
         apply_failing_manifest('create app pool', manifest)
 
-        it "iis_application_pool is absent" do
+        it 'iis_application_pool is absent' do
           puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
         end
 
@@ -179,12 +179,12 @@ describe 'iis_application_pool' do
 
     idempotent_apply('start the app pool', manifest)
 
-    it "iis_application_pool is present and has the correct state" do
+    it 'iis_application_pool is present and has the correct state' do
       resource_data = resource('iis_application_pool', pool_name)
       [
         'ensure', 'present',
-        'state', 'started',
-      ].each_slice(2) do | key, value |
+        'state', 'started'
+      ].each_slice(2) do |key, value|
         puppet_resource_should_show(key, value, resource_data)
       end
     end
@@ -208,7 +208,7 @@ describe 'iis_application_pool' do
 
     idempotent_apply('remove the app pool', manifest)
 
-    it "iis_application_pool is absent" do
+    it 'iis_application_pool is absent' do
       puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
     end
   end
@@ -230,13 +230,13 @@ describe 'iis_application_pool' do
 
     idempotent_apply('set memory limit', manifest)
 
-    it "has all properties correctly configured" do
+    it 'has all properties correctly configured' do
       resource_data = resource('iis_application_pool', pool_name)
       [
         'ensure', 'present',
         'state', 'started',
-        'restart_memory_limit', '3500000',
-      ].each_slice(2) do | key, value |
+        'restart_memory_limit', '3500000'
+      ].each_slice(2) do |key, value|
         puppet_resource_should_show(key, value, resource_data)
       end
     end
@@ -287,7 +287,7 @@ describe 'iis_application_pool' do
 
     idempotent_apply('create app pool', manifest)
 
-    it "has all properties correctly configured" do
+    it 'has all properties correctly configured' do
       resource_data = resource('iis_application_pool', pool_name)
       [
         'ensure', 'present',
@@ -318,8 +318,8 @@ describe 'iis_application_pool' do
         'ping_response_time', '00:01:30',
         'set_profile_environment', :true,
         'shutdown_time_limit', '00:01:30',
-        'startup_time_limit', '00:01:30',
-      ].each_slice(2) do | key, value |
+        'startup_time_limit', '00:01:30'
+      ].each_slice(2) do |key, value|
         puppet_resource_should_show(key, value, resource_data)
       end
     end
