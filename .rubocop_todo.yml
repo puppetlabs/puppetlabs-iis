@@ -54,12 +54,6 @@ Lint/Void:
   Exclude:
     - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
 
-# Offense count: 6
-# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
-# URISchemes: http, https
-Metrics/LineLength:
-  Max: 246
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Performance/RedundantMatch:
