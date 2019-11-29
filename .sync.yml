@@ -1,54 +1,44 @@
 ---
-Gemfile:
-  required:
-    ':system_tests':
-      - gem: 'puppet-module-posix-system-r#{minor_version}'
-        platforms: ruby
-      - gem: 'puppet-module-win-system-r#{minor_version}'
-        platforms:
-          - mswin
-          - mingw
-          - x64_mingw
-      - gem: beaker-testmode_switcher
-        version: '~> 0.4'
-      - gem: master_manipulator
-      - gem: puppet-blacksmith
-        version: '~> 3.4'
-  optional:
-    ':development':
-      - gem: 'rototiller'
-        version: '~> 1.0'
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
-
-spec/spec_helper.rb:
-  mock_with: ':rspec'
-
-# For the moment don't do any rubocop checks.
-
-# Includes acceptance_tests rototiller rake task added with MODULES-3373
-Rakefile:
-  unmanaged: true
-
+".gitlab-ci.yml":
+  delete: true
+".rubocop.yml":
+  include_todos: true
+".travis.yml":
+  simplecov: true
 appveyor.yml:
   matrix_extras:
-    - PUPPET_GEM_VERSION: ~> 6.0
-      RUBY_VERSION: 25
-      CHECK: parallel_spec
-    - PUPPET_GEM_VERSION: ~> 6.0
-      RUBY_VERSION: 25-x64
-      CHECK: parallel_spec
-
-.gitlab-ci.yml:
-  delete: true
-
-spec/default_facts.yml:
-  unmanaged: true
-
-.gitignore:
+  - PUPPET_GEM_VERSION: "~> 6.0"
+    RUBY_VERSION: 25
+    CHECK: parallel_spec
+  - PUPPET_GEM_VERSION: "~> 6.0"
+    RUBY_VERSION: 25-x64
+    CHECK: parallel_spec
+  simplecov: true
+Gemfile:
   required:
-    - ---.project
-
-.travis.yml:
+    ":system_tests":
+    - gem: puppet-module-posix-system-r#{minor_version}
+      platforms: ruby
+    - gem: puppet-module-win-system-r#{minor_version}
+      platforms:
+      - mswin
+      - mingw
+      - x64_mingw
+    - gem: beaker-testmode_switcher
+      version: "~> 0.4"
+    - gem: master_manipulator
+    - gem: puppet-blacksmith
+      version: "~> 3.4"
+  optional:
+    ":development":
+    - gem: rototiller
+      version: "~> 1.0"
+    - gem: github_changelog_generator
+      git: https://github.com/skywinder/github-changelog-generator
+      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
+      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
+Rakefile:
+  unmanaged: true
+spec/spec_helper.rb:
+  mock_with: ":rspec"
+  coverage_report: true

@@ -50,8 +50,14 @@ describe Puppet::Provider::IIS_PowerShell do
       it 'calls powershell one registry path' do
         reg_key = instance_double('bob')
         expect(reg_key).to receive(:[]).with('PowerShellVersion').and_return('2.0')
-        expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).once.and_raise(Win32::Registry::Error.new(2), 'nope')
-        expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).once.and_yield(reg_key)
+        expect_any_instance_of(Win32::Registry).to receive(:open)
+          .with('SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine', Win32::Registry::KEY_READ | 0x100)
+          .once
+          .and_raise(Win32::Registry::Error.new(2), 'nope')
+        expect_any_instance_of(Win32::Registry).to receive(:open)
+          .with('SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine', Win32::Registry::KEY_READ | 0x100)
+          .once
+          .and_yield(reg_key)
 
         version = subject.powershell_version
 
@@ -69,8 +75,14 @@ describe Puppet::Provider::IIS_PowerShell do
 
   describe 'when powershell is not installed' do
     before(:each) do
-      expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).once.and_raise(Win32::Registry::Error.new(2), 'nope')
-      expect_any_instance_of(Win32::Registry).to receive(:open).with('SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine', Win32::Registry::KEY_READ | 0x100).once.and_raise(Win32::Registry::Error.new(2), 'nope')
+      expect_any_instance_of(Win32::Registry).to receive(:open)
+        .with('SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine', Win32::Registry::KEY_READ | 0x100)
+        .once
+        .and_raise(Win32::Registry::Error.new(2), 'nope')
+      expect_any_instance_of(Win32::Registry).to receive(:open)
+        .with('SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine', Win32::Registry::KEY_READ | 0x100)
+        .once
+        .and_raise(Win32::Registry::Error.new(2), 'nope')
     end
 
     it 'returns nil and not throw' do

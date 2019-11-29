@@ -51,7 +51,7 @@ describe 'iis_virtual_directory' do
 
       idempotent_apply('create iis virtual dir', manifest)
 
-      it "iis_virtual_directory should be present" do
+      it 'iis_virtual_directory should be present' do
         puppet_resource_should_show('ensure', 'present', resource('iis_virtual_directory', virt_dir_name))
       end
 
@@ -61,7 +61,7 @@ describe 'iis_virtual_directory' do
 
       idempotent_apply('change physical path', manifest3)
 
-      it "physicalpath to be configured" do
+      it 'physicalpath to be configured' do
         puppet_resource_should_show('physicalpath', 'c:\\foo2', resource('iis_virtual_directory', virt_dir_name))
       end
 
@@ -90,18 +90,18 @@ describe 'iis_virtual_directory' do
 
         idempotent_apply('create iis virtual dir', manifest)
 
-        it "all parameters are configured" do
+        it 'all parameters are configured' do
           resource_data = resource('iis_virtual_directory', virt_dir_name)
           [
             'ensure', 'present',
             'user_name', 'user',
-            'password', '#@\\\'454sdf',
-          ].each_slice(2) do | key, value |
+            'password', '#@\\\'454sdf'
+          ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
         end
 
-        it "remove virt dir name" do
+        it 'remove virt dir name' do
           remove_vdir(virt_dir_name)
         end
       end
@@ -122,7 +122,7 @@ describe 'iis_virtual_directory' do
 
       idempotent_apply('create iis virtual dir', manifest)
 
-      it "iis_virtual_directory to be absent" do
+      it 'iis_virtual_directory to be absent' do
         puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
       end
 
@@ -171,7 +171,7 @@ describe 'iis_virtual_directory' do
         HERE
         apply_failing_manifest('apply failing manifest', manifest)
 
-        it "iis_virtual_directory to be absent" do
+        it 'iis_virtual_directory to be absent' do
           puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
         end
 
@@ -190,7 +190,7 @@ describe 'iis_virtual_directory' do
         HERE
         apply_failing_manifest('apply failing manifest', manifest)
 
-        it "iis_virtual_directory to be absent" do
+        it 'iis_virtual_directory to be absent' do
           puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
         end
 

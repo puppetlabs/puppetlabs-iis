@@ -1,7 +1,7 @@
 ---
 require:
 - rubocop-rspec
-# - rubocop-i18n
+- rubocop-i18n
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: '2.1'
@@ -14,13 +14,11 @@ AllCops:
   - "**/Rakefile"
   - pkg/**/*
   - spec/fixtures/**/*
-  - spec/integration/**/*
-  - spec/support/**/*
-  - spec/acceptance/**/*
   - vendor/**/*
   - "**/Puppetfile"
   - "**/Vagrantfile"
   - "**/Guardfile"
+inherit_from: ".rubocop_todo.yml"
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
@@ -30,6 +28,7 @@ GetText/DecorateString:
   Description: We don't want to decorate test output.
   Exclude:
   - spec/**/*
+  Enabled: false
 RSpec/BeforeAfterAll:
   Description: Beware of using after(:all) as it may cause state to leak between tests.
     A necessary evil in acceptance testing.
@@ -44,7 +43,7 @@ Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
 Style/ClassAndModuleChildren:
   Description: Compact style reduces the required amount of indentation.
-  Enabled: false
+  EnforcedStyle: compact
 Style/EmptyElse:
   Description: Enforce against empty else clauses, but allow `nil` for clarity.
   EnforcedStyle: empty
@@ -91,6 +90,12 @@ Style/MethodCalledOnDoEndBlock:
   Enabled: true
 Style/StringMethods:
   Enabled: true
+GetText/DecorateFunctionMessage:
+  Enabled: false
+GetText/DecorateStringFormattingUsingInterpolation:
+  Enabled: false
+GetText/DecorateStringFormattingUsingPercent:
+  Enabled: false
 Layout/EndOfLine:
   Enabled: false
 Layout/IndentHeredoc:
@@ -121,25 +126,9 @@ RSpec/MultipleExpectations:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
-RSpec/AnyInstance:
-  Enabled: false
 Style/AsciiComments:
-  Enabled: false
-Style/ClassVars:
   Enabled: false
 Style/IfUnlessModifier:
   Enabled: false
-Style/GuardClause:
-  Enabled: false
 Style/SymbolProc:
-  Enabled: false
-Style/PredicateName:
-  Enabled: false
-Style/MultilineTernaryOperator:
-  Enabled: false
-Lint/AssignmentInCondition:
-  Enabled: false
-Lint/IneffectiveAccessModifier:
-  Enabled: false
-Style/RegexpLiteral:
   Enabled: false

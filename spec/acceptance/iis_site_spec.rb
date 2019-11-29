@@ -26,10 +26,10 @@ describe 'iis_site' do
       it 'has all properties correctly configured' do
         resource_data = resource('iis_site', site_name)
         [
-          'ensure',            'started',
-          'physicalpath',                            'C:\inetpub\basic',
-          'applicationpool',                       'DefaultAppPool',
-        ].each_slice(2) do | key, value |
+          'ensure', 'started',
+          'physicalpath', 'C:\inetpub\basic',
+          'applicationpool', 'DefaultAppPool'
+        ].each_slice(2) do |key, value|
           puppet_resource_should_show(key, value, resource_data)
         end
       end
@@ -46,7 +46,7 @@ describe 'iis_site' do
           create_path('C:\inetpub\new')
         end
 
-        let(:certificate_hash) {create_selfsigned_cert('www.puppet.local').downcase}
+        let(:certificate_hash) { create_selfsigned_cert('www.puppet.local').downcase }
 
         let(:manifest) do
           <<-HERE
@@ -86,11 +86,11 @@ describe 'iis_site' do
           HERE
         end
 
-        it "creates a site with SSL bindings" do
+        it 'creates a site with SSL bindings' do
           execute_manifest(manifest, catch_failures: true)
         end
 
-        it " runs the manifest a second time without changes" do
+        it ' runs the manifest a second time without changes' do
           # SSL Flags not existing on IIS7 causes an idempotency bug in the provider
           pending('ssl flags do not exist on IIS 7 - MODULES-9894') if default.platform.match(/2008/)
           execute_manifest(manifest, catch_changes: true)
@@ -108,8 +108,8 @@ describe 'iis_site' do
             'loglocaltimerollover', 'false',
             'logpath', 'C:\\inetpub\\logs\\NewLogFiles',
             'logtruncatesize', '2000000',
-            'physicalpath', 'C:\\inetpub\\new',
-          ].each_slice(2) do | key, value |
+            'physicalpath', 'C:\\inetpub\\new'
+          ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
         end
@@ -147,14 +147,14 @@ describe 'iis_site' do
 
         idempotent_apply('create iis site', manifest)
 
-        it "has all properties correctly configured" do
+        it 'has all properties correctly configured' do
           resource_data = resource('iis_site', site_name)
           # resource_data = resource('iis_site', site_name)
           [
             'ensure', 'started',
             'preloadenabled', 'true',
-            'physicalpath', 'C:\\inetpub\\new',
-          ].each_slice(2) do | key, value |
+            'physicalpath', 'C:\\inetpub\\new'
+          ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
         end
@@ -185,7 +185,7 @@ describe 'iis_site' do
 
         idempotent_apply('create iis site', manifest)
 
-        it "has all properties correctly configured" do
+        it 'has all properties correctly configured' do
           resource_data = resource('iis_site', site_name)
           [
             'ensure', 'started',
@@ -195,8 +195,8 @@ describe 'iis_site' do
             'loglocaltimerollover', 'false',
             'logpath', 'C:\\inetpub\\logs\\NewLogFiles',
             'logperiod', 'Daily',
-            'physicalpath', 'C:\inetpub\new',
-          ].each_slice(2) do | key, value |
+            'physicalpath', 'C:\inetpub\new'
+          ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
         end
@@ -249,13 +249,13 @@ describe 'iis_site' do
 
           idempotent_apply('create iis site', manifest)
 
-          it "has all properties correctly configured" do
+          it 'has all properties correctly configured' do
             resource_data = resource('iis_site', site_name)
             [
               'ensure', 'started',
               'physicalpath', 'C:\inetpub\tmp',
-              'applicationpool', 'DefaultAppPool',
-            ].each_slice(2) do | key, value |
+              'applicationpool', 'DefaultAppPool'
+            ].each_slice(2) do |key, value|
               puppet_resource_should_show(key, value, resource_data)
             end
           end
@@ -282,13 +282,13 @@ describe 'iis_site' do
 
           idempotent_apply('create iis site', manifest)
 
-          it "has all properties correctly configured" do
+          it 'has all properties correctly configured' do
             resource_data = resource('iis_site', site_name)
             [
               'ensure', 'stopped',
               'physicalpath', 'C:\inetpub\tmp',
-              'applicationpool', 'DefaultAppPool',
-            ].each_slice(2) do | key, value |
+              'applicationpool', 'DefaultAppPool'
+            ].each_slice(2) do |key, value|
               puppet_resource_should_show(key, value, resource_data)
             end
           end
@@ -311,11 +311,11 @@ describe 'iis_site' do
 
           idempotent_apply('create iis site', manifest)
 
-          it "iis site is absent" do
+          it 'iis site is absent' do
             resource_data = resource('iis_site', site_name)
             [
-              'ensure', 'absent',
-            ].each_slice(2) do | key, value |
+              'ensure', 'absent'
+            ].each_slice(2) do |key, value|
               puppet_resource_should_show(key, value, resource_data)
             end
           end
@@ -385,7 +385,7 @@ describe 'iis_site' do
 
           idempotent_apply('create iis site', manifest)
 
-          it "has physicalpath configured" do
+          it 'has physicalpath configured' do
             puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new', resource('iis_site', site_name))
           end
 
@@ -410,7 +410,7 @@ describe 'iis_site' do
           HERE
 
           idempotent_apply('create iis site', manifest)
-          it "has applicationpool configured" do
+          it 'has applicationpool configured' do
             puppet_resource_should_show('applicationpool', pool_name, resource('iis_site', site_name))
           end
           after(:all) do
@@ -490,7 +490,7 @@ describe 'iis_site' do
 
           idempotent_apply('create iis site', manifest)
 
-          it "has enabledprotocols configured" do
+          it 'has enabledprotocols configured' do
             puppet_resource_should_show('enabledprotocols', 'https', resource('iis_site', site_name))
           end
           after(:all) do
@@ -526,7 +526,7 @@ describe 'iis_site' do
 
           idempotent_apply('create iis site', manifest)
 
-          it "has logflags configured" do
+          it 'has logflags configured' do
             puppet_resource_should_show('logflags', ['ClientIP', 'Date', 'Method'], resource('iis_site', site_name))
           end
           after(:all) do
@@ -632,7 +632,6 @@ describe 'iis_site' do
         it 'resource iis_site is' do
           puppet_resource_should_show('ensure', 'stopped', resource('iis_site', site_name))
         end
-
       end
     end
 
@@ -661,8 +660,6 @@ describe 'iis_site' do
 
       idempotent_apply('create iis site', manifest)
 
-
-
       it 'runs the first site on port 80 with no host header' do
         first_site = resource('iis_site', site_name)
         expect(first_site.stdout).to match(%r{ensure(\s*)=> 'started',})
@@ -670,7 +667,7 @@ describe 'iis_site' do
       end
 
       it 'runs the second site on port 80 but a different host header' do
-        second_site= resource('iis_site', second_site_name)
+        second_site = resource('iis_site', second_site_name)
         expect(second_site.stdout).to match(%r{ensure(\s*)=> 'started',})
         expect(second_site.stdout).to match(%r{\*\:80\:#{second_site_name}})
       end

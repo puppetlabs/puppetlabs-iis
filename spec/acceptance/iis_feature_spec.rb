@@ -11,7 +11,7 @@ describe 'when managing features iis_features' do
 
     idempotent_apply('create iis feature', manifest)
 
-    it "iis_feature is present" do
+    it 'iis_feature is present' do
       result = resource('iis_feature', feature)
       puppet_resource_should_show('ensure', 'present', result)
     end

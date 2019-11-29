@@ -29,14 +29,13 @@ describe 'iis_application' do
 
       idempotent_apply('create app', manifest)
 
-
       # include_context 'with a puppet resource run'# do
-      it "iis_application is absent" do
+      it 'iis_application is absent' do
         result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
         [
           'physicalpath', 'C:\inetpub\basic',
-          'applicationpool', 'DefaultAppPool',
-        ].each_slice(2) do | key, value |
+          'applicationpool', 'DefaultAppPool'
+        ].each_slice(2) do |key, value|
           puppet_resource_should_show(key, value, result)
         end
       end
@@ -78,12 +77,12 @@ describe 'iis_application' do
 
       idempotent_apply('create app', manifest)
 
-      it "iis_application is absent" do
+      it 'iis_application is absent' do
         result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
         [
           'physicalpath', 'C:\inetpub\vdir',
-          'applicationpool', 'DefaultAppPool',
-        ].each_slice(2) do | key, value |
+          'applicationpool', 'DefaultAppPool'
+        ].each_slice(2) do |key, value|
           puppet_resource_should_show(key, value, result)
         end
       end
@@ -351,7 +350,7 @@ describe 'iis_application' do
 
     idempotent_apply('create app', manifest)
 
-    it "iis_application is absent" do
+    it 'iis_application is absent' do
       result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
       puppet_resource_should_show('ensure', 'absent', result)
     end

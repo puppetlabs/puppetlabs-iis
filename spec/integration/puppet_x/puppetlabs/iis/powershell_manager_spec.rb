@@ -565,7 +565,8 @@ $bytes_in_k = (1024 * 64) + 1
       # then command may have \r\n injected, so remove those for comparison
       expect(result[:stdout].gsub(%r{\r\n}, '')).to include(command)
       # and it should end with the Write-Error content
-      expect(result[:stdout]).to end_with("404 Craig Not Found\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException\r\n \r\n")
+      expect(result[:stdout]).to end_with("404 Craig Not Found\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error]," \
+        " WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException\r\n \r\n")
     end
 
     it 'does not deadlock and return a valid response given invalid unparseable PowerShell code' do
@@ -697,7 +698,8 @@ $bytes_in_k = (1024 * 64) + 1
       msg = SecureRandom.uuid.to_s.delete('-')
       result = manager.execute("Write-Error '#{msg}'")
 
-      expect(result[:stdout]).to eq("Write-Error '#{msg}' : #{msg}\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException\r\n \r\n")
+      expect(result[:stdout]).to eq("Write-Error '#{msg}' : #{msg}\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error]," \
+        " WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException\r\n \r\n")
       expect(result[:exitcode]).to eq(0)
     end
 
