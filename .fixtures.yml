@@ -1,6 +1,7 @@
 fixtures:
   forge_modules:
     dism: 'puppetlabs/dism'
+    pwshlib: 'puppetlabs/pwshlib'
   fixtures:
   repositories:
     "stdlib":
