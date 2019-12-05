@@ -9,7 +9,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   confine    operatingsystem: [:windows]
   defaultfor operatingsystem: :windows
 
-  commands powershell: PuppetX::IIS::PowerShellCommon.powershell_path
+  commands powershell: Pwsh::Manager.powershell_path
 
   mk_resource_methods
 

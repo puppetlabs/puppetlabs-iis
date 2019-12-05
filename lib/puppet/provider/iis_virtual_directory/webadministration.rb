@@ -8,7 +8,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   confine     operatingsystem: [:windows]
   defaultfor operatingsystem: :windows
 
-  commands powershell: PuppetX::IIS::PowerShellCommon.powershell_path
+  commands powershell: Pwsh::Manager.powershell_path
 
   mk_resource_methods
 

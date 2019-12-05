@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'puppet_x/puppetlabs/iis/powershell_manager'
 
 describe 'iis_application provider' do
   subject(:iis_application_provider) do
@@ -13,10 +12,6 @@ describe 'iis_application provider' do
       iis_version: '8.0',
       operatingsystem: 'Windows',
     }
-  end
-
-  it 'does not receive new' do
-    expect(PuppetX::IIS::PowerShellManager).not_to receive(:new)
   end
 
   describe 'creating from scratch' do

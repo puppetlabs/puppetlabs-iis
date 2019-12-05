@@ -1,11 +1,8 @@
 require 'pathname'
+require 'ruby-pwsh'
 
 # This is the base class on which other providers are based.
 class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
-  require Pathname.new(__FILE__).dirname + '..' + '..' + 'puppet_x' + 'puppetlabs' + 'iis' + 'powershell_manager'
-  require Pathname.new(__FILE__).dirname + '..' + '..' + 'puppet_x' + 'puppetlabs' + 'iis' + 'powershell_common'
-  include PuppetX::IIS::PowerShellCommon
-
   def initialize(value = {})
     super(value)
     @original_values = if value.is_a? Hash
@@ -68,59 +65,17 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
 
   # PowerShellManager - Responsible for managing PowerShell
   def self.ps_manager
-    PuppetX::IIS::PowerShellManager.instance("#{command(:powershell)} #{PuppetX::IIS::PowerShellCommon.powershell_args.join(' ')}")
+    Pwsh::Manager.instance(command(:powershell), Pwsh::Manager.powershell_args)
   end
 
   # do_not_use_cached_value is typically only used for testing. In normal usage
   # the PowerShell version does not suddenly change during a Puppet run.
   def self.ps_major_version(do_not_use_cached_value = false)
     if @powershell_major_version.nil? || do_not_use_cached_value
-      version = powershell_version
+      version = Pwsh::WindowsPowerShell.version
       @powershell_major_version = version.nil? ? nil : version.split('.').first.to_i
     end
     @powershell_major_version
-  end
-
-  # define PS_ONE_REG_PATH
-  PS_ONE_REG_PATH   = 'SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'.freeze
-  # define PS_THREE_REG_PATH
-  PS_THREE_REG_PATH = 'SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine'.freeze
-  # define PS_REG_KEY
-  PS_REG_KEY        = 'PowerShellVersion'.freeze
-
-  # powershell_version
-  def self.powershell_version
-    Puppet::Util::Platform.windows? ? powershell_three_version || powershell_one_version : nil
-  end
-
-  # powershell_one_version
-  def self.powershell_one_version
-    version = nil
-    reg_access = Win32::Registry::KEY_READ | 0x100
-
-    begin
-      Win32::Registry::HKEY_LOCAL_MACHINE.open(PS_ONE_REG_PATH, reg_access) do |reg|
-        version = reg[PS_REG_KEY]
-      end
-    rescue
-      version = nil
-    end
-    version
-  end
-
-  # powershell_three_version
-  def self.powershell_three_version
-    version = nil
-    reg_access = Win32::Registry::KEY_READ | 0x100
-
-    begin
-      Win32::Registry::HKEY_LOCAL_MACHINE.open(PS_THREE_REG_PATH, reg_access) do |reg|
-        version = reg[PS_REG_KEY]
-      end
-    rescue
-      version = nil
-    end
-    version
   end
 
   # parse json result
