@@ -4,6 +4,8 @@
 ".rubocop.yml":
   include_todos: true
 ".travis.yml":
+  deploy_to_forge:
+    enabled: false
   simplecov: true
 appveyor.yml:
   matrix_extras:
