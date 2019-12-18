@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_application_pool' do
+describe 'iis_application_pool', :suite_a do
   context 'when configuring an application pool' do
     context 'with default parameters' do
       pool_name = SecureRandom.hex(10).to_s

@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_virtual_directory' do
+describe 'iis_virtual_directory', :suite_b do
   site_name = SecureRandom.hex(10)
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate

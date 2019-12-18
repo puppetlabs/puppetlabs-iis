@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'a minimal IIS config:' do
+describe 'a minimal IIS config:', :suite_a do
   manifest = <<-EOF
     file {'c:\\inetpub\\minimal':
       ensure => directory,

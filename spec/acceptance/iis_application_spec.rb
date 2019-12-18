@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_application' do
+describe 'iis_application', :suite_a do
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
     remove_all_sites
