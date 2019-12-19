@@ -12,6 +12,10 @@
       secure: >-
         L+69IwIvCn742nGHGfT3I0Qo6aNeXXCt0MvK3bYd2nZDzQsDxkzkjWMGswKj58T3nDKfTihF2N8IKy+r4ml3BXFyuPoBU+z8UEDSuU0IcU0QzXSvpWd5K8GH4OyRC/0k3K6OdcbcJvvC8imIAV6DxicJdRL1AL28EY9NETKYUCw3eZWWtSf8dFpsMFN3poJQ0fzYc5MrQHpP+/MHmwVDfqpu6iVjaCGK2Ifht9mHNI5zXMoHKgiKIFyYIVVQBBbrx+sc+Hfdrz1+dvDYdacws+QNK29sKuqHapdBzaQ/cwyOXtHvg4iK4UJ5QaDE5CM2M1ao2jUPjakScfBe5TE4ftCrLxL4k3xcWd/CyCQX8UCimE/Q1K86elywzrYUne2UsJCVIQlLIM74y5XtbVPMHZYx1lRLuCNukdwMmyXHjr0sUmXZGMWBTMItQNzbAV97jZefgzW8f/FxtpQhxRVGN066pjp1giXgAy+tGWzl9AuIfJOihw6Oq+R7cFAHvNrw2kFS52KBPqa47107n5DLgiHScxQV4kcZP0e2a2An6Q8/IcHk/DxbtGdG+5+YutxF+HGQGM5dPd6ipi4PeGe8cbsTQqpqNjwnxWTjxEHwK4Szw3zIx7/iW/Wh4Lw9VrBWymUzrAqiORQvCCebLh9k0ChnWn42rx3Sn9htdcwlZE4=
 appveyor.yml:
+  unmanaged: true
+  comment: "Unmanaged due to overly long acceptance test runs - see https://github.com/puppetlabs/puppetlabs-iis/pull/249"
+  use_travis: true
+  simplecov: true
   matrix_extras:
   - PUPPET_GEM_VERSION: "~> 6.0"
     RUBY_VERSION: 25
@@ -19,26 +23,10 @@ appveyor.yml:
   - PUPPET_GEM_VERSION: "~> 6.0"
     RUBY_VERSION: 25-x64
     CHECK: parallel_spec
-  simplecov: true
 Gemfile:
-  required:
-    ":system_tests":
-    - gem: puppet-module-posix-system-r#{minor_version}
-      platforms: ruby
-    - gem: puppet-module-win-system-r#{minor_version}
-      platforms:
-      - mswin
-      - mingw
-      - x64_mingw
-    - gem: beaker-testmode_switcher
-      version: "~> 0.4"
-    - gem: master_manipulator
-    - gem: puppet-blacksmith
-      version: "~> 3.4"
+  use_travis: true
   optional:
     ":development":
-    - gem: rototiller
-      version: "~> 1.0"
     - gem: github_changelog_generator
       git: https://github.com/skywinder/github-changelog-generator
       ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
