@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_application_pool' do
+describe 'iis_application_pool', :suite_a do
   context 'when configuring an application pool' do
     context 'with default parameters' do
       pool_name = SecureRandom.hex(10).to_s
@@ -71,7 +71,7 @@ describe 'iis_application_pool' do
         end
       end
       # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
-      unless ['6.2', '6.1'].include?(fact('kernelmajversion'))
+      unless ['6.2', '6.1'].include?(target_host_facts['kernelmajversion'])
         it 'has all properties correctly configured' do
           resource_data = resource('iis_application_pool', pool_name)
           [
@@ -89,34 +89,30 @@ describe 'iis_application_pool' do
     end
 
     context 'with a password wrapped in Sensitive() defined' do
-      if installed_puppet_version.to_i < 5
-        skip 'is skipped due to version being lower than puppet 5'
-      else
-        pool_name = SecureRandom.hex(10).to_s
-        manifest  = <<-HERE
-          iis_application_pool { '#{pool_name}':
-            ensure    => 'present',
-            user_name => 'user',
-            password  => Sensitive('#@\\\'454sdf'),
-          }
-        HERE
+      pool_name = SecureRandom.hex(10).to_s
+      manifest  = <<-HERE
+        iis_application_pool { '#{pool_name}':
+          ensure    => 'present',
+          user_name => 'user',
+          password  => Sensitive('#@\\\'454sdf'),
+        }
+      HERE
 
-        idempotent_apply('create app pool', manifest)
+      idempotent_apply('create app pool', manifest)
 
-        it 'has all properties correctly configured' do
-          resource_data = resource('iis_application_pool', pool_name)
-          [
-            'ensure', 'present',
-            'user_name', 'user',
-            'password', '#@\\\'454sdf'
-          ].each_slice(2) do |key, value|
-            puppet_resource_should_show(key, value, resource_data)
-          end
+      it 'has all properties correctly configured' do
+        resource_data = resource('iis_application_pool', pool_name)
+        [
+          'ensure', 'present',
+          'user_name', 'user',
+          'password', '#@\\\'454sdf'
+        ].each_slice(2) do |key, value|
+          puppet_resource_should_show(key, value, resource_data)
         end
+      end
 
-        after(:all) do
-          remove_app_pool(pool_name)
-        end
+      after(:all) do
+        remove_app_pool(pool_name)
       end
     end
 

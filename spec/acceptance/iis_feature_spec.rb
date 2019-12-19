@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'when managing features iis_features' do
+describe 'when managing features iis_features', :suite_a do
   context 'with default parameters' do
     feature = 'Web-Scripting-Tools'
     manifest = <<-HERE

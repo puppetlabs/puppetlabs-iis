@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_application' do
+describe 'iis_application', :suite_a do
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
     remove_all_sites
@@ -26,12 +26,11 @@ describe 'iis_application' do
           physicalpath => 'C:\\inetpub\\basic',
         }
       HERE
-
       idempotent_apply('create app', manifest)
 
       # include_context 'with a puppet resource run'# do
       it 'iis_application is absent' do
-        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+        result = resource('iis_application', "#{site_name}\\#{app_name}")
         [
           'physicalpath', 'C:\inetpub\basic',
           'applicationpool', 'DefaultAppPool'
@@ -50,7 +49,7 @@ describe 'iis_application' do
       HERE
 
       it 'runs with no changes' do
-        execute_manifest(manifest, catch_changes: true)
+        apply_manifest(manifest, catch_changes: true)
       end
 
       after(:all) do
@@ -78,7 +77,7 @@ describe 'iis_application' do
       idempotent_apply('create app', manifest)
 
       it 'iis_application is absent' do
-        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+        result = resource('iis_application', "#{site_name}\\#{app_name}")
         [
           'physicalpath', 'C:\inetpub\vdir',
           'applicationpool', 'DefaultAppPool'
@@ -113,7 +112,7 @@ describe 'iis_application' do
       idempotent_apply('create app', manifest)
 
       it 'creates the correct application' do
-        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/#{app_name}"))
+        result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
         expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
         expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
@@ -143,7 +142,7 @@ describe 'iis_application' do
       idempotent_apply('create app', manifest)
 
       it 'creates the correct application' do
-        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/#{app_name}"))
+        result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
         expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
         expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
@@ -226,7 +225,7 @@ describe 'iis_application' do
       idempotent_apply('create app', manifest)
 
       it 'creates the correct application' do
-        result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\subFolder/sub2/#{app_name}"))
+        result = resource('iis_application', "#{site_name}\\subFolder/sub2/#{app_name}")
         expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/sub2\/#{app_name}':/)
         expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
@@ -304,6 +303,10 @@ describe 'iis_application' do
       HERE
 
       idempotent_apply('create app', manifest)
+      after(:all) do
+        remove_app(app_name)
+        remove_all_sites
+      end
     end
 
     describe 'applicationpool' do
@@ -327,6 +330,10 @@ describe 'iis_application' do
       HERE
 
       idempotent_apply('create app', manifest)
+      after(:all) do
+        remove_app(app_name)
+        remove_all_sites
+      end
     end
   end
 
@@ -351,7 +358,7 @@ describe 'iis_application' do
     idempotent_apply('create app', manifest)
 
     it 'iis_application is absent' do
-      result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+      result = resource('iis_application', "#{site_name}\\#{app_name}")
       puppet_resource_should_show('ensure', 'absent', result)
     end
     after(:all) do
@@ -400,14 +407,14 @@ describe 'iis_application' do
     idempotent_apply('create app', manifest)
 
     it 'contains the first site with the same app name' do
-      result = on(default, puppet('resource', 'iis_application', "#{site_name}\\\\#{app_name}"))
+      result = resource('iis_application', "#{site_name}\\#{app_name}")
       expect(result.stdout).to match(%r{#{site_name}\\#{app_name}})
       expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       expect(result.stdout).to match %r{C:\\inetpub\\#{site_name}\\#{app_name}}
       expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
     end
     it 'contains the second site with the same app name' do
-      result2 = on(default, puppet('resource', 'iis_application', "#{site_name2}\\\\#{app_name}"))
+      result2 = resource('iis_application', "#{site_name2}\\#{app_name}")
       expect(result2.stdout).to match(%r{#{site_name2}\\#{app_name}})
       expect(result2.stdout).to match(%r{ensure\s*=> 'present',})
       expect(result2.stdout).to match %r{C:\\inetpub\\#{site_name2}\\#{app_name}}

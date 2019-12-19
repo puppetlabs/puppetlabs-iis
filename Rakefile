@@ -1,3 +1,4 @@
+require 'puppet_litmus/rake_tasks' if Bundler.rubygems.find_name('puppet_litmus').any?
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppet_blacksmith/rake_tasks' if Bundler.rubygems.find_name('puppet-blacksmith').any?
@@ -78,4 +79,15 @@ EOM
   end
 end
 
-
+desc 'Run serverspec against localhost, USE WITH CAUTION, this action can be potentially dangerous.'
+RSpec::Core::RakeTask.new(:test_suite_a) do |t|
+  t.pattern = 'spec/acceptance/**{,/*/**}/*_spec.rb'
+  t.rspec_opts = "--tag suite_a"
+  ENV['TARGET_HOST'] = 'localhost'
+end
+desc 'Run serverspec against localhost, USE WITH CAUTION, this action can be potentially dangerous.'
+RSpec::Core::RakeTask.new(:test_suite_b) do |t|
+  t.pattern = 'spec/acceptance/**{,/*/**}/*_spec.rb'
+  t.rspec_opts = "--tag suite_b"
+  ENV['TARGET_HOST'] = 'localhost'
+end

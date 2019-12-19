@@ -36,13 +36,60 @@ environment:
       RUBY_VERSION: 25-x64
       CHECK: parallel_spec
     -
-      PUPPET_GEM_VERSION: ~> 6.0
-      RUBY_VERSION: 25
-      CHECK: parallel_spec
-    -
-      PUPPET_GEM_VERSION: ~> 6.0
       RUBY_VERSION: 25-x64
-      CHECK: parallel_spec
+      ACCEPTANCE: test_suite_a
+      TARGET_HOST: localhost
+    -
+      RUBY_VERSION: 25-x64
+      ACCEPTANCE: test_suite_a
+      TARGET_HOST: localhost
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    -
+      RUBY_VERSION: 25-x64
+      ACCEPTANCE: test_suite_b
+      TARGET_HOST: localhost
+    -
+      RUBY_VERSION: 25-x64
+      ACCEPTANCE: test_suite_b
+      TARGET_HOST: localhost
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+for:
+-
+  matrix:
+    only:
+      - ACCEPTANCE: test_suite_a
+  services:
+    - iis
+  install:
+    - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+    - bundle install --jobs 4 --retry 2
+    - type Gemfile.lock
+  test_script:
+    - bundle exec puppet -V
+    - ruby -v
+    - gem -v
+    - facter --puppet --yaml
+    - bundle -v
+    - bundle exec rake spec_prep
+    - bundle exec rake test_suite_a
+-
+  matrix:
+    only:
+      - ACCEPTANCE: test_suite_b
+  services:
+    - iis
+  install:
+    - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+    - bundle install --jobs 4 --retry 2
+    - type Gemfile.lock
+  test_script:
+    - bundle exec puppet -V
+    - ruby -v
+    - gem -v
+    - facter --puppet --yaml
+    - bundle -v
+    - bundle exec rake spec_prep
+    - bundle exec rake test_suite_b
 matrix:
   fast_finish: true
 install:

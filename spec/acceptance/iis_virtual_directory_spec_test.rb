@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_virtual_directory' do
+describe 'iis_virtual_directory', :suite_b do
   site_name = SecureRandom.hex(10)
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
@@ -56,7 +56,7 @@ describe 'iis_virtual_directory' do
       end
 
       it 'runs with no changes if capitolization changes' do
-        execute_manifest(manifest2, catch_changes: true)
+        apply_manifest(manifest2, catch_changes: true)
       end
 
       idempotent_apply('change physical path', manifest3)

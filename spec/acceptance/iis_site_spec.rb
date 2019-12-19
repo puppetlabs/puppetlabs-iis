@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'iis_site' do
+describe 'iis_site', :suite_b do
   before(:all) do
     # Remove 'Default Web Site' to start from a clean slate
     remove_all_sites
@@ -87,13 +87,13 @@ describe 'iis_site' do
         end
 
         it 'creates a site with SSL bindings' do
-          execute_manifest(manifest, catch_failures: true)
+          apply_manifest(manifest, catch_failures: true)
         end
 
         it ' runs the manifest a second time without changes' do
           # SSL Flags not existing on IIS7 causes an idempotency bug in the provider
-          pending('ssl flags do not exist on IIS 7 - MODULES-9894') if default.platform.match(/2008/)
-          execute_manifest(manifest, catch_changes: true)
+          pending('ssl flags do not exist on IIS 7 - MODULES-9894') if target_host_facts['os']['release']['major'].match(/2008/)
+          apply_manifest(manifest, catch_changes: true)
         end
 
         it 'has all properties correctly configured' do
@@ -123,7 +123,7 @@ describe 'iis_site' do
               physicalpath         => 'C:\\ineTpub\\new',
             }
           HERE
-          execute_manifest(manifest, catch_changes: true)
+          apply_manifest(manifest, catch_changes: true)
         end
 
         after(:all) do
@@ -131,7 +131,7 @@ describe 'iis_site' do
         end
       end
 
-      context 'using preloadenabled', if: fact('kernelmajversion') != '6.1' do
+      context 'using preloadenabled', if: target_host_facts['kernelmajversion'] != '6.1' do
         before (:all) do
           create_path('C:\inetpub\new')
         end
@@ -440,7 +440,7 @@ describe 'iis_site' do
               ],
             }
             HERE
-            execute_manifest(setup_manifest, catch_failures: true)
+            apply_manifest(setup_manifest, catch_failures: true)
           end
 
           manifest = <<-HERE
@@ -476,7 +476,7 @@ describe 'iis_site' do
               applicationpool  => 'DefaultAppPool',
             }
             HERE
-            execute_manifest(setup_manifest, catch_failures: true)
+            apply_manifest(setup_manifest, catch_failures: true)
           end
 
           manifest = <<-HERE
@@ -511,7 +511,7 @@ describe 'iis_site' do
               logflags         => ['ClientIP', 'Date', 'HttpStatus']
             }
             HERE
-            execute_manifest(setup_manifest, catch_failures: true)
+            apply_manifest(setup_manifest, catch_failures: true)
           end
 
           manifest = <<-HERE
@@ -614,7 +614,7 @@ describe 'iis_site' do
           }
           HERE
 
-          execute_manifest(setup_manifest, catch_failures: true)
+          apply_manifest(setup_manifest, catch_failures: true)
         end
 
         manifest = <<-HERE
