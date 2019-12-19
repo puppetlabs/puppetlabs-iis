@@ -16,17 +16,6 @@ Lint/AssignmentInCondition:
     - 'lib/puppet/provider/iis_powershell.rb'
     - 'lib/puppet/provider/iis_site/webadministration.rb'
     - 'lib/puppet/provider/iis_virtual_directory/webadministration.rb'
-    - 'lib/puppet_x/puppetlabs/iis/powershell_manager.rb'
-
-# Offense count: 1
-Lint/ElseLayout:
-  Exclude:
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
-
-# Offense count: 5
-Lint/IneffectiveAccessModifier:
-  Exclude:
-    - 'lib/puppet_x/puppetlabs/iis/powershell_manager.rb'
 
 # Offense count: 16
 Lint/ParenthesesAsGroupedExpression:
@@ -36,7 +25,6 @@ Lint/ParenthesesAsGroupedExpression:
     - 'spec/acceptance/iis_virtual_directory_spec.rb'
     - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
     - 'spec/integration/puppet/provider/iis_powershell_spec.rb'
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
 
 # Offense count: 1
 Lint/ScriptPermission:
@@ -46,13 +34,7 @@ Lint/ScriptPermission:
 # Offense count: 2
 Lint/UselessAssignment:
   Exclude:
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
     - 'spec/support/utilities/utility_helper.rb'
-
-# Offense count: 1
-Lint/Void:
-  Exclude:
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -87,18 +69,12 @@ RSpec/ExpectInHook:
 RSpec/FilePath:
   Exclude:
     - 'spec/integration/puppet/provider/iis_powershell_spec.rb'
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
 
 # Offense count: 1
 # Configuration parameters: AssignmentOnly.
 RSpec/InstanceVariable:
   Exclude:
     - 'spec/acceptance/iis_application_spec.rb'
-
-# Offense count: 3
-RSpec/LetBeforeExamples:
-  Exclude:
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
 
 # Offense count: 8
 RSpec/NamedSubject:
@@ -110,11 +86,6 @@ RSpec/RepeatedDescription:
   Exclude:
     - 'spec/acceptance/iis_application_pool_spec.rb'
 
-# Offense count: 4
-RSpec/ScatteredLet:
-  Exclude:
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
-
 # Offense count: 50
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
@@ -123,8 +94,6 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/compatible_powershell_version.rb'
     - 'lib/puppet_x/puppetlabs/iis/iis_features.rb'
     - 'lib/puppet_x/puppetlabs/iis/iis_version.rb'
-    - 'lib/puppet_x/puppetlabs/iis/powershell_common.rb'
-    - 'lib/puppet_x/puppetlabs/iis/powershell_manager.rb'
     - 'lib/puppet_x/puppetlabs/iis/powershell_version.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/hash.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/name.rb'
@@ -133,12 +102,6 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/read_only.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/string.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/timeformat.rb'
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
-
-# Offense count: 1
-Style/ClassVars:
-  Exclude:
-    - 'lib/puppet_x/puppetlabs/iis/powershell_manager.rb'
 
 # Offense count: 7
 # Configuration parameters: MinBodyLength.
@@ -148,19 +111,7 @@ Style/GuardClause:
     - 'lib/puppet/provider/iis_common.rb'
     - 'lib/puppet/provider/iis_powershell.rb'
     - 'lib/puppet/provider/iis_site/webadministration.rb'
-    - 'lib/puppet_x/puppetlabs/iis/powershell_manager.rb'
     - 'spec/spec_helper_local.rb'
-
-# Offense count: 1
-Style/MultilineBlockChain:
-  Exclude:
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
-
-# Offense count: 2
-Style/MultilineTernaryOperator:
-  Exclude:
-    - 'lib/puppet_x/puppetlabs/iis/powershell_manager.rb'
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
 
 # Offense count: 3
 # Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist.
@@ -186,10 +137,3 @@ Style/RegexpLiteral:
     - 'lib/puppet_x/puppetlabs/iis/property/path.rb'
     - 'spec/acceptance/iis_application_spec.rb'
     - 'spec/acceptance/iis_site_spec.rb'
-
-# Offense count: 1
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: snake_case, normalcase, non_integer
-Style/VariableNumber:
-  Exclude:
-    - 'spec/integration/puppet_x/puppetlabs/iis/powershell_manager_spec.rb'
