@@ -64,6 +64,10 @@ describe 'iis_site', :suite_b do
                   'protocol'             => 'http',
                 },
                 {
+                  'bindinginformation'   => '*:8088:www.puppet.local',
+                  'protocol'             => 'http',
+                },
+                {
                   'bindinginformation'   => '*:443:www.puppet.local',
                   'certificatehash'      => '#{certificate_hash}',
                   'certificatestorename' => 'MY',
@@ -120,7 +124,7 @@ describe 'iis_site', :suite_b do
               ensure               => 'started',
               # Change capitalization to see if it break idempotency
               logpath              => 'C:\\ineTpub\\logs\\NewLogFiles',
-              physicalpath         => 'C:\\ineTpub\\new',
+              physicalpath         => 'C:\\ineTpub\\new'
             }
           HERE
           apply_manifest(manifest, catch_changes: true)
