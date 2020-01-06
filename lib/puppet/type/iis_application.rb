@@ -3,6 +3,7 @@ require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
 require_relative '../../puppet_x/puppetlabs/iis/property/path'
+require_relative '../../puppet_x/puppetlabs/iis/property/authenticationinfo'
 
 Puppet::Type.newtype(:iis_application) do
   desc <<-DOC
@@ -78,14 +79,7 @@ Puppet::Type.newtype(:iis_application) do
     )
   end
 
-  newproperty(:authenticationinfo, parent: PuppetX::PuppetLabs::IIS::Property::Hash) do
-    desc 'Enable and disable IIS authentication schemas.'
-    def insync?(is)
-      should.reject { |k, v|
-        is[k] == v
-      }.empty?
-    end
-  end
+  newproperty(:authenticationinfo, parent: PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo)
 
   newproperty(:enabledprotocols) do
     desc 'The comma-delimited list of enabled protocols for the application.
