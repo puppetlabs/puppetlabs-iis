@@ -6,10 +6,18 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   require Pathname.new(__FILE__).dirname + '..' + '..' + '..' + 'puppet_x' + 'puppetlabs' + 'iis' + 'iis_features'
   include PuppetX::IIS::Features
 
+  confine    feature: :pwshlib
   confine    operatingsystem: [:windows]
   defaultfor operatingsystem: :windows
 
-  commands powershell: Pwsh::Manager.powershell_path
+  def self.powershell_path
+    require 'ruby-pwsh'
+    Pwsh::Manager.powershell_path
+  rescue
+    nil
+  end
+
+  commands powershell: powershell_path
 
   mk_resource_methods
 
