@@ -4,11 +4,19 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
   desc 'IIS Virtual Directory provider using the PowerShell WebAdministration module'
 
+  confine     feature: :pwshlib
   confine     feature: :iis_web_server
   confine     operatingsystem: [:windows]
-  defaultfor operatingsystem: :windows
+  defaultfor  operatingsystem: :windows
 
-  commands powershell: Pwsh::Manager.powershell_path
+  def self.powershell_path
+    require 'ruby-pwsh'
+    Pwsh::Manager.powershell_path
+  rescue
+    nil
+  end
+
+  commands powershell: powershell_path
 
   mk_resource_methods
 
