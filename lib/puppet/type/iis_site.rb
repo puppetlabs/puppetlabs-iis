@@ -100,9 +100,10 @@ Puppet::Type.newtype(:iis_site) do
     desc 'The protocol, address, port, and ssl certificate bindings for a web
           site.
 
-          The bindinginformation value should be in the form of the IPv4/IPv6
-          address or wildcard *, then the port, then the optional hostname
-          separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
+          For web (http/https) protocols, the bindinginformation value should
+          be in the form of the IPv4/IPv6 address or wildcard *, then the port,
+          then the optional hostname separated by colons:
+          `(ip|\*):[1-65535]:(hostname)?`
 
           A protocol value of "http" indicates a binding that uses the HTTP
           protocol. A value of "https" indicates a binding that uses HTTP over
@@ -143,7 +144,7 @@ Puppet::Type.newtype(:iis_site) do
         end
       elsif ['net.tcp'].include?(value['protocol'])
         unless value['bindinginformation'] =~ %r{^\d+:.*}
-          raise("bindinginformation for net.tcp protocol must be of the format '(ip|*):1-65535:hostname'")
+          raise("bindinginformation for net.tcp protocol must be of the format '1-65535:hostname'")
         end
       elsif ['net.msmq'].include?(value['protocol'])
         unless value['bindinginformation'] =~ %r{^[^:]+$}
