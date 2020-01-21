@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v7.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v7.0.0) (2020-01-21)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v6.0.0...v7.0.0)
+
+### Changed
+
+- \(FM 8426\) replace vendored code with pwshlib dependency [\#247](https://github.com/puppetlabs/puppetlabs-iis/pull/247) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- \(FM-8195\) Convert to Litmus [\#249](https://github.com/puppetlabs/puppetlabs-iis/pull/249) ([florindragos](https://github.com/florindragos))
+
+### Fixed
+
+- \(MODULES-10362\) handle authenticationinfo consistently [\#253](https://github.com/puppetlabs/puppetlabs-iis/pull/253) ([pillarsdotnet](https://github.com/pillarsdotnet))
+- \(MODULES-10361\) sort https bindings first [\#252](https://github.com/puppetlabs/puppetlabs-iis/pull/252) ([pillarsdotnet](https://github.com/pillarsdotnet))
+
+## [v6.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v6.0.0) (2019-10-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v5.0.0...v6.0.0)
+
 ## v5.0.0
 All notable changes to this project will be documented in this file.
 

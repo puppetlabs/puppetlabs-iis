@@ -64,7 +64,7 @@ flags, with the following names: \'Ssl\', \'SslRequireCert\',
 
 ##### `authenticationinfo`
 
-Enable and disable IIS authentication schemas.
+
 
 ##### `enabledprotocols`
 
@@ -732,10 +732,7 @@ Configure limits for an IIS Site
 
 ##### `authenticationinfo`
 
-Enable and disable authentication schemas. Note: some schemas require
-additional Windows features to be installed, for example windows
-authentication. This type does not ensure a given feature is installed
-before attempting to configure it.
+
 
 #### Parameters
 
