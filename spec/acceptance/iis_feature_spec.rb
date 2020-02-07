@@ -9,7 +9,7 @@ describe 'when managing features iis_features', :suite_a do
       }
     HERE
 
-    idempotent_apply('create iis feature', manifest)
+    idempotent_apply(manifest)
 
     it 'iis_feature is present' do
       result = resource('iis_feature', feature)

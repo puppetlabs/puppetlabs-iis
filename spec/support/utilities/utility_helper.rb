@@ -28,16 +28,6 @@ def create_selfsigned_cert(dnsname)
   result.stdout.chomp
 end
 
-def idempotent_apply(work_description, manifest)
-  it "#{work_description} runs without errors" do
-    apply_manifest(manifest, catch_failures: true)
-  end
-
-  it "#{work_description} runs a second time without changes" do
-    apply_manifest(manifest, catch_changes: true)
-  end
-end
-
 def apply_failing_manifest(work_description, manifest)
   it "#{work_description} runs with errors" do
     apply_manifest(manifest, expect_failures: true)

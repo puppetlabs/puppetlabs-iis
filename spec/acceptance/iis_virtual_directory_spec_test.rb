@@ -49,7 +49,7 @@ describe 'iis_virtual_directory', :suite_b do
         }
       HERE
 
-      idempotent_apply('create iis virtual dir', manifest)
+      idempotent_apply(manifest)
 
       it 'iis_virtual_directory should be present' do
         puppet_resource_should_show('ensure', 'present', resource('iis_virtual_directory', virt_dir_name))
@@ -59,7 +59,7 @@ describe 'iis_virtual_directory', :suite_b do
         apply_manifest(manifest2, catch_changes: true)
       end
 
-      idempotent_apply('change physical path', manifest3)
+      idempotent_apply(manifest3)
 
       it 'physicalpath to be configured' do
         puppet_resource_should_show('physicalpath', 'c:\\foo2', resource('iis_virtual_directory', virt_dir_name))
@@ -88,7 +88,7 @@ describe 'iis_virtual_directory', :suite_b do
           }
         HERE
 
-        idempotent_apply('create iis virtual dir', manifest)
+        idempotent_apply(manifest)
 
         it 'all parameters are configured' do
           resource_data = resource('iis_virtual_directory', virt_dir_name)
@@ -120,7 +120,7 @@ describe 'iis_virtual_directory', :suite_b do
         }
       HERE
 
-      idempotent_apply('create iis virtual dir', manifest)
+      idempotent_apply(manifest)
 
       it 'iis_virtual_directory to be absent' do
         puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
@@ -152,7 +152,7 @@ describe 'iis_virtual_directory', :suite_b do
         physicalpath => 'c:\\inetpub\\deeper',
       }
       HERE
-      idempotent_apply('create iis virtual dir', manifest)
+      idempotent_apply(manifest)
 
       after(:all) do
         remove_vdir(virt_dir_name)
