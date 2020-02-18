@@ -4,6 +4,8 @@
 ".rubocop.yml":
   include_todos: true
 ".travis.yml":
+  global_env: 
+    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
   deploy_to_forge:
     enabled: false
   simplecov: true
@@ -14,6 +16,9 @@
 appveyor.yml:
   unmanaged: true
   comment: "Unmanaged due to overly long acceptance test runs - see https://github.com/puppetlabs/puppetlabs-iis/pull/249"
+  environment:
+    HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
+    HONEYCOMB_DATASET: litmus tests
   use_travis: true
   simplecov: true
   matrix_extras:
