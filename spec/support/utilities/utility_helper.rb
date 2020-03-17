@@ -28,7 +28,7 @@ def create_selfsigned_cert(dnsname)
   result.stdout.chomp
 end
 
-def idempotent_apply(work_description, manifest)
+def iis_idempotent_apply(work_description, manifest)
   it "#{work_description} runs without errors" do
     apply_manifest(manifest, catch_failures: true)
   end
