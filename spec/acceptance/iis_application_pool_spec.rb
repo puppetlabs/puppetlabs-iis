@@ -10,7 +10,7 @@ describe 'iis_application_pool', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app pool', manifest)
+      iis_idempotent_apply('create app pool', manifest)
 
       it 'resource iis_application_pool is present' do
         puppet_resource_should_show('ensure', 'present', resource('iis_application_pool', pool_name))
@@ -33,7 +33,7 @@ describe 'iis_application_pool', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app pool', manifest)
+      iis_idempotent_apply('create app pool', manifest)
 
       it 'has all properties correctly configured' do
         # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
@@ -98,7 +98,7 @@ describe 'iis_application_pool', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app pool', manifest)
+      iis_idempotent_apply('create app pool', manifest)
 
       it 'has all properties correctly configured' do
         resource_data = resource('iis_application_pool', pool_name)
@@ -173,7 +173,7 @@ describe 'iis_application_pool', :suite_a do
       stop_app_pool(pool_name)
     end
 
-    idempotent_apply('start the app pool', manifest)
+    iis_idempotent_apply('start the app pool', manifest)
 
     it 'iis_application_pool is present and has the correct state' do
       resource_data = resource('iis_application_pool', pool_name)
@@ -202,7 +202,7 @@ describe 'iis_application_pool', :suite_a do
       create_app_pool(pool_name)
     end
 
-    idempotent_apply('remove the app pool', manifest)
+    iis_idempotent_apply('remove the app pool', manifest)
 
     it 'iis_application_pool is absent' do
       puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
@@ -224,7 +224,7 @@ describe 'iis_application_pool', :suite_a do
       stop_app_pool(pool_name)
     end
 
-    idempotent_apply('set memory limit', manifest)
+    iis_idempotent_apply('set memory limit', manifest)
 
     it 'has all properties correctly configured' do
       resource_data = resource('iis_application_pool', pool_name)
@@ -281,7 +281,7 @@ describe 'iis_application_pool', :suite_a do
       }
     HERE
 
-    idempotent_apply('create app pool', manifest)
+    iis_idempotent_apply('create app pool', manifest)
 
     it 'has all properties correctly configured' do
       resource_data = resource('iis_application_pool', pool_name)

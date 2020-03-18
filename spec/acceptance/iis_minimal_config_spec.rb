@@ -14,5 +14,5 @@ describe 'a minimal IIS config:', :suite_a do
     }
   EOF
 
-  idempotent_apply('create app', manifest)
+  iis_idempotent_apply('create app', manifest)
 end

@@ -21,7 +21,7 @@ describe 'iis_site', :suite_b do
         }
       HERE
 
-      idempotent_apply('create iis site', manifest)
+      iis_idempotent_apply('create iis site', manifest)
 
       it 'has all properties correctly configured' do
         resource_data = resource('iis_site', site_name)
@@ -149,7 +149,7 @@ describe 'iis_site', :suite_b do
           }
         HERE
 
-        idempotent_apply('create iis site', manifest)
+        iis_idempotent_apply('create iis site', manifest)
 
         it 'has all properties correctly configured' do
           resource_data = resource('iis_site', site_name)
@@ -187,7 +187,7 @@ describe 'iis_site', :suite_b do
           }
         HERE
 
-        idempotent_apply('create iis site', manifest)
+        iis_idempotent_apply('create iis site', manifest)
 
         it 'has all properties correctly configured' do
           resource_data = resource('iis_site', site_name)
@@ -228,7 +228,7 @@ describe 'iis_site', :suite_b do
           }
         HERE
 
-        idempotent_apply('create iis site', manifest)
+        iis_idempotent_apply('create iis site', manifest)
 
         after(:all) do
           remove_all_sites
@@ -251,7 +251,7 @@ describe 'iis_site', :suite_b do
           }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
 
           it 'has all properties correctly configured' do
             resource_data = resource('iis_site', site_name)
@@ -284,7 +284,7 @@ describe 'iis_site', :suite_b do
             }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
 
           it 'has all properties correctly configured' do
             resource_data = resource('iis_site', site_name)
@@ -313,7 +313,7 @@ describe 'iis_site', :suite_b do
           }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
 
           it 'iis site is absent' do
             resource_data = resource('iis_site', site_name)
@@ -387,7 +387,7 @@ describe 'iis_site', :suite_b do
             }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
 
           it 'has physicalpath configured' do
             puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new', resource('iis_site', site_name))
@@ -413,7 +413,7 @@ describe 'iis_site', :suite_b do
             }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
           it 'has applicationpool configured' do
             puppet_resource_should_show('applicationpool', pool_name, resource('iis_site', site_name))
           end
@@ -462,7 +462,7 @@ describe 'iis_site', :suite_b do
             }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
           after(:all) do
             remove_all_sites
           end
@@ -492,7 +492,7 @@ describe 'iis_site', :suite_b do
             }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
 
           it 'has enabledprotocols configured' do
             puppet_resource_should_show('enabledprotocols', 'https', resource('iis_site', site_name))
@@ -528,7 +528,7 @@ describe 'iis_site', :suite_b do
             }
           HERE
 
-          idempotent_apply('create iis site', manifest)
+          iis_idempotent_apply('create iis site', manifest)
 
           it 'has logflags configured' do
             puppet_resource_should_show('logflags', ['ClientIP', 'Date', 'Method'], resource('iis_site', site_name))
@@ -583,7 +583,7 @@ describe 'iis_site', :suite_b do
           }
         HERE
 
-        idempotent_apply('create iis site', manifest)
+        iis_idempotent_apply('create iis site', manifest)
 
         it 'runs the first site on port 80' do
           first_site = resource('iis_site', site_name)
@@ -631,7 +631,7 @@ describe 'iis_site', :suite_b do
           }
         HERE
 
-        idempotent_apply('create iis site', manifest)
+        iis_idempotent_apply('create iis site', manifest)
 
         it 'resource iis_site is' do
           puppet_resource_should_show('ensure', 'stopped', resource('iis_site', site_name))
@@ -662,7 +662,7 @@ describe 'iis_site', :suite_b do
         }
       HERE
 
-      idempotent_apply('create iis site', manifest)
+      iis_idempotent_apply('create iis site', manifest)
 
       it 'runs the first site on port 80 with no host header' do
         first_site = resource('iis_site', site_name)
