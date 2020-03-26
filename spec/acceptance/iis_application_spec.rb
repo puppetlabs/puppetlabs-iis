@@ -26,7 +26,7 @@ describe 'iis_application', :suite_a do
           physicalpath => 'C:\\inetpub\\basic',
         }
       HERE
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
 
       # include_context 'with a puppet resource run'# do
       it 'iis_application is absent' do
@@ -74,7 +74,7 @@ describe 'iis_application', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
 
       it 'iis_application is absent' do
         result = resource('iis_application', "#{site_name}\\#{app_name}")
@@ -109,7 +109,7 @@ describe 'iis_application', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
 
       it 'creates the correct application' do
         result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
@@ -139,7 +139,7 @@ describe 'iis_application', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
 
       it 'creates the correct application' do
         result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
@@ -171,7 +171,7 @@ describe 'iis_application', :suite_a do
           }
         HERE
 
-        idempotent_apply('create app', manifest)
+        iis_idempotent_apply('create app', manifest)
 
         after(:all) do
           remove_app(app_name)
@@ -197,7 +197,7 @@ describe 'iis_application', :suite_a do
           }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
 
       after(:all) do
         remove_app(app_name)
@@ -222,7 +222,7 @@ describe 'iis_application', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
 
       it 'creates the correct application' do
         result = resource('iis_application', "#{site_name}\\subFolder/sub2/#{app_name}")
@@ -277,7 +277,7 @@ describe 'iis_application', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
     end
 
     describe 'authenticationinfo' do
@@ -302,7 +302,7 @@ describe 'iis_application', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
       after(:all) do
         remove_app(app_name)
         remove_all_sites
@@ -329,7 +329,7 @@ describe 'iis_application', :suite_a do
         }
       HERE
 
-      idempotent_apply('create app', manifest)
+      iis_idempotent_apply('create app', manifest)
       after(:all) do
         remove_app(app_name)
         remove_all_sites
@@ -355,7 +355,7 @@ describe 'iis_application', :suite_a do
       }
     HERE
 
-    idempotent_apply('create app', manifest)
+    iis_idempotent_apply('create app', manifest)
 
     it 'iis_application is absent' do
       result = resource('iis_application', "#{site_name}\\#{app_name}")
@@ -404,7 +404,7 @@ describe 'iis_application', :suite_a do
       }
     HERE
 
-    idempotent_apply('create app', manifest)
+    iis_idempotent_apply('create app', manifest)
 
     it 'contains the first site with the same app name' do
       result = resource('iis_application', "#{site_name}\\#{app_name}")
