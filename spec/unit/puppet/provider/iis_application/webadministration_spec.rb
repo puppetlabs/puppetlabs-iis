@@ -67,4 +67,18 @@ describe 'iis_application provider' do
   describe 'updating physicalpath'
   describe 'updating sslflags'
   describe 'updating authenticationinfo'
+  describe 'updating enabledprotocols' do
+    let(:params) do
+      {
+        title: 'foo\bar',
+      }
+    end
+    before :each do
+      allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with("$webApplication = Get-WebApplication -Site 'foo' -Name 'bar'\nSet-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"foo\"]/application[@path=\"/bar\"]' -Name enabledProtocols -Value 'http,https,net.tcp'").and_return(exitcode: 0)
+    end
+    it 'should update value' do
+      iis_application_provider.enabledprotocols='http,https,net.tcp'
+      iis_application_provider.update
+    end
+  end
 end
