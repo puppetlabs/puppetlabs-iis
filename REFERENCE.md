@@ -634,9 +634,10 @@ be a comma delimited list of protocols. Valid protocols are: 'http',
 The protocol, address, port, and ssl certificate bindings for a web
 site.
 
-The bindinginformation value should be in the form of the IPv4/IPv6
-address or wildcard *, then the port, then the optional hostname
-separated by colons:  `(ip|\*):[1-65535]:(hostname)?`
+For web (http/https) protocols, the bindinginformation value should
+be in the form of the IPv4/IPv6 address or wildcard *, then the port,
+then the optional hostname separated by colons:
+`(ip|\*):[1-65535]:(hostname)?`
 
 A protocol value of "http" indicates a binding that uses the HTTP
 protocol. A value of "https" indicates a binding that uses HTTP over
