@@ -97,7 +97,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
     if @property_flush[:enabledprotocols]
       inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{self.class.find_sitename(resource)}\"]/application[@path=\"/#{app_name}\"]'" \
-      "' -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
+      " -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
     end
 
     if @property_flush[:applicationpool]
