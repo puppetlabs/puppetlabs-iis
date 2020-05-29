@@ -37,6 +37,13 @@ Gemfile:
       ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
       condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
     - gem: 'ruby-pwsh'
+    - gem: bolt
+      version: = 2.6.0
+      condition: Gem::Version.new(RUBY_VERSION.dup) > Gem::Version.new('2.5.0')
+      platforms:
+        - mswin
+        - mingw
+        - x64_mingw
 Rakefile:
   unmanaged: true
 spec/spec_helper.rb:
