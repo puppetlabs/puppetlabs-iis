@@ -20,7 +20,10 @@ describe 'iis_application provider' do
         { title: 'foo\bar' }
       end
 
-      it { expect { iis_application_provider.create }.to raise_error(RuntimeError, %r{physicalpath}) }
+      before :each do
+        allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
+      end
+      it { iis_application_provider.create }
     end
     context 'with nonexistent physicalpath' do
       let(:params) do
