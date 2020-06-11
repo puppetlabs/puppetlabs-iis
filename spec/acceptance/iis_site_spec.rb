@@ -70,7 +70,7 @@ describe 'iis_site', :suite_b do
                 {
                   'bindinginformation'   => '*:443:www.puppet.local',
                   'certificatehash'      => '#{certificate_hash}',
-                  'certificatestorename' => 'MY',
+                  'certificatestorename' => 'My',
                   'protocol'             => 'https',
                   'sslflags'             => 1,
                 },
