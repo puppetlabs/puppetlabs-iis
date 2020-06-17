@@ -172,6 +172,9 @@ Puppet::Type.newtype(:iis_site) do
       if !value.nil? && value['certificatehash']
         value['certificatehash'] = value['certificatehash'].upcase
       end
+      if !value.nil? && value['certificatestorename']
+        value['certificatestorename'] = value['certificatestorename'].upcase
+      end
       value
     end
 

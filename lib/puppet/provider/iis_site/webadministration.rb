@@ -160,6 +160,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
         # of "http" will raise an error."
         binding.delete('certificatehash') unless binding['protocol'] == 'https'
         binding.delete('certificatestorename') unless binding['protocol'] == 'https'
+        binding['certificatestorename'] = binding['certificatestorename'].upcase unless binding['certificatestorename'].nil?
       end
       site['limits'] = {} if site['limits'].nil?
       site['authenticationinfo'] = {} if site['authenticationinfo'].nil?
