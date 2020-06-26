@@ -55,7 +55,6 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
       args << "-ApplicationPool #{@resource[:applicationpool].inspect}" if @resource[:applicationpool]
       inst_cmd = "ConvertTo-WebApplication #{args.join(' ')} -Force -ErrorAction Stop"
     else
-      raise 'Error creating application: physicalpath is required to create' unless @resource[:physicalpath]
       inst_cmd = self.class.ps_script_content('newapplication', @resource)
     end
     result = self.class.run(inst_cmd)

@@ -363,6 +363,36 @@ describe 'iis_application', :suite_a do
     end
     after(:all) do
       remove_app(app_name)
+      remove_all_sites
+    end
+  end
+
+  context 'physicalpath is not set' do
+    site_name = SecureRandom.hex(10).to_s
+    app_name = SecureRandom.hex(10).to_s
+    before(:all) do
+      create_site(site_name, true)
+      create_path('C:\inetpub\basic')
+      create_virtual_directory(site_name, app_name, 'C:\inetpub\basic')
+      create_app(site_name, app_name)
+    end
+
+    manifest = <<-HERE
+        iis_site { '#{site_name}':
+          ensure          => 'started',
+          physicalpath    => 'C:\\inetpub\\basic',
+          applicationpool => 'DefaultAppPool',
+        }
+        iis_application { '#{app_name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+        }
+      HERE
+    iis_idempotent_apply('create app', manifest)
+
+    after(:all) do
+      remove_app(app_name)
+      remove_all_sites
     end
   end
 
