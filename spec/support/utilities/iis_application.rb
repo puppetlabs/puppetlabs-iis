@@ -3,8 +3,9 @@ def has_app(app_name)
   !(run_shell(command).stdout =~ %r{Started}i).nil?
 end
 
-def create_app(site_name, app_name, directory)
-  command = format_powershell_iis_command("New-WebApplication -Site #{site_name} -Name #{app_name} -PhysicalPath #{directory} -Force -ErrorAction Stop")
+def create_app(site_name, app_name, directory = nil)
+  physicalpath_dash = directory ? "-PhysicalPath #{directory}" : ''
+  command = format_powershell_iis_command("New-WebApplication -Site #{site_name} -Name #{app_name} #{physicalpath_dash} -Force -ErrorAction Stop")
   run_shell(command) unless has_app(app_name)
 end
 
