@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v7.1.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v7.1.0) (2020-07-07)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v7.0.1...v7.1.0)
+
+### Added
+
+- Make iis application physicalpath optional [\#282](https://github.com/puppetlabs/puppetlabs-iis/pull/282) ([adrianiurca](https://github.com/adrianiurca))
+
+### Fixed
+
+- \(MODULES-10702\) Make certificatestorename case insensitive. [\#280](https://github.com/puppetlabs/puppetlabs-iis/pull/280) ([nicolasvan](https://github.com/nicolasvan))
+
 ## [v7.0.1](https://github.com/puppetlabs/puppetlabs-iis/tree/v7.0.1) (2020-03-31)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v7.0.0...v7.0.1)
