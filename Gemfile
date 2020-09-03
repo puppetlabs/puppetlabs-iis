@@ -1,5 +1,6 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
+
 def location_for(place_or_version, fake_version = nil)
   git_url_regex = %r{\A(?<url>(https?|git)[:@][^#]*)(#(?<branch>.*))?}
   file_url_regex = %r{\Afile:\/\/(?<path>.*)}
