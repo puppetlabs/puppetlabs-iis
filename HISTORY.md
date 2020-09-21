@@ -177,7 +177,7 @@
   - `iis_site` ([MODULES-3049](https://tickets.puppetlabs.com/browse/MODULES-3049), [MODULES-3887](https://tickets.puppetlabs.com/browse/MODULES-3887))
   - `iis_feature` ([MODULES-4434](https://tickets.puppetlabs.com/browse/MODULES-4434))
 
-[Unreleased]: https://github.com/puppetlabs/puppetlabs-iis/compare/4.5.1...master
+[Unreleased]: https://github.com/puppetlabs/puppetlabs-iis/compare/4.5.1...main
 [4.5.1]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.5.0...4.5.1
 [4.5.0]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.4.0...4.5.0
 [4.4.0]:      https://github.com/puppetlabs/puppetlabs-iis/compare/4.3.2...4.4.0

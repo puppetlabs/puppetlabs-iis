@@ -36,7 +36,7 @@ is a need to have a set of tests separate from those tests. At Puppet Labs we de
 > objective that utilizes a system composed of integrated components.
 
 What this means for this project is that we will install and configure all infrastructure needed in a real-world
-"puppetlabs-iis" environment. (Puppet master and agent.)
+"puppetlabs-iis" environment. (Puppet Server and agent.)
 
 ## Running Tests
 

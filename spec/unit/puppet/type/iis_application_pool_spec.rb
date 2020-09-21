@@ -302,5 +302,5 @@ describe 'iis_application_pool' do
     end
   end
 
-  # See https://github.com/puppetlabs/puppetlabs-azure/blob/master/spec/unit/type/azure_vm_spec.rb for more examples
+  # See https://github.com/puppetlabs/puppetlabs-azure/blob/main/spec/unit/type/azure_vm_spec.rb for more examples
 end
