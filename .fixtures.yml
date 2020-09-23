@@ -2,6 +2,7 @@ fixtures:
   forge_modules:
     dism: 'puppetlabs/dism'
     pwshlib: 'puppetlabs/pwshlib'
+    ruby_task_helper: 'puppetlabs/ruby_task_helper'
   fixtures:
   repositories:
     "stdlib":
