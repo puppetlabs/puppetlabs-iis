@@ -114,10 +114,10 @@ Style/GuardClause:
     - 'spec/spec_helper_local.rb'
 
 # Offense count: 3
-# Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist.
+# Configuration parameters: NamePrefix, NamePrefixDenylist, NameAllowlist.
 # NamePrefix: is_, has_, have_
-# NamePrefixBlacklist: is_, has_, have_
-# NameWhitelist: is_a?
+# NamePrefixDenylist: is_, has_, have_
+# NameAllowlist: is_a?
 Style/PredicateName:
   Exclude:
     - 'spec/**/*'
