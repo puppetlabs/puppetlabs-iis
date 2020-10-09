@@ -72,5 +72,5 @@ extra_gemfiles.each do |gemfile|
   end
 end
 # vim: syntax=ruby
-source 'http://3.120.249.152:9292/' do gem 'facter' end
+# source 'http://3.120.249.152:9292/' do gem 'facter' end
    

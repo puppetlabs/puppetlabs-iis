@@ -31,7 +31,13 @@ def resource(res, name)
 end
 
 def target_host_facts
-  @target_host_facts ||= LitmusHelper.instance.run_bolt_task('facts')[:result]
+  facts = LitmusHelper.instance.run_bolt_task('facts')
+  results = facts[:result]
+
+  puts "facts ****************************" + facts.inspect
+  puts "results ****************************" + results.inspect
+
+  @target_host_facts ||= results
 end
 
 def encode_command(command)
