@@ -15,7 +15,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   def self.powershell_path
     require 'ruby-pwsh'
     Pwsh::Manager.powershell_path
-  rescue
+  rescue LoadError
     nil
   end
 
