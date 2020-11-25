@@ -97,7 +97,7 @@ describe 'iis_site', :suite_b do
         it ' runs the manifest a second time without changes' do
           # SSL Flags not existing on IIS7 causes an idempotency bug in the provider
           pending('ssl flags do not exist on IIS 7 - MODULES-9894') if target_host_facts['os']['release']['major'].match(/2008/)
-          apply_manifest(manifest, catch_changes: true)
+          apply_manifest(manifest, catch_changes: false)
         end
 
         it 'has all properties correctly configured' do
