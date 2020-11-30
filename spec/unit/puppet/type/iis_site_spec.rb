@@ -56,6 +56,7 @@ describe Puppet::Type.type(:iis_site) do
     it 'accepts any string value' do
       resource[:physicalpath] = 'c:/thisstring-location/value/somefile.txt'
       resource[:physicalpath] = 'c:\\thisstring-location\\value\\somefile.txt'
+      resource[:physicalpath] = '\\\\server.fqdn\\thisstring-location\\value\\somefile.txt'
     end
   end
 
