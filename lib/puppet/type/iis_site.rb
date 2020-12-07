@@ -61,7 +61,7 @@ Puppet::Type.newtype(:iis_site) do
       if value.nil? || value.empty?
         raise ArgumentError, 'A non-empty physicalpath must be specified.'
       end
-      raise("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ || value =~ /^\/\/[^\/]+\/[^\/]+/
+      raise("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ || value =~ /^\/\/[^\/]+\/[^\/]+/ || value =~ /^\\\\/
     end
   end
 
