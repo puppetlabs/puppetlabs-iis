@@ -31,7 +31,12 @@ def resource(res, name)
 end
 
 def target_host_facts
-  @target_host_facts ||= LitmusHelper.instance.run_bolt_task('facts')[:result]
+  facter_version = run_shell('facter --version').stdout.strip.split('.')[0]
+  @target_host_facts ||= if facter_version =~ %r{4}
+                           run_shell('facter --json --show-legacy').stdout.strip
+                         else
+                           run_shell('facter -p --json').stdout.strip
+                         end
 end
 
 def encode_command(command)

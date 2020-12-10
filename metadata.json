@@ -15,11 +15,11 @@
   ],
   "operatingsystem_support": [
     {
-      "operatingsystem": "windows",
+      "operatingsystem": "Windows",
       "operatingsystemrelease": [
-        "2008R2",
+        "2008 R2",
         "2012",
-        "2012R2",
+        "2012 R2",
         "2016",
         "2019"
       ]
@@ -33,5 +33,5 @@
   ],
   "pdk-version": "1.18.1",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "heads/main-0-g874030e"
+  "template-ref": "heads/main-0-g5afcd3d"
 }

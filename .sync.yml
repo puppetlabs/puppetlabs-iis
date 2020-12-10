@@ -42,7 +42,7 @@ Rakefile:
 spec/spec_helper.rb:
   mock_with: ":rspec"
   coverage_report: true
-.gitpod.Dockerfile:
+.github/workflows/nightly.yml:
   unmanaged: false
-.gitpod.yml:
+.github/workflows/pr_test.yml:
   unmanaged: false
