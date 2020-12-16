@@ -59,16 +59,14 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
 
-    if @resource[:authenticationinfo]
-      @resource[:authenticationinfo].each do |auth, _enable|
-        args = []
-        args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
-        args << "-PSPath 'IIS:\\'"
-        args << "-Location '#{@resource[:name]}'"
-        args << '-Name enabled'
-        args << "-Value #{@resource[:authenticationinfo][auth]}"
-        cmd << "Set-WebConfigurationProperty #{args.join(' ')} -ErrorAction Stop\n"
-      end
+    @resource[:authenticationinfo]&.each do |auth, _enable|
+      args = []
+      args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
+      args << "-PSPath 'IIS:\\'"
+      args << "-Location '#{@resource[:name]}'"
+      args << '-Name enabled'
+      args << "-Value #{@resource[:authenticationinfo][auth]}"
+      cmd << "Set-WebConfigurationProperty #{args.join(' ')} -ErrorAction Stop\n"
     end
 
     inst_cmd = cmd.join
@@ -126,7 +124,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
   def self.prefetch(resources)
     sites = instances
-    resources.keys.each do |site|
+    resources.each_key do |site|
       next unless !sites.nil? && provider = sites.find { |s| s.name == site }
       unless resources[site]['authenticationinfo'].nil?
         resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])
