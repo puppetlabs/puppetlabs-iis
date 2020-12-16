@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'puppet/type'
 require 'puppet_x/puppetlabs/iis/iis_version'

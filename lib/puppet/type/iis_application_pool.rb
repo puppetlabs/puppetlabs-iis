@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'

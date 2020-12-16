@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def has_app(app_name)
   command = format_powershell_iis_command("Get-WebApplication -Name #{app_name}")
   !(run_shell(command).stdout =~ %r{Started}i).nil?

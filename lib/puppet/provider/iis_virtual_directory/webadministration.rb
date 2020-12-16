@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_common')
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # verify if the given path is a local one
 def is_local_path(path)
   (path =~ /^.:(\/|\\)/)

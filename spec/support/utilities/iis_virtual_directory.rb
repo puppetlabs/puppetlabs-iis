@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def has_vdir(vdir_name)
   command = format_powershell_iis_command("Get-WebVirtualDirectory -Name #{vdir_name}")
   result = run_shell(command, expect_failure: true)

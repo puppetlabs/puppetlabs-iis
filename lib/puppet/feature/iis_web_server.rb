@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/util/feature'
 require_relative '../../../lib/puppet_x/puppetlabs/iis/iis_version'
 

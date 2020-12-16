@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 RSpec::Matchers.define :require_string_for do |property|
   match do |type_class|

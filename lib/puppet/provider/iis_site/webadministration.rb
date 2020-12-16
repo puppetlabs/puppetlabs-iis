@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 # When writing IIS PowerShell code for any of the methods below

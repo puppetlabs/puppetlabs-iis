@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def create_site(name, started, path = 'C:\inetpub\wwwroot')
   create_path(path)
   # These commands are executed in bash therefore things need to be escaped properly
