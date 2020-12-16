@@ -29,13 +29,13 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     ['value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period'].each do |value|
-      it "should accept '#{value}'" do
+      it "accepts '#{value}'" do
         expect { resource[:name] = value }.not_to raise_error
       end
     end
 
     ['*', '()', '[]', '!@'].each do |value|
-      it "should reject '#{value}'" do
+      it "rejects '#{value}'" do
         expect { resource[:name] = value }.to raise_error(Puppet::ResourceError, %r{is not a valid name})
       end
     end

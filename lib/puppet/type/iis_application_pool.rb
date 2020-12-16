@@ -514,7 +514,7 @@ Puppet::Type.newtype(:iis_application_pool) do
     desc "Specifies the specific times in a 24-hour period that the worker
           process should be recycled."
     validate do |value|
-      raise "#{name} values should be between 00:00:00 and 23:59:59 seconds inclusive, with a granularity of 60 seconds." unless value =~ %r{^\d\d:\d\d:00$}
+      raise "#{name} values should be between 00:00:00 and 23:59:59 seconds inclusive, with a granularity of 60 seconds." unless %r{^\d\d:\d\d:00$}.match?(value)
     end
     def should_to_s(newvalue)
       newvalue

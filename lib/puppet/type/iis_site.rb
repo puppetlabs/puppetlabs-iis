@@ -137,23 +137,23 @@ Puppet::Type.newtype(:iis_site) do
       end
 
       if ['http', 'https'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^.+:\d+:.*}
+        unless %r{^.+:\d+:.*}.match?(value['bindinginformation'])
           raise("bindinginformation for http and https protocols must be of the format '(ip|*):1-65535:hostname'")
         end
       elsif ['net.pipe'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^[^:]+$}
+        unless %r{^[^:]+$}.match?(value['bindinginformation'])
           raise("bindinginformation for net.pipe protocol must be of the format 'hostname'")
         end
       elsif ['net.tcp'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^\d+:.*}
+        unless %r{^\d+:.*}.match?(value['bindinginformation'])
           raise("bindinginformation for net.tcp protocol must be of the format '1-65535:hostname'")
         end
       elsif ['net.msmq'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^[^:]+$}
+        unless %r{^[^:]+$}.match?(value['bindinginformation'])
           raise("bindinginformation for net.msmq protocol must be of the format 'hostname'")
         end
       elsif ['msmq.formatname'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^[^:]+$}
+        unless %r{^[^:]+$}.match?(value['bindinginformation'])
           raise("bindinginformation for msmq.formatname protocol must be of the format 'hostname'")
         end
       end
@@ -220,7 +220,7 @@ Puppet::Type.newtype(:iis_site) do
       if value.nil? || value.empty?
         raise ArgumentError, 'A non-empty serviceautostartprovidername name must be specified.'
       end
-      raise("#{name} is not a valid serviceautostartprovidername name") unless value =~ %r{^[a-zA-Z0-9\-\_'\s]+$}
+      raise("#{name} is not a valid serviceautostartprovidername name") unless %r{^[a-zA-Z0-9\-\_'\s]+$}.match?(value)
     end
     # serviceautostartprovidertype and serviceautostartprovidername work together
   end

@@ -17,7 +17,7 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     it { is_expected.to be_isnamevar }
 
     ['value', 'value\with\slashes', '0123456789_-'].each do |value|
-      it "should accept '#{value}'" do
+      it "accepts '#{value}'" do
         expect { resource[:name] = value }.not_to raise_error
       end
     end

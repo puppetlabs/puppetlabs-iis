@@ -11,7 +11,7 @@ module PuppetX
         # name Property
         class Name < Puppet::Property
           validate do |value|
-            raise("#{value} is not a valid #{name}") unless value =~ %r{^[a-zA-Z0-9\.\-\_\'\s]+$}
+            raise("#{value} is not a valid #{name}") unless %r{^[a-zA-Z0-9\.\-\_\'\s]+$}.match?(value)
           end
         end
       end
