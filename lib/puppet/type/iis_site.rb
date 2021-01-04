@@ -78,6 +78,8 @@ Puppet::Type.newtype(:iis_site) do
   end
 
   newproperty(:enabledprotocols) do
+    PROTOCOLS = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
+
     desc "The protocols enabled for the site. If 'https' is specified, 'http' is
           implied. If no value is provided, then this setting is disabled. Can
           be a comma delimited list of protocols. Valid protocols are: 'http',

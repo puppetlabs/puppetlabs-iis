@@ -84,6 +84,8 @@ Puppet::Type.newtype(:iis_application) do
   newproperty(:authenticationinfo, parent: PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo)
 
   newproperty(:enabledprotocols) do
+    PROTOCOLS = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
+
     desc 'The comma-delimited list of enabled protocols for the application.
           Valid protocols are: \'http\', \'https\', \'net.pipe\', \'net.tcp\', \'net.msmq\', \'msmq.formatname\'.'
     validate do |value|
