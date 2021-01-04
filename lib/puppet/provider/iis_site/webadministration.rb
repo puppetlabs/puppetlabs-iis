@@ -133,6 +133,9 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     end
   end
 
+  SETTINGS = ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
+              'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].freeze
+
   def self.instances
     inst_cmd = ps_script_content('_getwebsites', @resource)
     result   = run(inst_cmd)
@@ -146,8 +149,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
       # In PowerShell 2.0, empty strings come in as nil which then fail insync? tests.
       # Convert nil's to empty strings for all properties which we know are String types
-      ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
-       'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].each do |setting|
+      SETTINGS.each do |setting|
         site[setting] = '' if site[setting].nil?
       end
       site['bindings'] = [] if site['bindings'].nil?

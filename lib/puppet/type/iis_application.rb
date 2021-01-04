@@ -84,8 +84,6 @@ Puppet::Type.newtype(:iis_application) do
   newproperty(:authenticationinfo, parent: PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo)
 
   newproperty(:enabledprotocols) do
-    PROTOCOLS = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
-
     desc 'The comma-delimited list of enabled protocols for the application.
           Valid protocols are: \'http\', \'https\', \'net.pipe\', \'net.tcp\', \'net.msmq\', \'msmq.formatname\'.'
     validate do |value|
@@ -96,9 +94,10 @@ Puppet::Type.newtype(:iis_application) do
 
       raise("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
 
+      allowed_protocols = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
       protocols = value.split(',')
       protocols.each do |protocol|
-        unless ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(protocol)
+        unless allowed_protocols.include?(protocol)
           raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
         end
       end

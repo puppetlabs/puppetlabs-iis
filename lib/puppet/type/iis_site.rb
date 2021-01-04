@@ -78,8 +78,6 @@ Puppet::Type.newtype(:iis_site) do
   end
 
   newproperty(:enabledprotocols) do
-    PROTOCOLS = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
-
     desc "The protocols enabled for the site. If 'https' is specified, 'http' is
           implied. If no value is provided, then this setting is disabled. Can
           be a comma delimited list of protocols. Valid protocols are: 'http',
@@ -91,9 +89,10 @@ Puppet::Type.newtype(:iis_site) do
 
       raise("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
 
+      allowed_protocols = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
       protocols = value.split(',')
       protocols.each do |protocol|
-        unless ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(protocol)
+        unless allowed_protocols.include?(protocol)
           raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
         end
       end
