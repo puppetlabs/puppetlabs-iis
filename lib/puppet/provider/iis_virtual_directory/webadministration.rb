@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_common')
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
@@ -98,7 +100,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
   def self.prefetch(resources)
     virt_dirs = instances
-    resources.keys.each do |virt_dir|
+    resources.each_key do |virt_dir|
       if provider = virt_dirs.find { |s| virt_dir.casecmp(s.name).zero? }
         resources[virt_dir].provider = provider
       end

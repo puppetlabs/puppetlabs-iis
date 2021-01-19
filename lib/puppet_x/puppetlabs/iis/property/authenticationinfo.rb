@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # The Puppet Extensions Module
 class PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo < Puppet::Property
   desc 'Enable and disable authentication schemas. Note: some schemas require

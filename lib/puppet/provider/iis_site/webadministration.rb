@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 # When writing IIS PowerShell code for any of the methods below
@@ -57,16 +59,14 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
 
-    if @resource[:authenticationinfo]
-      @resource[:authenticationinfo].each do |auth, _enable|
-        args = []
-        args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
-        args << "-PSPath 'IIS:\\'"
-        args << "-Location '#{@resource[:name]}'"
-        args << '-Name enabled'
-        args << "-Value #{@resource[:authenticationinfo][auth]}"
-        cmd << "Set-WebConfigurationProperty #{args.join(' ')} -ErrorAction Stop\n"
-      end
+    @resource[:authenticationinfo]&.each do |auth, _enable|
+      args = []
+      args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
+      args << "-PSPath 'IIS:\\'"
+      args << "-Location '#{@resource[:name]}'"
+      args << '-Name enabled'
+      args << "-Value #{@resource[:authenticationinfo][auth]}"
+      cmd << "Set-WebConfigurationProperty #{args.join(' ')} -ErrorAction Stop\n"
     end
 
     inst_cmd = cmd.join
@@ -124,7 +124,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
   def self.prefetch(resources)
     sites = instances
-    resources.keys.each do |site|
+    resources.each_key do |site|
       next unless !sites.nil? && provider = sites.find { |s| s.name == site }
       unless resources[site]['authenticationinfo'].nil?
         resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])
@@ -132,6 +132,9 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       resources[site].provider = provider
     end
   end
+
+  SETTINGS = ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
+              'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].freeze
 
   def self.instances
     inst_cmd = ps_script_content('_getwebsites', @resource)
@@ -146,8 +149,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
       # In PowerShell 2.0, empty strings come in as nil which then fail insync? tests.
       # Convert nil's to empty strings for all properties which we know are String types
-      ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
-       'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].each do |setting|
+      SETTINGS.each do |setting|
         site[setting] = '' if site[setting].nil?
       end
       site['bindings'] = [] if site['bindings'].nil?

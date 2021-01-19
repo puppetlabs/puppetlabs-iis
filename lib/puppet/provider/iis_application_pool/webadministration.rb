@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
@@ -82,7 +84,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
   def self.prefetch(resources)
     pools = instances
-    resources.keys.each do |pool|
+    resources.each_key do |pool|
       if provider = pools.find { |s| s.name == pool }
         resources[pool].provider = provider
       end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_PowerShell) do
@@ -86,7 +88,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
 
   def self.prefetch(resources)
     features = instances
-    resources.keys.each do |name|
+    resources.each_key do |name|
       if provider = features.find { |feature| name.casecmp(feature.name).zero? }
         resources[name].provider = provider
       end

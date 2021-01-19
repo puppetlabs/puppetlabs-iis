@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/parameter/boolean'
 require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
@@ -87,9 +89,10 @@ Puppet::Type.newtype(:iis_site) do
 
       raise("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
 
+      allowed_protocols = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
       protocols = value.split(',')
       protocols.each do |protocol|
-        unless ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(protocol)
+        unless allowed_protocols.include?(protocol)
           raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
         end
       end
@@ -135,23 +138,23 @@ Puppet::Type.newtype(:iis_site) do
       end
 
       if ['http', 'https'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^.+:\d+:.*}
+        unless %r{^.+:\d+:.*}.match?(value['bindinginformation'])
           raise("bindinginformation for http and https protocols must be of the format '(ip|*):1-65535:hostname'")
         end
       elsif ['net.pipe'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^[^:]+$}
+        unless %r{^[^:]+$}.match?(value['bindinginformation'])
           raise("bindinginformation for net.pipe protocol must be of the format 'hostname'")
         end
       elsif ['net.tcp'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^\d+:.*}
+        unless %r{^\d+:.*}.match?(value['bindinginformation'])
           raise("bindinginformation for net.tcp protocol must be of the format '1-65535:hostname'")
         end
       elsif ['net.msmq'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^[^:]+$}
+        unless %r{^[^:]+$}.match?(value['bindinginformation'])
           raise("bindinginformation for net.msmq protocol must be of the format 'hostname'")
         end
       elsif ['msmq.formatname'].include?(value['protocol'])
-        unless value['bindinginformation'] =~ %r{^[^:]+$}
+        unless %r{^[^:]+$}.match?(value['bindinginformation'])
           raise("bindinginformation for msmq.formatname protocol must be of the format 'hostname'")
         end
       end
@@ -218,7 +221,7 @@ Puppet::Type.newtype(:iis_site) do
       if value.nil? || value.empty?
         raise ArgumentError, 'A non-empty serviceautostartprovidername name must be specified.'
       end
-      raise("#{name} is not a valid serviceautostartprovidername name") unless value =~ %r{^[a-zA-Z0-9\-\_'\s]+$}
+      raise("#{name} is not a valid serviceautostartprovidername name") unless %r{^[a-zA-Z0-9\-\_'\s]+$}.match?(value)
     end
     # serviceautostartprovidertype and serviceautostartprovidername work together
   end

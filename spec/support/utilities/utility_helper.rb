@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def format_powershell_iis_command(ps_command)
   command = []
   command << 'Import-Module WebAdministration -ErrorAction Stop;'

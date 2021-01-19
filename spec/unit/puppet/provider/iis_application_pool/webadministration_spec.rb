@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:iis_application_pool).provider(:webadministration)
@@ -21,13 +23,13 @@ describe provider_class do
   end
 
   [:name].each do |method|
-    it "should respond to the class method #{method}" do
+    it "responds to the class method #{method}" do
       expect(provider_class).to respond_to(method)
     end
   end
 
   [:exists?, :create, :destroy, :update].each do |method|
-    it "should respond to the instance method #{method}" do
+    it "responds to the instance method #{method}" do
       expect(provider_class.new).to respond_to(method)
     end
   end

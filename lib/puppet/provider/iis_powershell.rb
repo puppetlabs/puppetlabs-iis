@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'ruby-pwsh'
 
@@ -15,7 +17,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   # Match resources with existing providers
   def self.prefetch(resources)
     nodes = instances
-    resources.keys.each do |name|
+    resources.each_key do |name|
       if provider = nodes.find { |node| node.name == name }
         resources[name].provider = provider
       end
@@ -51,10 +53,8 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     result = ps_manager.execute(command)
     stderr = result[:stderr]
 
-    unless stderr.nil?
-      stderr.each do |er|
-        er.each { |e| Puppet.debug "STDERR: #{e.chop}" } unless er.empty?
-      end
+    stderr&.each do |er|
+      er.each { |e| Puppet.debug "STDERR: #{e.chop}" } unless er.empty?
     end
 
     Puppet.debug "STDOUT: #{result[:stdout]}" unless result[:stdout].nil?
@@ -83,8 +83,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
     return nil if raw.nil?
     # Unfortunately PowerShell tends to automatically insert CRLF characters mid-string (Console Width)
     # However as we're using JSON which does not use Line Endings for termination, we can safely strip them
-    raw.delete!("\n")
-    raw.delete!("\r")
+    raw = raw.delete("\n").delete("\r")
 
     result = JSON.parse(raw)
     return nil if result.nil?

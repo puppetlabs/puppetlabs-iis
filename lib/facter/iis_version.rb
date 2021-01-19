@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Facter.add('iis_version') do
   confine kernel: :windows
   setcode do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershell')
 
 Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
@@ -87,11 +89,9 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
       " -Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
     end
 
-    if @property_flush[:authenticationinfo]
-      @property_flush[:authenticationinfo].each do |auth, _enable|
-        inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'"\
-        " -Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
-      end
+    @property_flush[:authenticationinfo]&.each do |auth, _enable|
+      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'"\
+      " -Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
     end
 
     if @property_flush[:enabledprotocols]

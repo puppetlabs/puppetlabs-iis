@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'iis_application_pool' do
@@ -118,7 +120,7 @@ describe 'iis_application_pool' do
    :auto_shutdown_exe,
    :auto_shutdown_params,
    :log_event_on_recycle].each do |property|
-    it "should require #{property} to be a string" do
+    it "requires #{property} to be a string" do
       expect(type_class).to require_string_for(property)
     end
   end
@@ -137,7 +139,7 @@ describe 'iis_application_pool' do
     :disallow_overlapping_rotation,
     :disallow_rotation_on_config_change,
   ].each do |property|
-    it "should require #{property} to be boolean" do
+    it "requires #{property} to be boolean" do
       config = { name: 'name' }
       config[property] = 'string'
       expect {
@@ -160,14 +162,14 @@ describe 'iis_application_pool' do
     prop = property.keys[0]
     upper_limit = property[property.keys[0]]
 
-    it "should support #{prop} as a formatted time" do
+    it "supports #{prop} as a formatted time" do
       config = { name: 'name' }
       config[prop] = upper_limit
       expect {
         type_class.new(config)
       }.not_to raise_error
     end
-    it "should require #{prop} to be a formatted time" do
+    it "requires #{prop} to be a formatted time" do
       config = { name: 'name' }
       config[prop] = 'string'
       expect {
@@ -189,12 +191,12 @@ describe 'iis_application_pool' do
   ].each do |property|
     prop = property.keys[0]
     upper_limit = property[property.keys[0]]
-    it "should require #{prop} to be a number" do
+    it "requires #{prop} to be a number" do
       expect(type_class).to require_integer_for(prop)
     end
 
     next unless upper_limit
-    it "should require #{prop} to be less than #{upper_limit}" do
+    it "requires #{prop} to be less than #{upper_limit}" do
       expect {
         upper_limit += 1
         config = { name: 'sample' }
@@ -224,7 +226,7 @@ describe 'iis_application_pool' do
     end
 
     ['value', 'value with spaces', 'UPPER CASE', '0123456789_-', 'With.Period'].each do |value|
-      it "should accept '#{value}'" do
+      it "accepts '#{value}'" do
         expect {
           pool = type_class.new(
             name: 'foo',
@@ -235,7 +237,7 @@ describe 'iis_application_pool' do
     end
 
     ['*', '()', '[]', '!@'].each do |value|
-      it "should reject '#{value}'" do
+      it "rejects '#{value}'" do
         expect {
           pool = type_class.new(
             name: 'foo',

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 RSpec::Matchers.define :require_string_for do |property|
   match do |type_class|
@@ -27,7 +28,7 @@ end
 
 RSpec.shared_examples 'array properties' do |properties|
   properties.each do |property|
-    it "should require #{property} to be an Array" do
+    it "requires #{property} to be an Array" do
       config = { name: 'name' }
       config[property] = 2
       expect {
@@ -52,7 +53,7 @@ end
 
 RSpec.shared_examples 'boolean properties' do |properties|
   properties.each do |property|
-    it "should require #{property} to be boolean" do
+    it "requires #{property} to be boolean" do
       config = { name: 'name' }
       config[property] = 'string'
       expect {
