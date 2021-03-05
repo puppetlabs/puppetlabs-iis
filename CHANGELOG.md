@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.0.0) (2021-03-02)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v7.2.0...v8.0.0)
+
+### Changed
+
+- pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [\#308](https://github.com/puppetlabs/puppetlabs-iis/pull/308) ([carabasdaniel](https://github.com/carabasdaniel))
+
+### Fixed
+
+- \(MODULES-10361\) sort https bindings first [\#252](https://github.com/puppetlabs/puppetlabs-iis/pull/252) ([pillarsdotnet](https://github.com/pillarsdotnet))
+
 ## [v7.2.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v7.2.0) (2021-01-25)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v7.1.0...v7.2.0)
@@ -31,10 +43,6 @@ All notable changes to this project will be documented in this file. The format 
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v7.0.0...v7.0.1)
 
-### Added
-
-- \(FM-8195\) Convert to Litmus [\#249](https://github.com/puppetlabs/puppetlabs-iis/pull/249) ([florindragos](https://github.com/florindragos))
-
 ### Fixed
 
 - Fix provider enabledprotocols [\#272](https://github.com/puppetlabs/puppetlabs-iis/pull/272) ([johnrogers00](https://github.com/johnrogers00))
@@ -48,10 +56,13 @@ All notable changes to this project will be documented in this file. The format 
 
 - \(FM 8426\) replace vendored code with pwshlib dependency [\#247](https://github.com/puppetlabs/puppetlabs-iis/pull/247) ([david22swan](https://github.com/david22swan))
 
+### Added
+
+- \(FM-8195\) Convert to Litmus [\#249](https://github.com/puppetlabs/puppetlabs-iis/pull/249) ([florindragos](https://github.com/florindragos))
+
 ### Fixed
 
 - \(MODULES-10362\) handle authenticationinfo consistently [\#253](https://github.com/puppetlabs/puppetlabs-iis/pull/253) ([pillarsdotnet](https://github.com/pillarsdotnet))
-- \(MODULES-10361\) sort https bindings first [\#252](https://github.com/puppetlabs/puppetlabs-iis/pull/252) ([pillarsdotnet](https://github.com/pillarsdotnet))
 
 ## [v6.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v6.0.0) (2019-10-30)
 
