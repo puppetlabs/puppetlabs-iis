@@ -3,31 +3,9 @@
   delete: true
 ".rubocop.yml":
   include_todos: true
-".travis.yml":
-  global_env:
-    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
-  deploy_to_forge:
-    enabled: false
-  simplecov: true
-  notifications:
-    slack:
-      secure: >-
-        L+69IwIvCn742nGHGfT3I0Qo6aNeXXCt0MvK3bYd2nZDzQsDxkzkjWMGswKj58T3nDKfTihF2N8IKy+r4ml3BXFyuPoBU+z8UEDSuU0IcU0QzXSvpWd5K8GH4OyRC/0k3K6OdcbcJvvC8imIAV6DxicJdRL1AL28EY9NETKYUCw3eZWWtSf8dFpsMFN3poJQ0fzYc5MrQHpP+/MHmwVDfqpu6iVjaCGK2Ifht9mHNI5zXMoHKgiKIFyYIVVQBBbrx+sc+Hfdrz1+dvDYdacws+QNK29sKuqHapdBzaQ/cwyOXtHvg4iK4UJ5QaDE5CM2M1ao2jUPjakScfBe5TE4ftCrLxL4k3xcWd/CyCQX8UCimE/Q1K86elywzrYUne2UsJCVIQlLIM74y5XtbVPMHZYx1lRLuCNukdwMmyXHjr0sUmXZGMWBTMItQNzbAV97jZefgzW8f/FxtpQhxRVGN066pjp1giXgAy+tGWzl9AuIfJOihw6Oq+R7cFAHvNrw2kFS52KBPqa47107n5DLgiHScxQV4kcZP0e2a2An6Q8/IcHk/DxbtGdG+5+YutxF+HGQGM5dPd6ipi4PeGe8cbsTQqpqNjwnxWTjxEHwK4Szw3zIx7/iW/Wh4Lw9VrBWymUzrAqiORQvCCebLh9k0ChnWn42rx3Sn9htdcwlZE4=
 appveyor.yml:
-  unmanaged: true
-  comment: "Unmanaged due to overly long acceptance test runs - see https://github.com/puppetlabs/puppetlabs-iis/pull/249"
-  environment:
-    HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
-    HONEYCOMB_DATASET: litmus tests
-  use_travis: true
-  simplecov: true
-  matrix_extras:
-  - PUPPET_GEM_VERSION: "~> 6.0"
-    RUBY_VERSION: 25
-    CHECK: parallel_spec
-  - PUPPET_GEM_VERSION: "~> 6.0"
-    RUBY_VERSION: 25-x64
-    CHECK: parallel_spec
+  delete: true
+
 Gemfile:
   use_travis: true
   optional:
@@ -45,3 +23,10 @@ spec/spec_helper.rb:
   unmanaged: false
 .github/workflows/auto_release.yml:
   unmanaged: false
+.github/workflows/spec.yml:
+  checks: 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop'
+  unmanaged: false
+.github/workflows/release.yml:
+  unmanaged: false
+.travis.yml:
+  delete: true
