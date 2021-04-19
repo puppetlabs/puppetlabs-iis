@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'puppet/util/feature'
-require_relative '../../../lib/puppet_x/puppetlabs/iis/iis_version'
+require_relative '../../puppet_x/puppetlabs/iis/iis_version'
 
 Puppet.features.add(:iis_web_server) do
   PuppetX::PuppetLabs::IIS::IISVersion.supported_version_installed?
