@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.0.1](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.0.1) (2021-04-26)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.0.0...v8.0.1)
+
+### Fixed
+
+- \(MODULES-10988\) fix require\_relative being not relative enough [\#316](https://github.com/puppetlabs/puppetlabs-iis/pull/316) ([DavidS](https://github.com/DavidS))
+- \(IAC-1497\) - Removal of Unsupported Translate Module [\#314](https://github.com/puppetlabs/puppetlabs-iis/pull/314) ([david22swan](https://github.com/david22swan))
+
 ## [v8.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.0.0) (2021-03-02)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v7.2.0...v8.0.0)
@@ -9,10 +18,6 @@ All notable changes to this project will be documented in this file. The format 
 ### Changed
 
 - pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [\#308](https://github.com/puppetlabs/puppetlabs-iis/pull/308) ([carabasdaniel](https://github.com/carabasdaniel))
-
-### Fixed
-
-- \(MODULES-10361\) sort https bindings first [\#252](https://github.com/puppetlabs/puppetlabs-iis/pull/252) ([pillarsdotnet](https://github.com/pillarsdotnet))
 
 ## [v7.2.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v7.2.0) (2021-01-25)
 
@@ -63,6 +68,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - \(MODULES-10362\) handle authenticationinfo consistently [\#253](https://github.com/puppetlabs/puppetlabs-iis/pull/253) ([pillarsdotnet](https://github.com/pillarsdotnet))
+- \(MODULES-10361\) sort https bindings first [\#252](https://github.com/puppetlabs/puppetlabs-iis/pull/252) ([pillarsdotnet](https://github.com/pillarsdotnet))
 
 ## [v6.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v6.0.0) (2019-10-30)
 
