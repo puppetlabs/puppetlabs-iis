@@ -244,6 +244,48 @@ describe 'iis_application_pool', :suite_a do
     end
   end
 
+  context 'when application pool restart_memory_limit set' do
+    pool_name = SecureRandom.hex(10).to_s
+    manifest = <<-HERE
+      iis_application_pool { '#{pool_name}':
+        ensure                       => 'present',
+        state                        => 'started',
+        cpu_limit                    => '0',
+        max_processes                => '0',
+        restart_memory_limit         => '0',
+        restart_private_memory_limit => '0',
+        restart_requests_limit       => '0'
+
+      }
+    HERE
+
+    before(:all) do
+      create_app_pool(pool_name)
+      stop_app_pool(pool_name)
+    end
+
+    iis_idempotent_apply('set values to 0', manifest)
+
+    it 'has all properties correctly configured' do
+      resource_data = resource('iis_application_pool', pool_name)
+      [
+        'ensure', 'present',
+        'state', 'started',
+        'cpu_limit', '0',
+        'max_processes', '0',
+        'restart_memory_limit', '0',
+        'restart_private_memory_limit', '0',
+        'restart_requests_limit', '0'
+      ].each_slice(2) do |key, value|
+        puppet_resource_should_show(key, value, resource_data)
+      end
+    end
+
+    after(:all) do
+      remove_app_pool(pool_name)
+    end
+  end
+
   context 'when building a kitchen sink' do
     pool_name = SecureRandom.hex(10).to_s
     manifest = <<-HERE

@@ -5,6 +5,7 @@ require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/string'
 require_relative '../../puppet_x/puppetlabs/iis/property/positive_integer'
 require_relative '../../puppet_x/puppetlabs/iis/property/timeformat'
+require_relative '../../puppet_x/puppetlabs/iis/property/whole_number'
 
 Puppet::Type.newtype(:iis_application_pool) do
   @doc = 'Allows creation of a new IIS Application Pool and configuration of application pool parameters.'
@@ -146,7 +147,7 @@ Puppet::Type.newtype(:iis_application_pool) do
     newvalues(:NoAction, :KillW3wp, :Throttle, :ThrottleUnderLoad)
   end
 
-  newproperty(:cpu_limit, parent: PuppetX::PuppetLabs::IIS::Property::PositiveInteger) do
+  newproperty(:cpu_limit, parent: PuppetX::PuppetLabs::IIS::Property::WholeNumber) do
     desc "Configures the maximum percentage of CPU time (in 1/1000ths of one
           percent) that the worker processes in an application pool are
           allowed to consume over a period of time as indicated by the
@@ -297,7 +298,7 @@ Puppet::Type.newtype(:iis_application_pool) do
     end
   end
 
-  newproperty(:max_processes, parent: PuppetX::PuppetLabs::IIS::Property::PositiveInteger) do
+  newproperty(:max_processes, parent: PuppetX::PuppetLabs::IIS::Property::WholeNumber) do
     desc "Indicates the maximum number of worker processes that would be used
           for the application pool.
 
@@ -488,19 +489,19 @@ Puppet::Type.newtype(:iis_application_pool) do
           'Memory', and 'PrivateMemory'; for IIS 10 and later are all values."
   end
 
-  newproperty(:restart_memory_limit, parent: PuppetX::PuppetLabs::IIS::Property::PositiveInteger) do
+  newproperty(:restart_memory_limit, parent: PuppetX::PuppetLabs::IIS::Property::WholeNumber) do
     desc "Specifies the amount of virtual memory (in kilobytes) that a worker
           process can use before the worker process is recycled. The maximum
           value supported for this property is 4,294,967 KB."
   end
 
-  newproperty(:restart_private_memory_limit, parent: PuppetX::PuppetLabs::IIS::Property::PositiveInteger) do
+  newproperty(:restart_private_memory_limit, parent: PuppetX::PuppetLabs::IIS::Property::WholeNumber) do
     desc "Specifies the amount of private memory (in kilobytes) that a worker
           process can use before the worker process recycles. The maximum value
           supported for this property is 4,294,967 KB."
   end
 
-  newproperty(:restart_requests_limit, parent: PuppetX::PuppetLabs::IIS::Property::PositiveInteger) do
+  newproperty(:restart_requests_limit, parent: PuppetX::PuppetLabs::IIS::Property::WholeNumber) do
     desc "Specifies that the worker process should be recycled after it
           processes a specific number of requests."
   end
