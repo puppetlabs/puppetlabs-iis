@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v8.0.2](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.0.2) (2021-05-08)
+## [v8.0.3](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.0.3) (2021-06-28)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.0.2...v8.0.3)
+
+### Fixed
+
+- Correct error handling in require ruby-pwsh [\#325](https://github.com/puppetlabs/puppetlabs-iis/pull/325) ([benningm](https://github.com/benningm))
+
+## [v8.0.2](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.0.2) (2021-05-10)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.0.1...v8.0.2)
 
