@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'pathname'
-require 'ruby-pwsh'
 
 Puppet::Type.type(:iis_site).provide(:iisadministration) do
   desc 'IIS Provider using the PowerShell IISAdministration module'
@@ -15,7 +14,7 @@ Puppet::Type.type(:iis_site).provide(:iisadministration) do
   def self.powershell_path
     require 'ruby-pwsh'
     Pwsh::Manager.powershell_path
-  rescue
+  rescue LoadError
     nil
   end
 
