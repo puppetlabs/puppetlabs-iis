@@ -12,7 +12,7 @@ Get-WebApplication | % {
     name               = $name
     site               = $site
     applicationpool    = [string]$_.ApplicationPool
-    physicalpath       = [string]$_.PhysicalPath
+    physicalpath       = [string]$_.PhysicalPath.TrimEnd("/")
     sslflags           = $sslFlags
     authenticationinfo = New-Object -TypeName PSObject -Property @{
       anonymous                   = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/anonymousAuthentication").enabled
