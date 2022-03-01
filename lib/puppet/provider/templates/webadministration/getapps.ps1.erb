@@ -4,10 +4,16 @@ Get-WebApplication | % {
   $name = [string]$pattern.replace($_.Path,'',1)
   $site = [string]$_.ItemXPath.split("'")[1]
 
+  $SiteEntityPath = "IIS:\\Sites\${site}"
+  $SitePhysicalPath = Get-ItemProperty -Path $SiteEntityPath -Name PhysicalPath
+
+  if ($SitePhysicalPath.physicalpath.EndsWith('/')){
+    $null = Set-ItemProperty -Path $SiteEntityPath -Name PhysicalPath -Value $SitePhysicalPath.physicalpath.TrimEnd('/') -Force
+  }
+
   $sslFlags = @()
   $sslFlags_raw = [String](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags
   if ($sslFlags_raw -ne '') { $sslFlags = $sslFlags_raw -split ',' }
-
   New-Object -TypeName PSObject -Property @{
     name               = $name
     site               = $site

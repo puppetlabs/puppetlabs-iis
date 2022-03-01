@@ -7,6 +7,13 @@ Get-WebSite | % {
     $preloadenabled = [string](Get-ItemProperty -Path "IIS:\Sites\$($name)" -Name 'applicationDefaults.preloadEnabled' -ErrorAction 'Continue').Value
   }
 
+  $SiteEntityPath = "IIS:\\Sites\${name}"
+  $SitePhysicalPath = Get-ItemProperty -Path $SiteEntityPath -Name PhysicalPath
+
+  if ($SitePhysicalPath.physicalpath.EndsWith('/')){
+    $null = Set-ItemProperty -Path $SiteEntityPath -Name PhysicalPath -Value $SitePhysicalPath.physicalpath.TrimEnd('/') -Force
+  }
+  
   $authenticationTypes = @(
     'anonymous',
     'basic',
