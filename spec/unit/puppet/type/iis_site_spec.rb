@@ -52,7 +52,7 @@ describe Puppet::Type.type(:iis_site) do
     it 'does not allow empty' do
       expect {
         resource[:physicalpath] = ''
-      }.to raise_error(Puppet::Error, %r{A non-empty physicalpath must be specified.})
+      }.to raise_error(Puppet::ResourceError, %r{physicalpath should be a path})
     end
 
     it 'accepts any string value' do
