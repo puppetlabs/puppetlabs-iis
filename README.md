@@ -113,7 +113,7 @@ iis_application_pool { 'complete_site_app_pool':
   managed_runtime_version => 'v4.0',
 }
 
-#Application Pool No Managed Code .Net CLR Version set up
+# Application Pool No Managed Code .Net CLR Version set up
 iis_application_pool {'test_app_pool':
     ensure                    => 'present',
     enable32_bit_app_on_win64 => true,
@@ -146,6 +146,11 @@ iis_virtual_directory { 'vdir':
   require      => File['c:\\inetpub\\complete_vdir'],
 }
 ```
+### Note about physicalpaths
+This module does **not support** physicalpaths that end with a forwardslash (`/`). As such, the module:
+  - Will remove any forwardslashes at the end of a physicalpath found in the manifest.
+  - Will remove any forwardslashes at the end of a physicalpath found in any existing resource.
+
 
 ## Reference
 
@@ -157,7 +162,7 @@ For information on the classes and types, see the [REFERENCE.md](https://github.
 
 #### OS Compatibility
 
-This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2`, `Windows Server 2016`,`Windows Server 2016 Core` and `Windows Server 2019`.
+This module is compatible only with `Windows Server 2008R2`, `Windows Server 2012`, `Windows Server 2012R2`, `Windows Server 2016`,`Windows Server 2016 Core`, `Windows Server 2019` and `Windows Server 2022`.
 
 #### IIS Compatibility
 

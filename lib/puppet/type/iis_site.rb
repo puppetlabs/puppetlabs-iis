@@ -57,13 +57,16 @@ Puppet::Type.newtype(:iis_site) do
   end
 
   newproperty(:physicalpath, parent: PuppetX::PuppetLabs::IIS::Property::Path) do
-    desc 'The physical path to the site directory. This path must be fully
-          qualified.'
-    validate do |value|
-      if value.nil? || value.empty?
+    desc 'The physical path to the site directory. This path must be fully qualified.'
+    munge do |value|
+      v = value.chomp('/') if value.match?(/^.:(\/|\\)/)
+      v = value.chomp('\\') if value.match?(/^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/)
+
+      if v.nil? || v.empty?
         raise ArgumentError, 'A non-empty physicalpath must be specified.'
       end
-      raise("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ || value =~ /^\/\/[^\/]+\/[^\/]+/ || value =~ /^\\\\/
+      raise("File paths must be fully qualified, not '#{v}'") unless v =~ /^.:(\/|\\)/ || v =~ /^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/
+      v
     end
   end
 
