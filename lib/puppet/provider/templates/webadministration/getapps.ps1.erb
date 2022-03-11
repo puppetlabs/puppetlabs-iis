@@ -4,11 +4,11 @@ Get-WebApplication | % {
   $name = [string]$pattern.replace($_.Path,'',1)
   $site = [string]$_.ItemXPath.split("'")[1]
 
-  $SiteEntityPath = "IIS:\\Sites\${site}"
-  $SitePhysicalPath = Get-ItemProperty -Path $SiteEntityPath -Name PhysicalPath
+  $AppEntityPath = "IIS:\\Sites\${site}\${name}"
+  $AppEntityPhysicalPath = Get-ItemProperty -Path $AppEntityPath -Name physicalPath
 
-  if ($SitePhysicalPath.physicalpath.EndsWith('/')){
-    $null = Set-ItemProperty -Path $SiteEntityPath -Name PhysicalPath -Value $SitePhysicalPath.physicalpath.TrimEnd('/') -Force
+  if ($AppEntityPhysicalPath.EndsWith('/')){
+    $null = Set-ItemProperty -Path $AppEntityPath -Name physicalPath -Value $AppEntityPhysicalPath.TrimEnd('/') -Force
   }
 
   $sslFlags = @()
