@@ -8,10 +8,10 @@ Get-WebSite | % {
   }
 
   $SiteEntityPath = "IIS:\\Sites\${name}"
-  $SitePhysicalPath = Get-ItemProperty -Path $SiteEntityPath -Name PhysicalPath
+  $SiteEntityPhysicalPath = Get-ItemProperty -Path $SiteEntityPath -Name physicalPath
 
-  if ($SitePhysicalPath.physicalpath.EndsWith('/')){
-    $null = Set-ItemProperty -Path $SiteEntityPath -Name PhysicalPath -Value $SitePhysicalPath.physicalpath.TrimEnd('/') -Force
+  if ($SiteEntityPhysicalPath.EndsWith('/')){
+    $null = Set-ItemProperty -Path $SiteEntityPath -Name PhysicalPath -Value $SiteEntityPhysicalPath.TrimEnd('/') -Force
   }
   
   $authenticationTypes = @(
