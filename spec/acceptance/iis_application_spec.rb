@@ -182,6 +182,33 @@ describe 'iis_application', :suite_a do
       end
     end
 
+    context 'with a physcail path ending in a forward slash' do
+      context 'with a ending forward slash' do
+        site_name = SecureRandom.hex(10).to_s
+        app_name = SecureRandom.hex(10).to_s
+        before(:all) do
+          create_site(site_name, true)
+          create_path("c:\\inetpub\\wwwroot\\subFolder\\#{app_name}")
+        end
+
+        manifest = <<-HERE
+          iis_application{'subFolder/#{app_name}':
+            ensure => 'present',
+            applicationname => '/subFolder/#{app_name}',
+            physicalpath => 'c:/inetpub/wwwroot/subFolder/#{app_name}/',
+            sitename => '#{site_name}'
+          }
+        HERE
+
+        iis_idempotent_apply('create app', manifest)
+
+        after(:all) do
+          remove_app(app_name)
+          remove_all_sites
+        end
+      end
+    end
+
     context 'with backward slash virtual directory name format' do
       site_name = SecureRandom.hex(10).to_s
       app_name = SecureRandom.hex(10).to_s
