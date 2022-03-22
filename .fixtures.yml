@@ -3,12 +3,10 @@ fixtures:
     dism: 'puppetlabs/dism'
     pwshlib: 'puppetlabs/pwshlib'
     ruby_task_helper: 'puppetlabs/ruby_task_helper'
-  fixtures:
   repositories:
-    "stdlib":
-      "repo": "git://github.com/puppetlabs/puppetlabs-stdlib.git"
-    facts: 'git://github.com/puppetlabs/puppetlabs-facts.git'
-    puppet_agent: 'git://github.com/puppetlabs/puppetlabs-puppet_agent.git'
-    provision: 'git://github.com/puppetlabs/provision.git'
+    stdlib: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
+    facts: 'https://github.com/puppetlabs/puppetlabs-facts.git'
+    puppet_agent: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
+    provision: 'https://github.com/puppetlabs/provision.git'
   symlinks:
-    "iis": "#{source_dir}"
+    iis: "#{source_dir}"
