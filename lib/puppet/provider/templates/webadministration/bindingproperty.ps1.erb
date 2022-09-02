@@ -1,25 +1,20 @@
-<%- if resource[:bindings] -%>
-$website = Get-WebConfiguration -Filter '/system.applicationHost/sites/site' | Where-Object -FilterScript {$_.Name -eq '<%= resource[:name] %>' }
+<%- if resource[:bindings] %>
 
-Clear-WebConfiguration -Filter "$($website.ItemXPath)/bindings" -Force -ErrorAction Stop
+$binding = Get-WebBinding -Name <%= resource['name'] %> | Remove-WebBinding
 
-  <%- resource[:bindings].each do |bind| -%>
-Add-WebConfiguration -Filter "$($website.ItemXPath)/bindings" `
-  -Value @{
-    protocol = '<%= bind['protocol'] %>'
-    bindingInformation = '<%= bind['bindinginformation'] %>'
-  } `
-  -Force `
-  -ErrorAction Stop
-    <%- if bind['protocol'] == 'https' and bind['sslflags'] -%>
-Set-WebConfigurationProperty -Filter "$($website.ItemXPath)/bindings/binding[last()]" `
-  -Name sslFlags `
-  -Value <%= bind['sslflags'] %> `
-  -Force `
-  -ErrorAction Stop
+  <% resource[:bindings].each do |bind| -%>
+<% ip, port, host_header = resource.provider.divide_binding_information(bind) %>
 
-$binding = Get-WebConfiguration -Filter "$($website.ItemXPath)/bindings/binding[last()]" -ErrorAction Stop
+    <%- unless ( bind['protocol'] == 'https' and bind['sslflags'] ) %>
+New-WebBinding -Name '<%= resource['name'] %>'  -Protocol '<%= bind['protocol'] %>' -IPAddress <%= ip %> -Port <%= port %> -HostHeader '<%= host_header %>' -Force -ErrorAction Stop
+
+    <%- else %>
+New-WebBinding -name '<%= resource['name'] %>' -Protocol '<%= bind['protocol'] %>' -IPAddress '<%= ip %>' -Port '<%= port %>' -HostHeader '<%= host_header %>' -SslFlags '<%= bind['sslflags'] %>' -Force -ErrorAction Stop
+
+$binding = Get-WebBinding -Name <%= resource['name'] %> -Protocol <%= bind['protocol'] %> -IPAddress '<%= ip %>' -Port '<%= port %>' -HostHeader '<%= host_header %>'
+      if ( $binding ) {
 $binding.AddSslCertificate('<%= bind['certificatehash'] %>', '<%= bind['certificatestorename'] %>')
-    <%- end -%>
-  <%- end -%>
-<%- end -%>
+      }
+    <%- end %>
+  <% end %>
+<% end %>

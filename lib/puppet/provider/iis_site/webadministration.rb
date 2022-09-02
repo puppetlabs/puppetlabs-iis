@@ -202,6 +202,18 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     end
   end
 
+  # In bindingproperty.p1.erb this informaton was passed in as a single value
+  #   That is no longer the case
+  #   In addition when setting sslFlags a host_header is required
+  def divide_binding_information(bind)
+    matches = bind['bindinginformation'].match(%r{^(?<ip_dns>.+):(?<port>\d*):(?<host_header>(.*))})
+    if bind['protocol'] == 'https' && bind['sslflags'] && matches[:host_header] == ''
+      [matches[:ip_dns], matches[:port], 'sslFlags']
+    else
+      [matches[:ip_dns], matches[:port], matches[:host_header]]
+    end
+  end
+
   def ssl?
     bindings_ssl = !resource[:bindings].find { |x| x['protocol'] == 'https' }.nil? unless resource[:bindings].nil?
     port443 = binding_information[1] == '443' unless binding_information.nil?
