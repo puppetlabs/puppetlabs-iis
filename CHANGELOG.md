@@ -2,18 +2,26 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.1.1](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.1.1) (2022-10-03)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.1.0...v8.1.1)
+
+### Fixed
+
+- \(MAINT\) Drop support for Windows Server 2008 R2. [\#350](https://github.com/puppetlabs/puppetlabs-iis/pull/350) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [v8.1.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.1.0) (2022-03-14)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.0.3...v8.1.0)
 
 ### Added
 
-- pdksync - (FM-8922) - Add Support for Windows 2022 [\#335](https://github.com/puppetlabs/puppetlabs-iis/pull/335) ([david22swan](https://github.com/david22swan))
+- pdksync - \(FM-8922\) - Add Support for Windows 2022 [\#335](https://github.com/puppetlabs/puppetlabs-iis/pull/335) ([david22swan](https://github.com/david22swan))
 
 ### Fixed
 
-- MODULES-11188: trim physicalpath for iis_application resource [\#330](https://github.com/puppetlabs/puppetlabs-iis/pull/330) ([adrianiurca](https://github.com/adrianiurca))
-- (MODULES-11188) Fix physicalPath on apps and sites [\#336](https://github.com/puppetlabs/puppetlabs-iis/pull/336) ([chelnak](https://github.com/chelnak))
+- \(MODULES-11188\) Fix physicalPath on apps and sites [\#336](https://github.com/puppetlabs/puppetlabs-iis/pull/336) ([chelnak](https://github.com/chelnak))
+- MODULES-11188: trim physicalpath for iis\_application resource [\#330](https://github.com/puppetlabs/puppetlabs-iis/pull/330) ([adrianiurca](https://github.com/adrianiurca))
 
 ## [v8.0.3](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.0.3) (2021-06-28)
 
