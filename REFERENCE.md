@@ -733,8 +733,7 @@ value must be in bytes. The value can be any size between
 
 ##### `physicalpath`
 
-The physical path to the site directory. This path must be fully
-qualified.
+The physical path to the site directory. This path must be fully qualified.
 
 ##### `preloadenabled`
 
