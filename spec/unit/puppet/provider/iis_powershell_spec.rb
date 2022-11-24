@@ -22,37 +22,6 @@ describe 'test' do
       allow(ps_manager).to receive(:execute).and_return(execute_response)
     end
 
-    describe 'When on PowerShell 2.0' do
-      before(:each) do
-        allow(Puppet::Provider::IIS_PowerShell).to receive(:ps_major_version).and_return(2)
-      end
-
-      it 'appends Importing the WebAdministration module' do
-        expect(ps_manager).to receive(:execute).with(%r{Import-Module WebAdministration}).and_return(execute_response)
-        iis_powershell_type.run(command)
-      end
-
-      it 'appends changing the working directory to IIS' do
-        expect(ps_manager).to receive(:execute).with(%r{cd iis:}).and_return(execute_response)
-        iis_powershell_type.run(command)
-      end
-
-      it 'appends a JSON converter' do
-        expect(ps_manager).to receive(:execute).with(%r{ConvertTo\-JSON}).and_return(execute_response)
-        iis_powershell_type.run(command)
-      end
-
-      it 'sets Confirmation Preference' do
-        expect(ps_manager).to receive(:execute).with(%r{\$ConfirmPreference = 'high'}).and_return(execute_response)
-        iis_powershell_type.run(command)
-      end
-
-      it 'appends the original command at the end' do
-        expect(ps_manager).to receive(:execute).with(%r{#{command}$}).and_return(execute_response)
-        iis_powershell_type.run(command)
-      end
-    end
-
     [3, 4, 5, 6].each do |testcase|
       describe "When on PowerShell #{testcase}.0" do
         before(:each) do

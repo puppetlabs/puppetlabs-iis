@@ -39,17 +39,6 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   def self.run(command, _check = false)
     Puppet.debug("COMMAND: #{command}")
 
-    if ps_major_version == 2
-      # - PowerShell 2.0 does not support autoload of modules therefore we must explicitly add the WebAdministration module
-      # - Must change the current location to the be the IIS: provider
-      # - Add the ConvertTo-JSON command support
-      command = "Import-Module WebAdministration -ErrorAction Stop\n" \
-                "cd iis:\n" +
-                ps_script_content('json_1.7', @resource) + "\n" \
-                "$ConfirmPreference = 'high'" + "\n" +
-                command
-    end
-
     result = ps_manager.execute(command)
     stderr = result[:stderr]
 
