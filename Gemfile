@@ -31,7 +31,7 @@ group :development do
   gem "rubocop-rspec", '= 2.0.1',                            require: false
   gem "rb-readline", '= 0.5.5',                              require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "github_changelog_generator",                          require: false
-  gem 'puppet-lint-check_unsafe_interpolations', '~> 0.0.3', require: false
+  gem 'puppet-lint-check_unsafe_interpolations', '~> 0.0.4', require: false
   gem "ruby-pwsh",                                           require: false
 end
 group :system_tests do
