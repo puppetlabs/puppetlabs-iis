@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v9.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v9.0.0) (2023-02-10)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.1.1...v9.0.0)
+
+### Changed
+
+- \(CONT-6\) Hardening codebase - Dropping Powershell 2 Support [\#355](https://github.com/puppetlabs/puppetlabs-iis/pull/355) ([LukasAud](https://github.com/LukasAud))
+
 ## [v8.1.1](https://github.com/puppetlabs/puppetlabs-iis/tree/v8.1.1) (2022-10-03)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.1.0...v8.1.1)
