@@ -76,21 +76,21 @@ flags, with the following names: \'Ssl\', \'SslRequireCert\',
 
 The following parameters are available in the `iis_application` type.
 
-* [`applicationname`](#applicationname)
-* [`provider`](#provider)
-* [`virtual_directory`](#virtual_directory)
+* [`applicationname`](#-iis_application--applicationname)
+* [`provider`](#-iis_application--provider)
+* [`virtual_directory`](#-iis_application--virtual_directory)
 
-##### <a name="applicationname"></a>`applicationname`
+##### <a name="-iis_application--applicationname"></a>`applicationname`
 
 The name of the application. The virtual path of the application is
 '/<applicationname>'.
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iis_application--provider"></a>`provider`
 
 The specific backend to use for this `iis_application` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="virtual_directory"></a>`virtual_directory`
+##### <a name="-iis_application--virtual_directory"></a>`virtual_directory`
 
 The IIS Virtual Directory to convert to an application on create.
 Similar to iis_application, iis_virtual_directory uses composite
@@ -117,7 +117,7 @@ in the `auto_shutdown_exe` property.
 
 ##### `auto_start`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 When `true`, indicates to the World Wide Web Publishing Service (W3SVC)
 that the application pool should be automatically started when it is
@@ -163,7 +163,7 @@ process from IIS.
 
 ##### `cpu_smp_affinitized`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Specifies whether a particular worker process assigned to an
 application pool should also be assigned to a given CPU. This
@@ -213,7 +213,7 @@ DWORD for the processor mask. On 32-bit computers, the
 
 ##### `disallow_overlapping_rotation`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Specifies whether the WWW Service should start another worker
 process to replace the existing worker process while that process is
@@ -223,21 +223,21 @@ multiple worker processes.
 
 ##### `disallow_rotation_on_config_change`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Specifies whether the WWW Service should rotate worker processes in an
 application pool when the configuration has changed.
 
 ##### `enable32_bit_app_on_win64`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 When `true`, enables a 32-bit application to run on a computer that
 runs a 64-bit version of Windows.
 
 ##### `enable_configuration_override`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 When `true`, indicates that delegated settings in Web.config files
 will processed for applications within this application pool. When
@@ -292,7 +292,7 @@ protection.
 
 ##### `load_user_profile`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Specifies whether IIS loads the user profile for the application
 pool identity. Setting this value to `false` causes IIS to revert to
@@ -349,7 +349,7 @@ Specify an empty string (`''`) to set as 'No Managed Code.'
 
 ##### `manual_group_membership`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Specifies whether the IIS_IUSRS group Security Identifier (SID) is
 added to the worker process token. When `false`, IIS automatically
@@ -394,14 +394,14 @@ orphaned process, use '%1%'.
 
 ##### `orphan_worker_process`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Specifies whether to assign a worker process to an orphan state
 instead of terminating it when an application pool fails.
 
 ##### `pass_anonymous_token`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 When `true`, the Windows Process Activation Service (WAS) creates
 and passes a token for the built-in IUSR anonymous user account to
@@ -436,7 +436,7 @@ service terminates the worker process.
 
 ##### `pinging_enabled`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 The pinging_enabled property specifies whether the WWW Service should periodically
 monitor the health of a worker process. Setting the value of this property to true
@@ -513,7 +513,7 @@ amount of time has elapsed.
 
 ##### `set_profile_environment`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 When set to `true`, WAS creates an environment block to pass to
 CreateProcessAsUser when creating a worker process. This ensures that
@@ -556,16 +556,16 @@ Specifies the identity under which the application pool runs when the
 
 The following parameters are available in the `iis_application_pool` type.
 
-* [`name`](#name)
-* [`provider`](#provider)
+* [`name`](#-iis_application_pool--name)
+* [`provider`](#-iis_application_pool--provider)
 
-##### <a name="name"></a>`name`
+##### <a name="-iis_application_pool--name"></a>`name`
 
 namevar
 
 The unique name of the ApplicationPool.
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iis_application_pool--provider"></a>`provider`
 
 The specific backend to use for this `iis_application_pool` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
@@ -590,40 +590,40 @@ Default value: `present`
 
 The following parameters are available in the `iis_feature` type.
 
-* [`include_all_subfeatures`](#include_all_subfeatures)
-* [`include_management_tools`](#include_management_tools)
-* [`name`](#name)
-* [`provider`](#provider)
-* [`restart`](#restart)
-* [`source`](#source)
+* [`include_all_subfeatures`](#-iis_feature--include_all_subfeatures)
+* [`include_management_tools`](#-iis_feature--include_management_tools)
+* [`name`](#-iis_feature--name)
+* [`provider`](#-iis_feature--provider)
+* [`restart`](#-iis_feature--restart)
+* [`source`](#-iis_feature--source)
 
-##### <a name="include_all_subfeatures"></a>`include_all_subfeatures`
+##### <a name="-iis_feature--include_all_subfeatures"></a>`include_all_subfeatures`
 
 Indicates whether to install all sub features of a parent IIS feature.
 For instance, ASP.NET as well as the IIS Web Server
 
-##### <a name="include_management_tools"></a>`include_management_tools`
+##### <a name="-iis_feature--include_management_tools"></a>`include_management_tools`
 
 Indicates whether to automatically install all managment tools for a
 given IIS feature
 
-##### <a name="name"></a>`name`
+##### <a name="-iis_feature--name"></a>`name`
 
 namevar
 
 The unique name of the feature to manage.
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iis_feature--provider"></a>`provider`
 
 The specific backend to use for this `iis_feature` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="restart"></a>`restart`
+##### <a name="-iis_feature--restart"></a>`restart`
 
 Indicates whether to allow a restart if the IIS feature installation
 requests one
 
-##### <a name="source"></a>`source`
+##### <a name="-iis_feature--source"></a>`source`
 
 Optionally include a source path for the installation media for an IIS
 feature
@@ -686,7 +686,7 @@ be a comma delimited list of protocols. Valid protocols are: 'http',
 
 ##### `ensure`
 
-Valid values: `stopped`, `started`, `present`, `absent`, ``false``, ``true``
+Valid values: `stopped`, `started`, `present`, `absent`, `false`, `true`
 
 Aliases: `"false"=>"stopped", "true"=>"started"`
 
@@ -712,7 +712,7 @@ Specifies the format for the log file. When set to 'W3C', used with
 
 ##### `loglocaltimerollover`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Use the system\'s local time to determine for the log file name as
 well as when the log file is rolled over
@@ -737,13 +737,13 @@ The physical path to the site directory. This path must be fully qualified.
 
 ##### `preloadenabled`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Enables loading website automatically without a client request first
 
 ##### `serviceautostart`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Enables autostart on the specified website
 
@@ -774,17 +774,17 @@ serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, versi
 
 The following parameters are available in the `iis_site` type.
 
-* [`name`](#name)
-* [`provider`](#provider)
+* [`name`](#-iis_site--name)
+* [`provider`](#-iis_site--provider)
 
-##### <a name="name"></a>`name`
+##### <a name="-iis_site--name"></a>`name`
 
 namevar
 
 The Name of the IIS site. Used for uniqueness. Will set
 the target to this value if target is unset.
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iis_site--provider"></a>`provider`
 
 The specific backend to use for this `iis_site` resource. You will seldom need to specify this --- Puppet will usually
 discover the appropriate provider for your platform.
@@ -833,16 +833,16 @@ physical path.
 
 The following parameters are available in the `iis_virtual_directory` type.
 
-* [`name`](#name)
-* [`provider`](#provider)
+* [`name`](#-iis_virtual_directory--name)
+* [`provider`](#-iis_virtual_directory--provider)
 
-##### <a name="name"></a>`name`
+##### <a name="-iis_virtual_directory--name"></a>`name`
 
 namevar
 
 The name of the virtual directory to manage
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iis_virtual_directory--provider"></a>`provider`
 
 The specific backend to use for this `iis_virtual_directory` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
