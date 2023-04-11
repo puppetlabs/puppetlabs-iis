@@ -52,7 +52,7 @@ describe 'iis_version' do
 
       version = ps.installed_version
 
-      expect(version).to eq nil
+      expect(version).to be_nil
     end
   end
 end

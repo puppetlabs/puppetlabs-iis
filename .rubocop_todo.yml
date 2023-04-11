@@ -46,22 +46,16 @@ Naming/HeredocDelimiterNaming:
   Exclude:
     - 'spec/acceptance/iis_minimal_config_spec.rb'
 
-# # Offense count: 1
-# # This cop supports unsafe autocorrection (--autocorrect-all).
-# Performance/StringInclude:
-#   Exclude:
-#     - 'spec/spec_helper_acceptance_local.rb'
-
 # Offense count: 4
 RSpec/AnyInstance:
   Exclude:
     - 'spec/unit/puppet_x/puppetlabs/iis/iis_version_spec.rb'
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-RSpec/BeEq:
-  Exclude:
-    - 'spec/unit/puppet_x/puppetlabs/iis/iis_version_spec.rb'
+# # Offense count: 1
+# # This cop supports unsafe autocorrection (--autocorrect-all).
+# RSpec/BeEq:
+#   Exclude:
+#     - 'spec/unit/puppet_x/puppetlabs/iis/iis_version_spec.rb'
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
