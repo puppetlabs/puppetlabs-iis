@@ -55,7 +55,7 @@ describe 'iis_application' do
       {
         title: 'foo\bar',
         authenticationinfo: {
-          'basic'     => true,
+          'basic' => true,
           'anonymous' => true,
         },
       }
