@@ -86,12 +86,12 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
     if @property_flush[:sslflags]
       flags = @property_flush[:sslflags].join(',')
-      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' "\
+      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
       "-Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
     end
 
     @property_flush[:authenticationinfo]&.each do |auth, _enable|
-      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' "\
+      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
       "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
     end
 
