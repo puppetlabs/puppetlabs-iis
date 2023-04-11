@@ -25,6 +25,10 @@ describe 'iis_site', :suite_b do
 
       iis_idempotent_apply('create iis site', manifest)
 
+      after(:all) do
+        remove_all_sites
+      end
+
       it 'has all properties correctly configured' do
         resource_data = resource('iis_site', site_name)
         [
@@ -34,10 +38,6 @@ describe 'iis_site', :suite_b do
         ].each_slice(2) do |key, value|
           puppet_resource_should_show(key, value, resource_data)
         end
-      end
-
-      after(:all) do
-        remove_all_sites
       end
     end
 
@@ -92,6 +92,10 @@ describe 'iis_site', :suite_b do
           HERE
         end
 
+        after(:all) do
+          remove_all_sites
+        end
+
         it 'creates a site with SSL bindings' do
           apply_manifest(manifest, catch_failures: true)
         end
@@ -132,10 +136,6 @@ describe 'iis_site', :suite_b do
           HERE
           apply_manifest(manifest, catch_changes: true)
         end
-
-        after(:all) do
-          remove_all_sites
-        end
       end
 
       context 'using preloadenabled', if: target_host_facts['kernelmajversion'] != '6.1' do
@@ -155,6 +155,10 @@ describe 'iis_site', :suite_b do
 
         iis_idempotent_apply('create iis site', manifest)
 
+        after(:all) do
+          remove_all_sites
+        end
+
         it 'has all properties correctly configured' do
           resource_data = resource('iis_site', site_name)
           # resource_data = resource('iis_site', site_name)
@@ -165,10 +169,6 @@ describe 'iis_site', :suite_b do
           ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
-        end
-
-        after(:all) do
-          remove_all_sites
         end
       end
 
@@ -194,6 +194,10 @@ describe 'iis_site', :suite_b do
 
         iis_idempotent_apply('create iis site', manifest)
 
+        after(:all) do
+          remove_all_sites
+        end
+
         it 'has all properties correctly configured' do
           resource_data = resource('iis_site', site_name)
           [
@@ -208,10 +212,6 @@ describe 'iis_site', :suite_b do
           ].each_slice(2) do |key, value|
             puppet_resource_should_show(key, value, resource_data)
           end
-        end
-
-        after(:all) do
-          remove_all_sites
         end
       end
 
@@ -258,6 +258,10 @@ describe 'iis_site', :suite_b do
 
           iis_idempotent_apply('create iis site', manifest)
 
+          after(:all) do
+            remove_all_sites
+          end
+
           it 'has all properties correctly configured' do
             resource_data = resource('iis_site', site_name)
             [
@@ -267,10 +271,6 @@ describe 'iis_site', :suite_b do
             ].each_slice(2) do |key, value|
               puppet_resource_should_show(key, value, resource_data)
             end
-          end
-
-          after(:all) do
-            remove_all_sites
           end
         end
 
@@ -291,6 +291,10 @@ describe 'iis_site', :suite_b do
 
           iis_idempotent_apply('create iis site', manifest)
 
+          after(:all) do
+            remove_all_sites
+          end
+
           it 'has all properties correctly configured' do
             resource_data = resource('iis_site', site_name)
             [
@@ -300,10 +304,6 @@ describe 'iis_site', :suite_b do
             ].each_slice(2) do |key, value|
               puppet_resource_should_show(key, value, resource_data)
             end
-          end
-
-          after(:all) do
-            remove_all_sites
           end
         end
 
@@ -321,6 +321,10 @@ describe 'iis_site', :suite_b do
 
           iis_idempotent_apply('create iis site', manifest)
 
+          after(:all) do
+            remove_all_sites
+          end
+
           it 'iis site is absent' do
             resource_data = resource('iis_site', site_name)
             [
@@ -329,14 +333,14 @@ describe 'iis_site', :suite_b do
               puppet_resource_should_show(key, value, resource_data)
             end
           end
-
-          after(:all) do
-            remove_all_sites
-          end
         end
       end
 
       context 'with invalid value for' do
+        after(:all) do
+          remove_all_sites
+        end
+
         context 'logformat' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
@@ -372,10 +376,6 @@ describe 'iis_site', :suite_b do
 
           apply_failing_manifest('apply failed manifest', manifest)
         end
-
-        after(:all) do
-          remove_all_sites
-        end
       end
 
       context 'can changed previously set value' do
@@ -396,12 +396,12 @@ describe 'iis_site', :suite_b do
 
           iis_idempotent_apply('create iis site', manifest)
 
-          it 'has physicalpath configured' do
-            puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new', resource('iis_site', site_name))
-          end
-
           after(:all) do
             remove_all_sites
+          end
+
+          it 'has physicalpath configured' do
+            puppet_resource_should_show('physicalpath', 'C:\\inetpub\\new', resource('iis_site', site_name))
           end
         end
 
@@ -421,12 +421,12 @@ describe 'iis_site', :suite_b do
           HERE
 
           iis_idempotent_apply('create iis site', manifest)
-          it 'has applicationpool configured' do
-            puppet_resource_should_show('applicationpool', pool_name, resource('iis_site', site_name))
-          end
-
           after(:all) do
             remove_all_sites
+          end
+
+          it 'has applicationpool configured' do
+            puppet_resource_should_show('applicationpool', pool_name, resource('iis_site', site_name))
           end
         end
 
@@ -502,12 +502,12 @@ describe 'iis_site', :suite_b do
 
           iis_idempotent_apply('create iis site', manifest)
 
-          it 'has enabledprotocols configured' do
-            puppet_resource_should_show('enabledprotocols', 'https', resource('iis_site', site_name))
-          end
-
           after(:all) do
             remove_all_sites
+          end
+
+          it 'has enabledprotocols configured' do
+            puppet_resource_should_show('enabledprotocols', 'https', resource('iis_site', site_name))
           end
         end
 
@@ -539,12 +539,12 @@ describe 'iis_site', :suite_b do
 
           iis_idempotent_apply('create iis site', manifest)
 
-          it 'has logflags configured' do
-            puppet_resource_should_show('logflags', ['ClientIP', 'Date', 'Method'], resource('iis_site', site_name))
-          end
-
           after(:all) do
             remove_all_sites
+          end
+
+          it 'has logflags configured' do
+            puppet_resource_should_show('logflags', ['ClientIP', 'Date', 'Method'], resource('iis_site', site_name))
           end
         end
       end
@@ -595,6 +595,10 @@ describe 'iis_site', :suite_b do
 
         iis_idempotent_apply('create iis site', manifest)
 
+        after(:all) do
+          remove_all_sites
+        end
+
         it 'runs the first site on port 80' do
           first_site = resource('iis_site', site_name)
           expect(first_site.stdout).to match(%r{ensure(\s*)=> 'started',})
@@ -605,10 +609,6 @@ describe 'iis_site', :suite_b do
           second_site = resource('iis_site', second_site_name)
           expect(second_site.stdout).to match(%r{ensure(\s*)=> 'started',})
           expect(second_site.stdout).to match(%r{\*\:8080\:#{second_site_name}})
-        end
-
-        after(:all) do
-          remove_all_sites
         end
       end
 
@@ -674,6 +674,10 @@ describe 'iis_site', :suite_b do
 
       iis_idempotent_apply('create iis site', manifest)
 
+      after(:all) do
+        remove_all_sites
+      end
+
       it 'runs the first site on port 80 with no host header' do
         first_site = resource('iis_site', site_name)
         expect(first_site.stdout).to match(%r{ensure(\s*)=> 'started',})
@@ -684,10 +688,6 @@ describe 'iis_site', :suite_b do
         second_site = resource('iis_site', second_site_name)
         expect(second_site.stdout).to match(%r{ensure(\s*)=> 'started',})
         expect(second_site.stdout).to match(%r{\*\:80\:#{second_site_name}})
-      end
-
-      after(:all) do
-        remove_all_sites
       end
     end
   end

@@ -23,6 +23,10 @@ describe 'iis_site', :suite_b do
         }
       HERE
 
+      after(:all) do
+        remove_all_sites
+      end
+
       it 'runs without errors' do
         # Expected to fail due to MODULES-6869
         expect { apply_manifest(manifest, catch_failures: true) }.to raise_exception
@@ -39,10 +43,6 @@ describe 'iis_site', :suite_b do
         result = run_shell(interpolate_powershell(verify_iis_site(site_name)))
         # Expected to fail due to MODULES-6869'
         expect { assert_match(%r{^1$}, result.stdout, 'Expected IIS site was not present!') }.to raise_exception
-      end
-
-      after(:all) do
-        remove_all_sites
       end
     end
   end

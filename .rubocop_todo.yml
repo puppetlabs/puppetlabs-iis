@@ -89,24 +89,6 @@ RSpec/EmptyExampleGroup:
 RSpec/ExampleLength:
   Max: 37
 
-# # Offense count: 1
-# # Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
-# # Include: **/*_spec*rb*, **/spec/**/*
-# RSpec/FilePath:
-#   Exclude:
-#     - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
-
-# Offense count: 39
-# This cop supports safe autocorrection (--autocorrect).
-RSpec/HooksBeforeExamples:
-  Exclude:
-    - 'spec/acceptance/iis_application_pool_spec.rb'
-    - 'spec/acceptance/iis_application_spec.rb'
-    - 'spec/acceptance/iis_site_spec.rb'
-    - 'spec/acceptance/iis_unicode_site_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
-
 # Offense count: 1
 # Configuration parameters: AssignmentOnly.
 RSpec/InstanceVariable:

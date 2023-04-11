@@ -22,6 +22,10 @@ describe 'iis_virtual_directory', :suite_b do
 
       virt_dir_name = SecureRandom.hex(10).to_s
       # create_site(site_name, true)
+      after(:all) do
+        remove_vdir(virt_dir_name, site_name)
+      end
+
       describe 'apply manifest twice' do
         manifest = <<-HERE
           file{ 'c:/foo':
@@ -80,10 +84,6 @@ describe 'iis_virtual_directory', :suite_b do
           end
         end
       end
-
-      after(:all) do
-        remove_vdir(virt_dir_name, site_name)
-      end
     end
 
     context 'with a password wrapped in Sensitive()' do
@@ -134,12 +134,12 @@ describe 'iis_virtual_directory', :suite_b do
       HERE
       iis_idempotent_apply('remove iis virtual dir', manifest)
 
-      it 'iis_virtual_directory to be absent' do
-        puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
-      end
-
       after(:all) do
         remove_vdir(virt_dir_name)
+      end
+
+      it 'iis_virtual_directory to be absent' do
+        puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
       end
     end
 
@@ -186,12 +186,12 @@ describe 'iis_virtual_directory', :suite_b do
         HERE
         apply_failing_manifest('apply failing manifest', manifest)
 
-        it 'iis_virtual_directory to be absent' do
-          puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
-        end
-
         after(:all) do
           remove_vdir(virt_dir_name)
+        end
+
+        it 'iis_virtual_directory to be absent' do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
         end
       end
 
@@ -205,12 +205,12 @@ describe 'iis_virtual_directory', :suite_b do
         HERE
         apply_failing_manifest('apply failing manifest', manifest)
 
-        it 'iis_virtual_directory to be absent' do
-          puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
-        end
-
         after(:all) do
           remove_vdir(virt_dir_name)
+        end
+
+        it 'iis_virtual_directory to be absent' do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_virtual_directory', virt_dir_name))
         end
       end
     end
