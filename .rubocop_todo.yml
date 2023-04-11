@@ -8,18 +8,11 @@ Lint/BooleanSymbol:
     - 'spec/acceptance/iis_application_pool_spec.rb'
     - 'spec/unit/puppet/type/iis_site_spec.rb'
 
-
-# # Offense count: 1
-# # Configuration parameters: IgnoreLiteralBranches, IgnoreConstantBranches.
-# Lint/DuplicateBranch:
+# # Offense count: 2
+# # This cop supports safe autocorrection (--autocorrect).
+# Lint/ErbNewArguments:
 #   Exclude:
-#     - 'lib/puppet/provider/iis_application/webadministration.rb'
-
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-Lint/ErbNewArguments:
-  Exclude:
-    - 'lib/puppet/provider/iis_powershell.rb'
+#     - 'lib/puppet/provider/iis_powershell.rb'
 
 # Offense count: 1
 Lint/MixedRegexpCaptureTypes:
