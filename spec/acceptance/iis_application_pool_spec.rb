@@ -212,7 +212,7 @@ describe 'iis_application_pool', :suite_a do
     end
   end
 
-  context 'when application pool restart_memory_limit set' do
+  context 'when application pool restart_memory_limit set to 3500000' do
     pool_name = SecureRandom.hex(10).to_s
     manifest = <<-HERE
       iis_application_pool { '#{pool_name}':
@@ -245,7 +245,7 @@ describe 'iis_application_pool', :suite_a do
     end
   end
 
-  context 'when application pool restart_memory_limit set' do
+  context 'when application pool restart_memory_limit set to 0' do
     pool_name = SecureRandom.hex(10).to_s
     manifest = <<-HERE
       iis_application_pool { '#{pool_name}':

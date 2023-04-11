@@ -127,14 +127,9 @@ RSpec/NoExpectationExample:
     - 'spec/unit/puppet/type/iis_virtual_directory_spec.rb'
 
 # Offense count: 2
-# RSpec/RepeatedDescription:
+# RSpec/RepeatedExampleGroupDescription:
 #   Exclude:
 #     - 'spec/acceptance/iis_application_pool_spec.rb'
-
-# Offense count: 2
-RSpec/RepeatedExampleGroupDescription:
-  Exclude:
-    - 'spec/acceptance/iis_application_pool_spec.rb'
 
 # Offense count: 4
 RSpec/StubbedMock:
