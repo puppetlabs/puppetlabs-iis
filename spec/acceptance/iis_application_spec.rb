@@ -309,7 +309,7 @@ describe 'iis_application', :suite_a do
       iis_idempotent_apply('create app', manifest)
     end
 
-    describe 'authenticationinfo' do
+    describe 'authentication info' do
       site_name = SecureRandom.hex(10).to_s
       app_name = SecureRandom.hex(10).to_s
       before(:all) do

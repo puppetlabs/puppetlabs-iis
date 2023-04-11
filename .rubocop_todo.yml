@@ -60,7 +60,7 @@ RSpec/ContextWording:
     - 'spec/acceptance/iis_application_spec.rb'
     - 'spec/acceptance/iis_site_spec.rb'
     - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_test_spec.rb'
+    - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
     - 'spec/unit/puppet/provider/iis_site/webadministration_spec.rb'
     - 'spec/unit/puppet/provider/iis_virtual_directory/webadministration_spec.rb'
     - 'spec/unit/puppet/type/iis_application_pool_spec.rb'
@@ -82,12 +82,16 @@ RSpec/EmptyExampleGroup:
     - 'spec/acceptance/iis_minimal_config_spec.rb'
     - 'spec/acceptance/iis_site_spec.rb'
     - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_test_spec.rb'
+    - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
 
 # Offense count: 39
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:
   Max: 37
+
+RSpec/FilePath:
+  Exclude:
+  - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
 
 # Offense count: 1
 # Configuration parameters: AssignmentOnly.
@@ -119,17 +123,12 @@ RSpec/NoExpectationExample:
     - 'spec/acceptance/iis_feature_spec.rb'
     - 'spec/acceptance/iis_site_spec.rb'
     - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_test_spec.rb'
+    - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
     - 'spec/support/utilities/utility_helper.rb'
     - 'spec/unit/puppet/provider/iis_application/webadministration_spec.rb'
     - 'spec/unit/puppet/provider/iis_virtual_directory/webadministration_spec.rb'
     - 'spec/unit/puppet/type/iis_site_spec.rb'
     - 'spec/unit/puppet/type/iis_virtual_directory_spec.rb'
-
-# Offense count: 2
-# RSpec/RepeatedExampleGroupDescription:
-#   Exclude:
-#     - 'spec/acceptance/iis_application_pool_spec.rb'
 
 # Offense count: 4
 RSpec/StubbedMock:
@@ -138,9 +137,9 @@ RSpec/StubbedMock:
     - 'spec/unit/puppet_x/puppetlabs/iis/iis_version_spec.rb'
 
 # Offense count: 2
-RSpec/UnspecifiedException:
-  Exclude:
-    - 'spec/acceptance/iis_unicode_site_spec.rb'
+# RSpec/UnspecifiedException:
+#   Exclude:
+#     - 'spec/acceptance/iis_unicode_site_spec.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -265,7 +264,7 @@ Style/RedundantStringEscape:
     - 'spec/acceptance/iis_application_pool_spec.rb'
     - 'spec/acceptance/iis_unicode_site_spec.rb'
     - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_test_spec.rb'
+    - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
     - 'spec/support/utilities/iis_site.rb'
     - 'spec/support/utilities/utility_helper.rb'
 
