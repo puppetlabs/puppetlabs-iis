@@ -190,7 +190,6 @@ Puppet::Type.newtype(:iis_site) do
       super
       @should = PuppetX::PuppetLabs::IIS::Bindings.sort_bindings(@should)
     end
-
   end
 
   newproperty(:serviceautostart, boolean: true) do
@@ -341,7 +340,6 @@ Puppet::Type.newtype(:iis_site) do
              ProtocolVersion, Host, HttpSubStatus")
       end
     end
-
   end
 
   newproperty(:limits) do
