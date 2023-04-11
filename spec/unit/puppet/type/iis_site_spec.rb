@@ -9,7 +9,7 @@ describe Puppet::Type.type(:iis_site) do
 
   let(:resource) { described_class.new(name: 'iis_site') }
 
-  it { is_expected.to be_a_kind_of Puppet::Type::Iis_site }
+  it { is_expected.to be_a Puppet::Type::Iis_site }
 
   describe 'parameter :name' do
     subject { resource.parameters[:name] }

@@ -9,7 +9,7 @@ describe Puppet::Type.type(:iis_virtual_directory) do
 
   let(:resource) { described_class.new(name: 'iis_virtual_directory') }
 
-  it { is_expected.to be_a_kind_of Puppet::Type::Iis_virtual_directory }
+  it { is_expected.to be_a Puppet::Type::Iis_virtual_directory }
 
   describe 'parameter :name' do
     subject { resource.parameters[:name] }
