@@ -39,14 +39,6 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 15
 
-# # Offense count: 1
-# # This cop supports safe autocorrection (--autocorrect).
-# # Configuration parameters: EnforcedStyle.
-# # SupportedStyles: lowercase, uppercase
-# Naming/HeredocDelimiterCase:
-#   Exclude:
-#     - 'spec/acceptance/iis_unicode_site_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: ForbiddenDelimiters.
 # ForbiddenDelimiters: (?i-mx:(^|\s)(EO[A-Z]{1}|END)(\s|$))
@@ -57,13 +49,13 @@ Naming/HeredocDelimiterNaming:
 # Offense count: 8
 # Configuration parameters: MinNameLength, AllowNamesEndingInNumbers, AllowedNames, ForbiddenNames.
 # AllowedNames: as, at, by, cc, db, id, if, in, io, ip, of, on, os, pp, to
-Naming/MethodParameterName:
-  Exclude:
-    - 'lib/puppet/type/iis_site.rb'
-    - 'lib/puppet_x/puppetlabs/iis/bindings.rb'
-    - 'lib/puppet_x/puppetlabs/iis/property/authenticationinfo.rb'
-    - 'lib/puppet_x/puppetlabs/iis/property/positive_integer.rb'
-    - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
+# Naming/MethodParameterName:
+#   Exclude:
+#     - 'lib/puppet/type/iis_site.rb'
+#     - 'lib/puppet_x/puppetlabs/iis/bindings.rb'
+#     - 'lib/puppet_x/puppetlabs/iis/property/authenticationinfo.rb'
+#     - 'lib/puppet_x/puppetlabs/iis/property/positive_integer.rb'
+#     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
 # Offense count: 3
 # Configuration parameters: NamePrefix, ForbiddenPrefixes, AllowedMethods, MethodDefinitionMacros.

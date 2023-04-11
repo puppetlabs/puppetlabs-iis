@@ -148,7 +148,6 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     site_json.map do |site|
       site_hash = {}
 
-      # In PowerShell 2.0, empty strings come in as nil which then fail insync? tests.
       # Convert nil's to empty strings for all properties which we know are String types
       SETTINGS.each do |setting|
         site[setting] = '' if site[setting].nil?

@@ -34,12 +34,6 @@ Puppet::Type.newtype(:iis_site) do
       provider.destroy
     end
 
-    def insync?(is)
-      is.to_s == should.to_s ||
-        (is.to_s == 'started' && should.to_s == 'present') ||
-        (is.to_s == 'stopped' && should.to_s == 'present')
-    end
-
     aliasvalue(:false, :stopped)
     aliasvalue(:true, :started)
   end
@@ -197,9 +191,6 @@ Puppet::Type.newtype(:iis_site) do
       @should = PuppetX::PuppetLabs::IIS::Bindings.sort_bindings(@should)
     end
 
-    def insync?(is)
-      PuppetX::PuppetLabs::IIS::Bindings.sort_bindings(is) == should
-    end
   end
 
   newproperty(:serviceautostart, boolean: true) do
@@ -351,9 +342,6 @@ Puppet::Type.newtype(:iis_site) do
       end
     end
 
-    def insync?(is)
-      is.sort == should.sort
-    end
   end
 
   newproperty(:limits) do
@@ -369,11 +357,6 @@ Puppet::Type.newtype(:iis_site) do
           raise("Invalid value '#{limit} for #{key}'. Cannot be less than 1 or greater than 4294967295")
         end
       end
-    end
-    def insync?(is)
-      should.reject { |k, v|
-        is[k] == v
-      }.empty?
     end
   end
 
