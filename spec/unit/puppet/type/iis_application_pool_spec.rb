@@ -76,8 +76,7 @@ describe 'iis_application_pool' do
   end
 
   let :optional_config do
-    {
-    }
+    {}
   end
 
   let :default_config do
