@@ -8,11 +8,11 @@
 
 # Offense count: 7
 # This cop supports safe autocorrection (--autocorrect).
-Layout/ClosingHeredocIndentation:
-  Exclude:
-    - 'spec/acceptance/iis_application_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/unit/puppet/provider/iis_powershell_spec.rb'
+# Layout/ClosingHeredocIndentation:
+#   Exclude:
+#     - 'spec/acceptance/iis_application_spec.rb'
+#     - 'spec/acceptance/iis_virtual_directory_spec.rb'
+#     - 'spec/unit/puppet/provider/iis_powershell_spec.rb'
 
 # Offense count: 18
 # This cop supports safe autocorrection (--autocorrect).

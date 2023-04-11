@@ -131,7 +131,7 @@ describe 'iis_virtual_directory', :suite_b do
           sitename     => '#{site_name}',
           ensure       => 'absent'
         }
-        HERE
+      HERE
       iis_idempotent_apply('remove iis virtual dir', manifest)
 
       it 'iis_virtual_directory to be absent' do

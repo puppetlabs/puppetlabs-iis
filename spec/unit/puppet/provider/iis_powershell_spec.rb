@@ -61,7 +61,7 @@ describe 'test' do
     "hostheader":  "",
     "loglocaltimerollover":  "False"
 }
-HERE
+      HERE
     end
     # Same as single_rawtext with CR and LF littered throughout
     let(:single_rawtext_with_crlf) do
@@ -89,7 +89,7 @@ C",
     "hostheader":  "",
     "loglocaltimerollover":  "False"
 }
-HERE
+      HERE
     end
     # PowerShell 2 representation of single_rawtext
     let(:single_ps2_rawtext) do
@@ -115,7 +115,7 @@ HERE
     "loglocaltimerollover":  "False"
 }
 }}
-HERE
+      HERE
     end
     # The object representation for single_rawtext
     let(:single_expected_object) do
@@ -182,7 +182,7 @@ HERE
     "hostheader":  "header",
     "loglocaltimerollover":  "False"
 }]
-HERE
+      HERE
     end
     # PowerShell 2 representation of multi_rawtext
     let(:multi_ps2_rawtext) do
@@ -234,7 +234,7 @@ HERE
     "loglocaltimerollover":  "False"
 }]
 }
-HERE
+      HERE
     end
     # The object representation for multi_rawtext
     let(:multi_expected_object) do

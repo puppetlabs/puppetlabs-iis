@@ -416,7 +416,7 @@ describe 'iis_application', :suite_a do
           ensure       => 'present',
           sitename     => '#{site_name}',
         }
-      HERE
+    HERE
     iis_idempotent_apply('create app', manifest)
 
     after(:all) do
