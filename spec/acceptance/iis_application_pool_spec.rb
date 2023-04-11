@@ -72,6 +72,7 @@ describe 'iis_application_pool', :suite_a do
           puppet_resource_should_show(key, value, resource_data)
         end
       end
+
       # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
       unless ['6.2', '6.1'].include?(target_host_facts['kernelmajversion'])
         it 'has all properties correctly configured' do

@@ -168,6 +168,7 @@ describe 'iis_application_pool' do
         type_class.new(config)
       }.not_to raise_error
     end
+
     it "requires #{prop} to be a formatted time" do
       config = { name: 'name' }
       config[prop] = 'string'
@@ -256,6 +257,7 @@ describe 'iis_application_pool' do
       )
       expect(pool[:restart_schedule]).to eq(['00:00:00'])
     end
+
     it 'accepts an array of formatted times' do
       pool = type_class.new(
         name: 'foo',
@@ -263,6 +265,7 @@ describe 'iis_application_pool' do
       )
       expect(pool[:restart_schedule]).to eq(['00:00:00'])
     end
+
     it 'rejects a value that is not a formatted time' do
       expect {
         config = {
@@ -272,6 +275,7 @@ describe 'iis_application_pool' do
         type_class.new(config)
       }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})
     end
+
     it 'rejects a formatted time with a granularity of less than 60 seconds' do
       expect {
         config = {

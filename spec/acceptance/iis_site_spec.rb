@@ -420,6 +420,7 @@ describe 'iis_site', :suite_b do
           it 'has applicationpool configured' do
             puppet_resource_should_show('applicationpool', pool_name, resource('iis_site', site_name))
           end
+
           after(:all) do
             remove_all_sites
           end
@@ -500,6 +501,7 @@ describe 'iis_site', :suite_b do
           it 'has enabledprotocols configured' do
             puppet_resource_should_show('enabledprotocols', 'https', resource('iis_site', site_name))
           end
+
           after(:all) do
             remove_all_sites
           end
@@ -536,6 +538,7 @@ describe 'iis_site', :suite_b do
           it 'has logflags configured' do
             puppet_resource_should_show('logflags', ['ClientIP', 'Date', 'Method'], resource('iis_site', site_name))
           end
+
           after(:all) do
             remove_all_sites
           end

@@ -390,6 +390,7 @@ describe 'iis_application', :suite_a do
       result = resource('iis_application', "#{site_name}\\#{app_name}")
       puppet_resource_should_show('ensure', 'absent', result)
     end
+
     after(:all) do
       remove_app(app_name)
       remove_all_sites
@@ -472,6 +473,7 @@ describe 'iis_application', :suite_a do
       expect(result.stdout).to match %r{C:\\inetpub\\#{site_name}\\#{app_name}}
       expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
     end
+
     it 'contains the second site with the same app name' do
       result2 = resource('iis_application', "#{site_name2}\\#{app_name}")
       expect(result2.stdout).to match(%r{#{site_name2}\\#{app_name}})
