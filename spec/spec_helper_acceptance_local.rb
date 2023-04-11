@@ -34,7 +34,7 @@ end
 
 def target_host_facts
   facter_version = run_shell('facter --version').stdout.strip.split('.')[0]
-  @target_host_facts ||= if %r{4}.match?(facter_version)
+  @target_host_facts ||= if facter_version.include?('4')
                            run_shell('facter --json --show-legacy').stdout.strip
                          else
                            run_shell('facter -p --json').stdout.strip

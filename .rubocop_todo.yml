@@ -46,23 +46,11 @@ Naming/HeredocDelimiterNaming:
   Exclude:
     - 'spec/acceptance/iis_minimal_config_spec.rb'
 
-# Offense count: 3
-# Configuration parameters: NamePrefix, ForbiddenPrefixes, AllowedMethods, MethodDefinitionMacros.
-# NamePrefix: is_, has_, have_
-# ForbiddenPrefixes: is_, has_, have_
-# AllowedMethods: is_a?
-# # MethodDefinitionMacros: define_method, define_singleton_method
-# Naming/PredicateName:
+# # Offense count: 1
+# # This cop supports unsafe autocorrection (--autocorrect-all).
+# Performance/StringInclude:
 #   Exclude:
-#     - 'spec/**/*'
-#     - 'lib/puppet/provider/iis_common.rb'
-#     - 'lib/puppet/provider/iis_feature/default.rb'
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/StringInclude:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
+#     - 'spec/spec_helper_acceptance_local.rb'
 
 # Offense count: 4
 RSpec/AnyInstance:
