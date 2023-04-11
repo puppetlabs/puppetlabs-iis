@@ -125,7 +125,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def self.prefetch(resources)
     sites = instances
     resources.each_key do |site|
-      next unless !sites.nil? && provider = sites.find { |s| s.name == site }
+      next unless !sites.nil? && (provider = sites.find { |s| s.name == site })
 
       unless resources[site]['authenticationinfo'].nil?
         resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])

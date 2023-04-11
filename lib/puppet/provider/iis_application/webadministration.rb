@@ -113,7 +113,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   def self.prefetch(resources)
     apps = instances
     resources.each do |name, resource|
-      if provider = apps.find { |app| compare_app_names(app, resource) && app.sitename == find_sitename(resource) }
+      if (provider = apps.find { |app| compare_app_names(app, resource) && app.sitename == find_sitename(resource) })
         resources[name].provider = provider
       end
     end

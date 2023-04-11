@@ -85,7 +85,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
   def self.prefetch(resources)
     pools = instances
     resources.each_key do |pool|
-      if provider = pools.find { |s| s.name == pool }
+      if (provider = pools.find { |s| s.name == pool })
         resources[pool].provider = provider
       end
     end

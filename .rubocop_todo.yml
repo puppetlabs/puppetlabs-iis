@@ -1,32 +1,14 @@
-# # Offense count: 6
-# # This cop supports safe autocorrection (--autocorrect).
-# # Configuration parameters: EnforcedStyle, IndentationWidth.
-# # SupportedStyles: aligned, indented
-# Layout/LineEndStringConcatenationIndentation:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_application/webadministration.rb'
-#     - 'lib/puppet/provider/iis_virtual_directory/webadministration.rb'
-#     - 'spec/support/utilities/iis_site.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyleForEmptyBraces.
-# SupportedStyles: space, no_space, compact
-# SupportedStylesForEmptyBraces: space, no_space
-Layout/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: space
-
 # Offense count: 6
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: AllowSafeAssignment.
-Lint/AssignmentInCondition:
-  Exclude:
-    - 'lib/puppet/provider/iis_application/webadministration.rb'
-    - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
-    - 'lib/puppet/provider/iis_feature/default.rb'
-    - 'lib/puppet/provider/iis_powershell.rb'
-    - 'lib/puppet/provider/iis_site/webadministration.rb'
-    - 'lib/puppet/provider/iis_virtual_directory/webadministration.rb'
+# Lint/AssignmentInCondition:
+#   Exclude:
+#     - 'lib/puppet/provider/iis_application/webadministration.rb'
+#     - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
+#     - 'lib/puppet/provider/iis_feature/default.rb'
+#     - 'lib/puppet/provider/iis_powershell.rb'
+#     - 'lib/puppet/provider/iis_site/webadministration.rb'
+#     - 'lib/puppet/provider/iis_virtual_directory/webadministration.rb'
 
 # Offense count: 66
 # This cop supports unsafe autocorrection (--autocorrect-all).

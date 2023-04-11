@@ -18,7 +18,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   def self.prefetch(resources)
     nodes = instances
     resources.each_key do |name|
-      if provider = nodes.find { |node| node.name == name }
+      if (provider = nodes.find { |node| node.name == name })
         resources[name].provider = provider
       end
     end

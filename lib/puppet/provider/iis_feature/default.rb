@@ -89,7 +89,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   def self.prefetch(resources)
     features = instances
     resources.each_key do |name|
-      if provider = features.find { |feature| name.casecmp(feature.name).zero? }
+      if (provider = features.find { |feature| name.casecmp(feature.name).zero? })
         resources[name].provider = provider
       end
     end
