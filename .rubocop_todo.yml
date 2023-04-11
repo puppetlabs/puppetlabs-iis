@@ -9,11 +9,11 @@ Lint/BooleanSymbol:
     - 'spec/unit/puppet/type/iis_site_spec.rb'
 
 
-# Offense count: 1
-# Configuration parameters: IgnoreLiteralBranches, IgnoreConstantBranches.
-Lint/DuplicateBranch:
-  Exclude:
-    - 'lib/puppet/provider/iis_application/webadministration.rb'
+# # Offense count: 1
+# # Configuration parameters: IgnoreLiteralBranches, IgnoreConstantBranches.
+# Lint/DuplicateBranch:
+#   Exclude:
+#     - 'lib/puppet/provider/iis_application/webadministration.rb'
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).

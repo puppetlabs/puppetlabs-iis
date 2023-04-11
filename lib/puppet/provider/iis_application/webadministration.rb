@@ -165,9 +165,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
   def app_name
     name_segments = @resource[:applicationname].split(/[\\\/]/)
-    if @resource[:sitename] && name_segments.count > 1 && name_segments[0] == @resource[:sitename]
-      name_segments[1..-1].join('/')
-    elsif @resource[:sitename].nil?
+    if (@resource[:sitename] && name_segments.count > 1 && name_segments[0] == @resource[:sitename]) || @resource[:sitename].nil?
       name_segments[1..-1].join('/')
     else
       name_segments.join('/')
