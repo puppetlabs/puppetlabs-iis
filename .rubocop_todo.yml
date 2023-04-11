@@ -1,15 +1,3 @@
-# Offense count: 6
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AllowSafeAssignment.
-# Lint/AssignmentInCondition:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_application/webadministration.rb'
-#     - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
-#     - 'lib/puppet/provider/iis_feature/default.rb'
-#     - 'lib/puppet/provider/iis_powershell.rb'
-#     - 'lib/puppet/provider/iis_site/webadministration.rb'
-#     - 'lib/puppet/provider/iis_virtual_directory/webadministration.rb'
-
 # Offense count: 66
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Lint/BooleanSymbol:
@@ -20,12 +8,6 @@ Lint/BooleanSymbol:
     - 'spec/acceptance/iis_application_pool_spec.rb'
     - 'spec/unit/puppet/type/iis_site_spec.rb'
 
-# Offense count: 1
-# Configuration parameters: AllowedMethods.
-# AllowedMethods: enums
-Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - 'lib/puppet/provider/iis_site/webadministration.rb'
 
 # Offense count: 1
 # Configuration parameters: IgnoreLiteralBranches, IgnoreConstantBranches.

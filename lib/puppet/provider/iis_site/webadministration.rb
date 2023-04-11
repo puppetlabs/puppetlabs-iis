@@ -8,6 +8,9 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 # to return. This will exponentially increase the total duration of your
 # puppet run
 
+SETTINGS = ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
+            'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].freeze
+
 Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
   desc 'IIS Provider using the PowerShell WebAdministration module'
 
@@ -133,9 +136,6 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
       resources[site].provider = provider
     end
   end
-
-  SETTINGS = ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
-              'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].freeze
 
   def self.instances
     inst_cmd = ps_script_content('_getwebsites', @resource)
