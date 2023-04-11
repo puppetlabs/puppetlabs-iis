@@ -46,28 +46,17 @@ Naming/HeredocDelimiterNaming:
   Exclude:
     - 'spec/acceptance/iis_minimal_config_spec.rb'
 
-# Offense count: 8
-# Configuration parameters: MinNameLength, AllowNamesEndingInNumbers, AllowedNames, ForbiddenNames.
-# AllowedNames: as, at, by, cc, db, id, if, in, io, ip, of, on, os, pp, to
-# Naming/MethodParameterName:
-#   Exclude:
-#     - 'lib/puppet/type/iis_site.rb'
-#     - 'lib/puppet_x/puppetlabs/iis/bindings.rb'
-#     - 'lib/puppet_x/puppetlabs/iis/property/authenticationinfo.rb'
-#     - 'lib/puppet_x/puppetlabs/iis/property/positive_integer.rb'
-#     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
-
 # Offense count: 3
 # Configuration parameters: NamePrefix, ForbiddenPrefixes, AllowedMethods, MethodDefinitionMacros.
 # NamePrefix: is_, has_, have_
 # ForbiddenPrefixes: is_, has_, have_
 # AllowedMethods: is_a?
-# MethodDefinitionMacros: define_method, define_singleton_method
-Naming/PredicateName:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/puppet/provider/iis_common.rb'
-    - 'lib/puppet/provider/iis_feature/default.rb'
+# # MethodDefinitionMacros: define_method, define_singleton_method
+# Naming/PredicateName:
+#   Exclude:
+#     - 'spec/**/*'
+#     - 'lib/puppet/provider/iis_common.rb'
+#     - 'lib/puppet/provider/iis_feature/default.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).

@@ -30,17 +30,17 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   def create
     raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.iis_feature?(resource[:name])
 
-    if @resource[:include_management_tools] == true && self.class.is_windows2008 == true
+    if @resource[:include_management_tools] == true && self.class.windows2008? == true
       raise Puppet::Error, 'include_management_tools can only be used with Windows 2012 and above'
     end
 
     cmd = []
-    cmd << "Import-Module ServerManager; Add-WindowsFeature -Name '#{resource[:name]}'" if self.class.is_windows2008 == true
-    cmd << "Install-WindowsFeature -Name '#{resource[:name]}' " if self.class.is_windows2008 == false
+    cmd << "Import-Module ServerManager; Add-WindowsFeature -Name '#{resource[:name]}'" if self.class.windows2008? == true
+    cmd << "Install-WindowsFeature -Name '#{resource[:name]}' " if self.class.windows2008? == false
     cmd << '-IncludeAllSubFeature ' if @resource[:include_all_subfeatures] == true
     cmd << '-Restart ' if @resource[:restart] == true
     cmd << "-Source '#{resource['source']}' " if @resource[:source]
-    cmd << '-IncludeManagementTools' if @resource[:include_management_tools] == true && self.class.is_windows2008 == false
+    cmd << '-IncludeManagementTools' if @resource[:include_management_tools] == true && self.class.windows2008? == false
 
     Puppet.debug "Powershell create command is '#{cmd}'"
     result = self.class.run(cmd.join)
@@ -55,8 +55,8 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
     raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.iis_feature?(resource[:name])
 
     cmd = []
-    cmd << "Import-Module ServerManager; Remove-WindowsFeature -Name '#{resource[:name]}'" if self.class.is_windows2008 == true
-    cmd << "Uninstall-WindowsFeature '#{resource[:name]}'" if self.class.is_windows2008 == false
+    cmd << "Import-Module ServerManager; Remove-WindowsFeature -Name '#{resource[:name]}'" if self.class.windows2008? == true
+    cmd << "Uninstall-WindowsFeature '#{resource[:name]}'" if self.class.windows2008? == false
     cmd << ' -Restart' if @resource[:restart] == true
 
     Puppet.debug "Powershell destroy command is '#{cmd}'"
@@ -66,7 +66,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
 
   def self.instances
     cmd = []
-    cmd << 'Import-Module ServerManager; ' if is_windows2008 == true
+    cmd << 'Import-Module ServerManager; ' if windows2008? == true
     cmd << 'Get-WindowsFeature | Sort Name | Select Name,Installed | ConvertTo-Json -Depth 4'
 
     result = run(cmd.join)
@@ -95,7 +95,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
     end
   end
 
-  def self.is_windows2008
+  def self.windows2008?
     os_major_version == '6.1'
   end
 
