@@ -28,10 +28,10 @@ describe 'iis_site', :suite_b do
       end
 
       def verify_iis_site(iis_site_name)
-        <<-powershell
+        <<-POWERSHELL
           Import-Module Webadministration
           (Get-ChildItem -Path IIS:\Sites | Where-Object { $_.Name -match ([regex]::Unescape(\"#{iis_site_name}\")) } | Measure-Object).Count
-        powershell
+        POWERSHELL
       end
 
       it 'Verify that IIS site name is present' do

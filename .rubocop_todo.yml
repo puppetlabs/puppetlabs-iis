@@ -13,11 +13,6 @@ Lint/MixedRegexpCaptureTypes:
   Exclude:
     - 'lib/puppet/provider/iis_site/webadministration.rb'
 
-# # Offense count: 1
-# Lint/UselessAssignment:
-#   Exclude:
-#     - 'spec/support/utilities/utility_helper.rb'
-
 # Offense count: 17
 # Configuration parameters: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
 Metrics/AbcSize:
@@ -44,13 +39,13 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 15
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: lowercase, uppercase
-Naming/HeredocDelimiterCase:
-  Exclude:
-    - 'spec/acceptance/iis_unicode_site_spec.rb'
+# # Offense count: 1
+# # This cop supports safe autocorrection (--autocorrect).
+# # Configuration parameters: EnforcedStyle.
+# # SupportedStyles: lowercase, uppercase
+# Naming/HeredocDelimiterCase:
+#   Exclude:
+#     - 'spec/acceptance/iis_unicode_site_spec.rb'
 
 # Offense count: 1
 # Configuration parameters: ForbiddenDelimiters.
