@@ -41,7 +41,7 @@ describe 'iis_application_pool', :suite_a do
         remove_app_pool(pool_name)
       end
 
-      it 'has all properties correctly configured' do
+      it 'has all properties correctly configured for IIS 7.0' do
         # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
         resource_data = resource('iis_application_pool', pool_name)
         [
@@ -79,7 +79,7 @@ describe 'iis_application_pool', :suite_a do
 
       # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
       unless ['6.2', '6.1'].include?(target_host_facts['kernelmajversion'])
-        it 'has all properties correctly configured' do
+        it 'has all properties correctly configured for IIS 8.5' do
           resource_data = resource('iis_application_pool', pool_name)
           [
             'idle_timeout_action', 'Terminate',

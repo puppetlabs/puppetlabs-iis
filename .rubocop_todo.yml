@@ -126,15 +126,10 @@ RSpec/NoExpectationExample:
     - 'spec/unit/puppet/type/iis_site_spec.rb'
     - 'spec/unit/puppet/type/iis_virtual_directory_spec.rb'
 
-# # Offense count: 1
-# RSpec/PendingWithoutReason:
-#   Exclude:
-#     - 'spec/acceptance/iis_application_spec.rb'
-
 # Offense count: 2
-RSpec/RepeatedDescription:
-  Exclude:
-    - 'spec/acceptance/iis_application_pool_spec.rb'
+# RSpec/RepeatedDescription:
+#   Exclude:
+#     - 'spec/acceptance/iis_application_pool_spec.rb'
 
 # Offense count: 2
 RSpec/RepeatedExampleGroupDescription:
