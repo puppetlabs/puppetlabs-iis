@@ -16,7 +16,7 @@ describe 'iis_virtual_directory', :suite_b do
 
   context 'when configuring a virtual directory' do
     context 'with default parameters' do
-      before (:all) do
+      before(:all) do
         create_path('C:\foo')
       end
       virt_dir_name = SecureRandom.hex(10).to_s

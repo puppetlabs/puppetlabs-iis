@@ -10,7 +10,7 @@ describe 'iis_site', :suite_b do
 
   context 'when configuring a website' do
     context 'with required parameters and UTF-8 site name' do
-      before (:all) do
+      before(:all) do
         create_path('C:\inetpub\basic')
       end
       site_name = "\u4388\u542B\u3D3C\u7F4D\uF961\u4381\u53F4\u79C0\u3AB2\u8EDE" # 䎈含㴼罍率䎁叴秀㪲軞

@@ -10,7 +10,7 @@ describe 'iis_site', :suite_b do
 
   context 'when configuring a website' do
     context 'with basic required parameters' do
-      before (:all) do
+      before(:all) do
         create_path('C:\inetpub\basic')
       end
 
@@ -44,7 +44,7 @@ describe 'iis_site', :suite_b do
     context 'with all parameters specified' do
       context 'using W3C log format, logflags and logtruncatesize' do
         site_name = SecureRandom.hex(10).to_s
-        before (:all) do
+        before(:all) do
           create_path('C:\inetpub\new')
         end
 
@@ -139,7 +139,7 @@ describe 'iis_site', :suite_b do
       end
 
       context 'using preloadenabled', if: target_host_facts['kernelmajversion'] != '6.1' do
-        before (:all) do
+        before(:all) do
           create_path('C:\inetpub\new')
         end
         site_name = SecureRandom.hex(10).to_s
@@ -172,7 +172,7 @@ describe 'iis_site', :suite_b do
       end
 
       context 'using non-W3C log format and logtperiod' do
-        before (:all) do
+        before(:all) do
           create_path('C:\inetpub\tmp')
         end
         site_name = SecureRandom.hex(10).to_s
@@ -241,7 +241,7 @@ describe 'iis_site', :suite_b do
       context 'can change site state from stopped to started' do
         context 'stopped to started' do
           site_name = SecureRandom.hex(10).to_s
-          before (:all) do
+          before(:all) do
             create_path('C:\inetpub\tmp')
             create_site(site_name, false)
           end
@@ -274,7 +274,7 @@ describe 'iis_site', :suite_b do
 
         context 'started to stopped' do
           site_name = SecureRandom.hex(10).to_s
-          before (:all) do
+          before(:all) do
             create_path('C:\inetpub\tmp')
             create_site(site_name, true)
           end
@@ -307,7 +307,7 @@ describe 'iis_site', :suite_b do
 
         context 'started to absent' do
           site_name = SecureRandom.hex(10).to_s
-          before (:all) do
+          before(:all) do
             create_site(site_name, true)
           end
           manifest = <<-HERE
@@ -545,7 +545,7 @@ describe 'iis_site', :suite_b do
       context 'with an existing website' do
         site_name_one = SecureRandom.hex(10).to_s
         site_name_two = SecureRandom.hex(10).to_s
-        before (:all) do
+        before(:all) do
           create_site(site_name_one, true)
           create_path('C:\inetpub\basic')
         end
@@ -567,7 +567,7 @@ describe 'iis_site', :suite_b do
       context 'with conflicting sites on differing ports' do
         site_name = SecureRandom.hex(10).to_s
         second_site_name = SecureRandom.hex(10).to_s
-        before (:all) do
+        before(:all) do
           create_path('C:\inetpub\basic')
           create_site(site_name, true)
         end

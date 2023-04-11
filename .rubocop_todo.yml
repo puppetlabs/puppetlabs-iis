@@ -8,25 +8,19 @@ Lint/BooleanSymbol:
     - 'spec/acceptance/iis_application_pool_spec.rb'
     - 'spec/unit/puppet/type/iis_site_spec.rb'
 
-# # Offense count: 2
-# # This cop supports safe autocorrection (--autocorrect).
-# Lint/ErbNewArguments:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_powershell.rb'
-
 # Offense count: 1
 Lint/MixedRegexpCaptureTypes:
   Exclude:
     - 'lib/puppet/provider/iis_site/webadministration.rb'
 
-# Offense count: 12
-# This cop supports safe autocorrection (--autocorrect).
-Lint/ParenthesesAsGroupedExpression:
-  Exclude:
-    - 'spec/acceptance/iis_site_spec.rb'
-    - 'spec/acceptance/iis_unicode_site_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
+# # Offense count: 12
+# # This cop supports safe autocorrection (--autocorrect).
+# Lint/ParenthesesAsGroupedExpression:
+#   Exclude:
+#     - 'spec/acceptance/iis_site_spec.rb'
+#     - 'spec/acceptance/iis_unicode_site_spec.rb'
+#     - 'spec/acceptance/iis_virtual_directory_spec.rb'
+#     - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
 
 # Offense count: 1
 Lint/UselessAssignment:
