@@ -27,6 +27,7 @@ describe 'iis_application provider' do
       end
       it { iis_application_provider.create }
     end
+
     context 'with nonexistent physicalpath' do
       let(:params) do
         {
@@ -40,6 +41,7 @@ describe 'iis_application provider' do
       end
       it { expect { iis_application_provider.create }.to raise_error(RuntimeError, %r{doesn't exist}) }
     end
+
     context 'with existent physicalpath' do
       let(:params) do
         {
@@ -56,6 +58,7 @@ describe 'iis_application provider' do
       it { iis_application_provider.create }
     end
   end
+
   describe 'converting virtual_directory' do
     let(:params) do
       {
@@ -69,6 +72,7 @@ describe 'iis_application provider' do
     end
     it { iis_application_provider.create }
   end
+
   describe 'updating physicalpath'
   describe 'updating sslflags'
   describe 'updating authenticationinfo'

@@ -138,6 +138,7 @@ describe Puppet::Type.type(:iis_site) do
       }
     end
   end
+
   context 'property :limits' do
     it 'requires a hash' do
       expect {
@@ -166,6 +167,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::Error, %r{Cannot be less than 1 or greater than 4294967295})
     end
   end
+
   context 'parameter :applicationpool' do
     it 'does not allow nil' do
       expect {
