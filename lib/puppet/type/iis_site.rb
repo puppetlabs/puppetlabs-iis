@@ -52,6 +52,7 @@ Puppet::Type.newtype(:iis_site) do
       if value.nil? || value.empty?
         raise ArgumentError, 'A non-empty name must be specified.'
       end
+
       super value
     end
   end
@@ -66,6 +67,7 @@ Puppet::Type.newtype(:iis_site) do
         raise ArgumentError, 'A non-empty physicalpath must be specified.'
       end
       raise("File paths must be fully qualified, not '#{v}'") unless v =~ /^.:(\/|\\)/ || v =~ /^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/
+
       v
     end
   end
@@ -76,6 +78,7 @@ Puppet::Type.newtype(:iis_site) do
       if value.nil? || value.empty?
         raise ArgumentError, 'A non-empty applicationpool name must be specified.'
       end
+
       super value
     end
   end
@@ -165,6 +168,7 @@ Puppet::Type.newtype(:iis_site) do
       if ['http', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(value['protocol']) && (value['sslflags'] || value['certificatehash'] || value['certificatestorename'])
         raise("#{value['bindinginformation']}: sslflags, certificatehash, and certificatestorename are only valid when the protocol is https")
       end
+
       if value['protocol'] == 'https'
         unless [0, 1, 2, 3].include?(value['sslflags'])
           raise("#{value['bindinginformation']}: sslflags must be an integer 0, 1, 2, or 3")
@@ -332,6 +336,7 @@ Puppet::Type.newtype(:iis_site) do
       unless value.is_a?(String)
         raise("Invalid logflags value '#{value}'. Should be a string")
       end
+
       unless [
         'Date', 'Time', 'ClientIP', 'UserName', 'SiteName', 'ComputerName', 'ServerIP',
         'Method', 'UriStem', 'UriQuery', 'HttpStatus', 'Win32Status', 'BytesSent',
@@ -356,6 +361,7 @@ Puppet::Type.newtype(:iis_site) do
     valid_limits = ['connectiontimeout', 'maxbandwidth', 'maxconnections']
     validate do |value|
       raise "#{name} should be a Hash" unless value.is_a? ::Hash
+
       value.each do |key, limit|
         raise("Invalid iis site limit key '#{key}'. Should be one of: #{valid_limits}") unless valid_limits.include? key
         raise("Invalid value '#{limit}' for #{key}. Must be an integer") unless limit.is_a? Integer

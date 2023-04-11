@@ -62,6 +62,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     result = self.class.run(inst_cmd)
     raise "Error creating application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     raise "Error creating application: #{result[:errormessage]}" unless result[:errormessage].nil?
+
     @property_hash[:ensure] = :present
   end
 

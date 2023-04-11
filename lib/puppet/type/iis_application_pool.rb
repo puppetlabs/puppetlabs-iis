@@ -35,6 +35,7 @@ Puppet::Type.newtype(:iis_application_pool) do
         raise ArgumentError, "A non-empty #{name} must be specified."
       end
       raise("#{name} should be less than 64 characters") unless value.length < 64
+
       super value
     end
   end

@@ -4,6 +4,7 @@ def has_app_pool(pool_name)
   command = format_powershell_iis_command("Get-WebAppPoolState -Name #{pool_name}")
   result = run_shell(command, expect_failures: true)
   return false if result.exit_code != 0
+
   true
 end
 

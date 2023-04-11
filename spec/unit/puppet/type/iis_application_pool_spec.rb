@@ -195,6 +195,7 @@ describe 'iis_application_pool' do
     end
 
     next unless upper_limit
+
     it "requires #{prop} to be less than #{upper_limit}" do
       expect {
         upper_limit += 1

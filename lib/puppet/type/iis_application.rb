@@ -49,6 +49,7 @@ Puppet::Type.newtype(:iis_application) do
         raise ArgumentError, 'A non-empty physicalpath must be specified.'
       end
       raise("File paths must be fully qualified, not '#{v}'") unless v =~ /^.:(\/|\\)/ || v =~ /^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/
+
       v
     end
   end
@@ -59,6 +60,7 @@ Puppet::Type.newtype(:iis_application) do
       if value.nil? || value.empty?
         raise ArgumentError, 'A non-empty applicationpool name must be specified.'
       end
+
       super value
     end
   end

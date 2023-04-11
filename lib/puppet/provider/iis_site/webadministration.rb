@@ -126,6 +126,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     sites = instances
     resources.each_key do |site|
       next unless !sites.nil? && provider = sites.find { |s| s.name == site }
+
       unless resources[site]['authenticationinfo'].nil?
         resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])
       end
@@ -191,6 +192,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def self.to_bool(value)
     return :true   if value == true   || value =~ %r{(true|t|yes|y|1)$}i
     return :false  if value == false  || value =~ %r{(^$|false|f|no|n|0)$}i
+
     raise ArgumentError, "invalid value for Boolean: \"#{value}\""
   end
 

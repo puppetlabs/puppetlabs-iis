@@ -70,6 +70,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   # parse json result
   def self.parse_json_result(raw)
     return nil if raw.nil?
+
     # Unfortunately PowerShell tends to automatically insert CRLF characters mid-string (Console Width)
     # However as we're using JSON which does not use Line Endings for termination, we can safely strip them
     raw = raw.delete("\n").delete("\r")

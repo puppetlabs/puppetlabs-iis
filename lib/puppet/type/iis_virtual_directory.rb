@@ -49,6 +49,7 @@ Puppet::Type.newtype(:iis_virtual_directory) do
       if value.nil? || value.empty?
         raise ArgumentError, 'A non-empty physicalpath must be specified.'
       end
+
       super value
     end
   end

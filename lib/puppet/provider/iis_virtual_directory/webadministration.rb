@@ -35,6 +35,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     if is_local_path(@resource[:physicalpath])
       cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
       raise('sitename is a required parameter') unless @resource[:sitename]
+
       cmd << "-Site \"#{@resource[:sitename]}\" "
     else
       # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
