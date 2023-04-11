@@ -1,20 +1,8 @@
-# Offense count: 57
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowMultipleStyles, EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle.
-# SupportedHashRocketStyles: key, separator, table
-# SupportedColonStyles: key, separator, table
-# SupportedLastArgumentHashStyles: always_inspect, always_ignore, ignore_implicit, ignore_explicit
-# Layout/HashAlignment:
+# # Offense count: 5
+# # This cop supports safe autocorrection (--autocorrect).
+# Layout/HeredocIndentation:
 #   Exclude:
-#     - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
-#     - 'spec/unit/puppet/provider/iis_site/webadministration_spec.rb'
-#     - 'spec/unit/puppet/type/iis_application_spec.rb'
-
-# Offense count: 5
-# This cop supports safe autocorrection (--autocorrect).
-Layout/HeredocIndentation:
-  Exclude:
-    - 'spec/unit/puppet/provider/iis_powershell_spec.rb'
+#     - 'spec/unit/puppet/provider/iis_powershell_spec.rb'
 
 # Offense count: 6
 # This cop supports safe autocorrection (--autocorrect).

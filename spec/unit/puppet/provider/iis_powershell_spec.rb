@@ -41,80 +41,80 @@ describe 'test' do
     subject(:iis_powershell_type) { Puppet::Provider::IIS_PowerShell }
 
     let(:single_rawtext) do
-      <<-HERE
-{
-    "enabledprotocols":  "http",
-    "logtruncatesize":  "20971520",
-    "applicationpool":  "DefaultAppPool",
-    "logperiod":  "Daily",
-    "name":  "Default Web Site",
-    "bindings":  [
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:80:"
-                    }
-                ],
-    "logformat":  "W3C",
-    "hostheader":  "",
-    "loglocaltimerollover":  "False"
-}
+      <<~HERE
+        {
+            "enabledprotocols":  "http",
+            "logtruncatesize":  "20971520",
+            "applicationpool":  "DefaultAppPool",
+            "logperiod":  "Daily",
+            "name":  "Default Web Site",
+            "bindings":  [
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:80:"
+                            }
+                        ],
+            "logformat":  "W3C",
+            "hostheader":  "",
+            "loglocaltimerollover":  "False"
+        }
       HERE
     end
     # Same as single_rawtext with CR and LF littered throughout
     let(:single_rawtext_with_crlf) do
-      <<-HERE
-{
-    "enabledprotocols":  "http",
-    "logtruncatesize":  "20971520",
-    "applicat\r
-ionpool":  "DefaultAppPool",
-    "logperiod":  "Daily",
-    "name":  "Default Web Site",
-    "bindings":  [
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "ssl
-flags":  0,
-                        "certificatehash":  \r
-"",
-                        "bindinginformation":  "*:80:"
-                    }
-                ],
-    "logformat":  "W3\r
-C",
-    "hostheader":  "",
-    "loglocaltimerollover":  "False"
-}
+      <<~HERE
+        {
+            "enabledprotocols":  "http",
+            "logtruncatesize":  "20971520",
+            "applicat\r
+        ionpool":  "DefaultAppPool",
+            "logperiod":  "Daily",
+            "name":  "Default Web Site",
+            "bindings":  [
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "ssl
+        flags":  0,
+                                "certificatehash":  \r
+        "",
+                                "bindinginformation":  "*:80:"
+                            }
+                        ],
+            "logformat":  "W3\r
+        C",
+            "hostheader":  "",
+            "loglocaltimerollover":  "False"
+        }
       HERE
     end
     # PowerShell 2 representation of single_rawtext
     let(:single_ps2_rawtext) do
-      <<-HERE
-{ "Objects": { "Object":
-{
-    "enabledprotocols":  "http",
-    "logtruncatesize":  "20971520",
-    "applicationpool":  "DefaultAppPool",
-    "logperiod":  "Daily",
-    "name":  "Default Web Site",
-    "bindings":  [
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:80:"
-                    }
-                ],
-    "logformat":  "W3C",
-    "hostheader":  "",
-    "loglocaltimerollover":  "False"
-}
-}}
+      <<~HERE
+        { "Objects": { "Object":
+        {
+            "enabledprotocols":  "http",
+            "logtruncatesize":  "20971520",
+            "applicationpool":  "DefaultAppPool",
+            "logperiod":  "Daily",
+            "name":  "Default Web Site",
+            "bindings":  [
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:80:"
+                            }
+                        ],
+            "logformat":  "W3C",
+            "hostheader":  "",
+            "loglocaltimerollover":  "False"
+        }
+        }}
       HERE
     end
     # The object representation for single_rawtext
@@ -136,104 +136,104 @@ C",
     end
     # Multi Object return
     let(:multi_rawtext) do
-      <<-HERE
-[{
-    "enabledprotocols":  "http",
-    "logtruncatesize":  "20971520",
-    "applicationpool":  "DefaultAppPool",
-    "logperiod":  "Daily",
-    "name":  "Default Web Site",
-    "bindings":  [
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:80:"
-                    }
-                ],
-    "logformat":  "W3C",
-    "hostheader":  "",
-    "loglocaltimerollover":  "False"
-},
-{
-    "enabledprotocols":  "http",
-    "logtruncatesize":  "20971520",
-    "applicationpool":  "AppPool2",
-    "logperiod":  "Daily",
-    "name":  "Default Web Site",
-    "bindings":  [
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:80:"
-                    },
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:8080:"
-                    }
-                ],
-    "logformat":  "W3C",
-    "hostheader":  "header",
-    "loglocaltimerollover":  "False"
-}]
+      <<~HERE
+        [{
+            "enabledprotocols":  "http",
+            "logtruncatesize":  "20971520",
+            "applicationpool":  "DefaultAppPool",
+            "logperiod":  "Daily",
+            "name":  "Default Web Site",
+            "bindings":  [
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:80:"
+                            }
+                        ],
+            "logformat":  "W3C",
+            "hostheader":  "",
+            "loglocaltimerollover":  "False"
+        },
+        {
+            "enabledprotocols":  "http",
+            "logtruncatesize":  "20971520",
+            "applicationpool":  "AppPool2",
+            "logperiod":  "Daily",
+            "name":  "Default Web Site",
+            "bindings":  [
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:80:"
+                            },
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:8080:"
+                            }
+                        ],
+            "logformat":  "W3C",
+            "hostheader":  "header",
+            "loglocaltimerollover":  "False"
+        }]
       HERE
     end
     # PowerShell 2 representation of multi_rawtext
     let(:multi_ps2_rawtext) do
-      <<-HERE
-{ "Objects":
-[{
-    "enabledprotocols":  "http",
-    "logtruncatesize":  "20971520",
-    "applicationpool":  "DefaultAppPool",
-    "logperiod":  "Daily",
-    "name":  "Default Web Site",
-    "bindings":  [
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:80:"
-                    }
-                ],
-    "logformat":  "W3C",
-    "hostheader":  "",
-    "loglocaltimerollover":  "False"
-},
-{
-    "enabledprotocols":  "http",
-    "logtruncatesize":  "20971520",
-    "applicationpool":  "AppPool2",
-    "logperiod":  "Daily",
-    "name":  "Default Web Site",
-    "bindings":  [
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:80:"
-                    },
-                    {
-                        "certificatestorename":  "",
-                        "protocol":  "http",
-                        "sslflags":  0,
-                        "certificatehash":  "",
-                        "bindinginformation":  "*:8080:"
-                    }
-                ],
-    "logformat":  "W3C",
-    "hostheader":  "header",
-    "loglocaltimerollover":  "False"
-}]
-}
+      <<~HERE
+        { "Objects":
+        [{
+            "enabledprotocols":  "http",
+            "logtruncatesize":  "20971520",
+            "applicationpool":  "DefaultAppPool",
+            "logperiod":  "Daily",
+            "name":  "Default Web Site",
+            "bindings":  [
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:80:"
+                            }
+                        ],
+            "logformat":  "W3C",
+            "hostheader":  "",
+            "loglocaltimerollover":  "False"
+        },
+        {
+            "enabledprotocols":  "http",
+            "logtruncatesize":  "20971520",
+            "applicationpool":  "AppPool2",
+            "logperiod":  "Daily",
+            "name":  "Default Web Site",
+            "bindings":  [
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:80:"
+                            },
+                            {
+                                "certificatestorename":  "",
+                                "protocol":  "http",
+                                "sslflags":  0,
+                                "certificatehash":  "",
+                                "bindinginformation":  "*:8080:"
+                            }
+                        ],
+            "logformat":  "W3C",
+            "hostheader":  "header",
+            "loglocaltimerollover":  "False"
+        }]
+        }
       HERE
     end
     # The object representation for multi_rawtext
