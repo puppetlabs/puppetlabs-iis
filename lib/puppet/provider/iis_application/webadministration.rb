@@ -87,17 +87,17 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     if @property_flush[:sslflags]
       flags = @property_flush[:sslflags].join(',')
       inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
-      "-Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
+                  "-Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
     end
 
     @property_flush[:authenticationinfo]&.each do |auth, _enable|
       inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
-      "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
+                  "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
     end
 
     if @property_flush[:enabledprotocols]
       inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{self.class.find_sitename(resource)}\"]/application[@path=\"/#{app_name}\"]' " \
-      "-Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
+                  "-Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
     end
 
     if @property_flush[:applicationpool]

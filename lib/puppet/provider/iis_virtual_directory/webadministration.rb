@@ -47,11 +47,11 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     cmd << '-ErrorAction Stop;'
     if @resource[:user_name]
       cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' " \
-      "-Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;"
+             "-Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;"
     end
     if @resource[:password]
       cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' " \
-      "-Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;"
+             "-Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;"
     end
     cmd = cmd.join
 
