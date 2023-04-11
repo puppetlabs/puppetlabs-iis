@@ -90,12 +90,6 @@ RSpec/ExampleLength:
   Max: 37
 
 # Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-RSpec/ExcessiveDocstringSpacing:
-  Exclude:
-    - 'spec/acceptance/iis_site_spec.rb'
-
-# Offense count: 1
 # Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
 # Include: **/*_spec*rb*, **/spec/**/*
 RSpec/FilePath:
