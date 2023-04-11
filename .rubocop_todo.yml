@@ -84,17 +84,6 @@ RSpec/EmptyExampleGroup:
     - 'spec/acceptance/iis_virtual_directory_spec.rb'
     - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
 
-# Offense count: 13
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowConsecutiveOneLiners.
-RSpec/EmptyLineAfterHook:
-  Exclude:
-    - 'spec/acceptance/iis_site_spec.rb'
-    - 'spec/acceptance/iis_unicode_site_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_spec.rb'
-    - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
-    - 'spec/unit/puppet/provider/iis_application/webadministration_spec.rb'
-
 # Offense count: 39
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:

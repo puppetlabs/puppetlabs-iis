@@ -142,6 +142,7 @@ describe 'iis_site', :suite_b do
         before(:all) do
           create_path('C:\inetpub\new')
         end
+
         site_name = SecureRandom.hex(10).to_s
 
         manifest = <<-HERE
@@ -175,6 +176,7 @@ describe 'iis_site', :suite_b do
         before(:all) do
           create_path('C:\inetpub\tmp')
         end
+
         site_name = SecureRandom.hex(10).to_s
 
         manifest = <<-HERE
@@ -310,6 +312,7 @@ describe 'iis_site', :suite_b do
           before(:all) do
             create_site(site_name, true)
           end
+
           manifest = <<-HERE
           iis_site { '#{site_name}':
             ensure => 'absent'
@@ -339,6 +342,7 @@ describe 'iis_site', :suite_b do
           before(:all) do
             create_path('C:\inetpub\wwwroot')
           end
+
           manifest = <<-HERE
             iis_site { '#{site_name}':
               ensure          => 'started',

@@ -25,6 +25,7 @@ describe 'iis_application provider' do
       before :each do
         allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
       end
+
       it { iis_application_provider.create }
     end
 
@@ -39,6 +40,7 @@ describe 'iis_application provider' do
       before :each do
         allow(File).to receive(:exists?).with('C:\noexist').and_return(false)
       end
+
       it { expect { iis_application_provider.create }.to raise_error(RuntimeError, %r{doesn't exist}) }
     end
 
@@ -55,6 +57,7 @@ describe 'iis_application provider' do
         allow(File).to receive(:exist?).with('C:\exist').and_return(true)
         allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
       end
+
       it { iis_application_provider.create }
     end
   end
@@ -70,6 +73,7 @@ describe 'iis_application provider' do
     before :each do
       allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{ConvertTo-WebApplication}).and_return(exitcode: 0)
     end
+
     it { iis_application_provider.create }
   end
 
@@ -91,6 +95,7 @@ describe 'iis_application provider' do
         .with(cmdtext) \
         .and_return(exitcode: 0)
     end
+
     it 'updates value' do
       iis_application_provider.enabledprotocols = 'http,https,net.tcp'
       iis_application_provider.update

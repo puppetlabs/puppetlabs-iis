@@ -152,6 +152,7 @@ describe 'iis_virtual_directory', :suite_b do
           create_path('c:\inetpub\deeper')
           # create_site(site_name, true)
         end
+
         manifest = <<-HERE
         iis_virtual_directory{ "test_vdir":
           ensure       => 'present',

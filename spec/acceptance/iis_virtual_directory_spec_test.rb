@@ -19,6 +19,7 @@ describe 'iis_virtual_directory', :suite_b do
       before(:all) do
         create_path('C:\foo')
       end
+
       virt_dir_name = SecureRandom.hex(10).to_s
       manifest = <<-HERE
         file{ 'c:/foo':
@@ -141,6 +142,7 @@ describe 'iis_virtual_directory', :suite_b do
         create_path('c:\inetpub\deeper')
         create_site(site_name, true)
       end
+
       manifest = <<-HERE
       iis_virtual_directory{ "test_vdir":
         ensure       => 'present',
