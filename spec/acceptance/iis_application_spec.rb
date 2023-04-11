@@ -267,7 +267,7 @@ describe 'iis_application', :suite_a do
   end
 
   context 'when setting' do
-    skip 'sslflags - blocked by MODULES-5561' do
+    it 'sslflags', skip: 'blocked by MODULES-5561' do
       site_name = SecureRandom.hex(10).to_s
       app_name = SecureRandom.hex(10).to_s
       site_hostname = 'www.puppet.local'
