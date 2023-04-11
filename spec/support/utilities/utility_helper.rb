@@ -22,7 +22,7 @@ def create_selfsigned_cert(dnsname)
 
   # Defaults to personal machine store
   command = format_powershell_iis_command("& CERTUTIL -f -p puppet -importpfx '#{cert_filename_dest_windows}' NoRoot ")
-  result = run_shell(command)
+  run_shell(command)
 
   # These commands are executed in bash therefore things need to be escaped properly
   command = format_powershell_iis_command("(Get-ChildItem -Path 'Cert:\\LocalMachine\\My' | Where-Object { \$_.Subject -eq 'CN=#{dnsname}'} | Select-Object -First 1).Thumbprint")

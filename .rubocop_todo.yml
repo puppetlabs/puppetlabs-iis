@@ -13,19 +13,10 @@ Lint/MixedRegexpCaptureTypes:
   Exclude:
     - 'lib/puppet/provider/iis_site/webadministration.rb'
 
-# # Offense count: 12
-# # This cop supports safe autocorrection (--autocorrect).
-# Lint/ParenthesesAsGroupedExpression:
+# # Offense count: 1
+# Lint/UselessAssignment:
 #   Exclude:
-#     - 'spec/acceptance/iis_site_spec.rb'
-#     - 'spec/acceptance/iis_unicode_site_spec.rb'
-#     - 'spec/acceptance/iis_virtual_directory_spec.rb'
-#     - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
-
-# Offense count: 1
-Lint/UselessAssignment:
-  Exclude:
-    - 'spec/support/utilities/utility_helper.rb'
+#     - 'spec/support/utilities/utility_helper.rb'
 
 # Offense count: 17
 # Configuration parameters: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
