@@ -168,19 +168,13 @@ Style/ClassAndModuleChildren:
 
 
 
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Style/SlicingWithRange:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_application/webadministration.rb'
-
 # Offense count: 4
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowModifier.
-Style/SoleNestedConditional:
-  Exclude:
-    - 'lib/puppet/provider/iis_common.rb'
-    - 'lib/puppet/type/iis_site.rb'
+# Style/SoleNestedConditional:
+#   Exclude:
+#     - 'lib/puppet/provider/iis_common.rb'
+#     - 'lib/puppet/type/iis_site.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).

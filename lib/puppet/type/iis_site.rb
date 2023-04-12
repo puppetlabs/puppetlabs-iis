@@ -315,17 +315,11 @@ Puppet::Type.newtype(:iis_site) do
     raise('Cannot specify logperiod and logtruncatesize at the same time') if self[:logperiod] && self[:logtruncatesize]
 
     # can only use logflags if logformat is W3C
-    if self[:logflags]
-      raise('Cannot specify logflags when logformat is not W3C') unless ['W3C', 'w3c'].include?(self[:logformat])
-    end
+    raise('Cannot specify logflags when logformat is not W3C') if self[:logflags] && !['W3C', 'w3c'].include?(self[:logformat])
 
-    if self[:serviceautostartprovidername]
-      raise('Must specify serviceautostartprovidertype as well as serviceautostartprovidername') unless self[:serviceautostartprovidertype]
-    end
+    raise('Must specify serviceautostartprovidertype as well as serviceautostartprovidername') if self[:serviceautostartprovidername] && !(self[:serviceautostartprovidertype])
 
-    if self[:serviceautostartprovidertype]
-      raise('Must specify serviceautostartprovidername as well as serviceautostartprovidertype') unless self[:serviceautostartprovidername]
-    end
+    raise('Must specify serviceautostartprovidername as well as serviceautostartprovidertype') if self[:serviceautostartprovidertype] && !(self[:serviceautostartprovidername])
 
     provider.validate if provider.respond_to?(:validate)
   end
