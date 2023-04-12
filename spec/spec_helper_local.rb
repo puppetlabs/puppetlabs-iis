@@ -18,9 +18,9 @@ if Puppet.features.microsoft_windows?
   def take_ownership(path)
     path = path.tr('/', '\\')
     output = `takeown.exe /F #{path} /R /A /D Y 2>&1`
-    if $CHILD_STATUS != 0 # check if the child process exited cleanly.
-      puts "#{path} got error #{output}"
-    end
+    return unless $CHILD_STATUS != 0 # check if the child process exited cleanly.
+
+    puts "#{path} got error #{output}"
   end
 
   def installed_powershell_major_version

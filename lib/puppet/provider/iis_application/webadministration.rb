@@ -175,9 +175,10 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   private
 
   def check_paths
-    if @resource[:physicalpath] && !File.exist?(@resource[:physicalpath])
-      raise "physicalpath doesn't exist: #{@resource[:physicalpath]}"
-    end
+    return unless @resource[:physicalpath] && !File.exist?(@resource[:physicalpath])
+
+    raise "physicalpath doesn't exist: #{@resource[:physicalpath]}"
+
     # XXX How do I check for IIS:\ path existence without shelling out to PS?
     # if @resource[:virtual_directory] and ! File.exists?(@resource[:virtual_directory])
     #  fail "virtual_directory doesn't exist: #{@resource[:virtual_directory]}"

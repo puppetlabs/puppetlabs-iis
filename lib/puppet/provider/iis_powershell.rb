@@ -30,9 +30,9 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
 
   # update if exists
   def flush
-    if exists?
-      update
-    end
+    return unless exists?
+
+    update
   end
 
   # run command

@@ -16,9 +16,8 @@ def verify_physicalpath
     raise('physicalpath is a required parameter')
   end
 
-  if local_path?(@resource[:physicalpath])
-    unless File.exist?(@resource[:physicalpath])
-      raise("physicalpath doesn't exist: #{@resource[:physicalpath]}")
-    end
-  end
+  return unless local_path?(@resource[:physicalpath])
+  return if File.exist?(@resource[:physicalpath])
+
+  raise("physicalpath doesn't exist: #{@resource[:physicalpath]}")
 end

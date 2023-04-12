@@ -166,22 +166,16 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/timeformat.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
-# # Offense count: 1
+# # Offense count: 6
 # # This cop supports safe autocorrection (--autocorrect).
-# Style/ExpandPathArguments:
+# # Configuration parameters: MinBodyLength, AllowConsecutiveConditionals.
+# Style/GuardClause:
 #   Exclude:
+#     - 'lib/puppet/provider/iis_application/webadministration.rb'
+#     - 'lib/puppet/provider/iis_common.rb'
 #     - 'lib/puppet/provider/iis_powershell.rb'
-
-# Offense count: 6
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: MinBodyLength, AllowConsecutiveConditionals.
-Style/GuardClause:
-  Exclude:
-    - 'lib/puppet/provider/iis_application/webadministration.rb'
-    - 'lib/puppet/provider/iis_common.rb'
-    - 'lib/puppet/provider/iis_powershell.rb'
-    - 'lib/puppet/provider/iis_site/webadministration.rb'
-    - 'spec/spec_helper_local.rb'
+#     - 'lib/puppet/provider/iis_site/webadministration.rb'
+#     - 'spec/spec_helper_local.rb'
 
 # Offense count: 49
 # This cop supports safe autocorrection (--autocorrect).
