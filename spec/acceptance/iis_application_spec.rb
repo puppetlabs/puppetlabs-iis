@@ -120,7 +120,7 @@ describe 'iis_application', :suite_a do
 
       it 'creates the correct application' do
         result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
-        expect(result.stdout).to match(%r{iis_application { '#{site_name}\\subFolder/#{app_name}':}})
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/) # rubocop:disable Style/RegexpLiteral
         expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
     end
@@ -150,7 +150,7 @@ describe 'iis_application', :suite_a do
 
       it 'creates the correct application' do
         result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
-        expect(result.stdout).to match(%r{iis_application { '#{site_name}\\subFolder/#{app_name}':}})
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/) # rubocop:disable Style/RegexpLiteral
         expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
     end
@@ -260,7 +260,7 @@ describe 'iis_application', :suite_a do
 
       it 'creates the correct application' do
         result = resource('iis_application', "#{site_name}\\subFolder/sub2/#{app_name}")
-        expect(result.stdout).to match(%r{iis_application { '#{site_name}\\subFolder/sub2/#{app_name}':}})
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/sub2\/#{app_name}':/) # rubocop:disable Style/RegexpLiteral
         expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
     end

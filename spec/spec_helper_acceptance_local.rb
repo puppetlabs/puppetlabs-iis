@@ -15,7 +15,7 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install IIS and required features on the target host
-    LitmusHelper.instance.run_shell("cmd.exe /c 'Start /w pkgmgr /iu:IIS-WebServerRole;IIS-WebServer;IIS-WebServerManagementTools'") unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
+    LitmusHelper.instance.run_shell('Install-WindowsFeature -name Web-Server -IncludeManagementTools') unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
   end
 end
 
