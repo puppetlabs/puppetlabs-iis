@@ -167,21 +167,12 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle, AllowedMethods, AllowedPatterns.
-# SupportedStyles: predicate, comparison
-# Style/NumericPredicate:
+# # Offense count: 2
+# # Configuration parameters: AllowedMethods.
+# # AllowedMethods: respond_to_missing?
+# Style/OptionalBooleanParameter:
 #   Exclude:
-#     - 'spec/**/*'
-#     - 'lib/puppet_x/puppetlabs/iis/property/positive_integer.rb'
-
-# Offense count: 2
-# Configuration parameters: AllowedMethods.
-# AllowedMethods: respond_to_missing?
-Style/OptionalBooleanParameter:
-  Exclude:
-    - 'lib/puppet/provider/iis_powershell.rb'
+#     - 'lib/puppet/provider/iis_powershell.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).

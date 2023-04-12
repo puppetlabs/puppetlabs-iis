@@ -36,7 +36,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   end
 
   # run command
-  def self.run(command, _check = false)
+  def self.run(command, _check: false)
     Puppet.debug("COMMAND: #{command}")
 
     result = ps_manager.execute(command)
@@ -59,7 +59,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
 
   # do_not_use_cached_value is typically only used for testing. In normal usage
   # the PowerShell version does not suddenly change during a Puppet run.
-  def self.ps_major_version(do_not_use_cached_value = false)
+  def self.ps_major_version(do_not_use_cached_value: false)
     if @powershell_major_version.nil? || do_not_use_cached_value
       version = Pwsh::WindowsPowerShell.version
       @powershell_major_version = version.nil? ? nil : version.split('.').first.to_i
