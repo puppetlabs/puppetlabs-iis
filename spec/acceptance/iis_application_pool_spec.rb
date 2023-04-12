@@ -97,7 +97,7 @@ describe 'iis_application_pool', :suite_a do
         iis_application_pool { '#{pool_name}':
           ensure    => 'present',
           user_name => 'user',
-          password  => Sensitive('#@\\\'454sdf'),
+          password  => Sensitive('#@\\'454sdf'),
         }
       HERE
 

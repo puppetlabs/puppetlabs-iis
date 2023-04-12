@@ -16,7 +16,7 @@ Puppet::Type.newtype(:iis_application) do
     The iis_application type uses an applicationname and a sitename to
     create an IIS Application. When specifying an application you must
     specify both. You can specify the sitename by putting it in the title
-    as in \"$site_name\\$application_name\", or you can use the named
+    as in "$site_name\\$application_name", or you can use the named
     parameters. If converting a virtual directory to an app, you can use
     the virtual_directory parameter to specify the site and omit the
     sitename parameter. To manage two applications of the same name within

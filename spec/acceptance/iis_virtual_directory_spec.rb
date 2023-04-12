@@ -97,7 +97,7 @@ describe 'iis_virtual_directory', :suite_b do
           sitename     => '#{site_name}',
           physicalpath => 'c:\\foo',
           user_name    => 'user',
-          password     => Sensitive('#@\\\'454sdf'),
+          password     => Sensitive('#@\\'454sdf'),
         }
       HERE
 

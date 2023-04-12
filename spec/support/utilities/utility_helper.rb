@@ -25,7 +25,7 @@ def create_selfsigned_cert(dnsname)
   run_shell(command)
 
   # These commands are executed in bash therefore things need to be escaped properly
-  command = format_powershell_iis_command("(Get-ChildItem -Path 'Cert:\\LocalMachine\\My' | Where-Object { \$_.Subject -eq 'CN=#{dnsname}'} | Select-Object -First 1).Thumbprint")
+  command = format_powershell_iis_command("(Get-ChildItem -Path 'Cert:\\LocalMachine\\My' | Where-Object { $_.Subject -eq 'CN=#{dnsname}'} | Select-Object -First 1).Thumbprint")
   result = run_shell(command)
   result.stdout.chomp
 end

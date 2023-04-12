@@ -44,7 +44,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       if property.value.is_a?(Array)
         cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}'"
         property.value.each do |item|
-          cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @\{value=#{escape_value(item)}\}"
+          cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @{value=#{escape_value(item)}}"
         end
       else
         cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{escape_value(property.value)}"
@@ -234,7 +234,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     if number?(value)
       value
     else
-      "'#{value.to_s.gsub("'", "''")}\'"
+      "'#{value.to_s.gsub("'", "''")}'"
     end
   end
 

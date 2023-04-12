@@ -35,7 +35,7 @@ describe 'iis_site', :suite_b do
       def verify_iis_site(iis_site_name)
         <<-POWERSHELL
           Import-Module Webadministration
-          (Get-ChildItem -Path IIS:\Sites | Where-Object { $_.Name -match ([regex]::Unescape(\"#{iis_site_name}\")) } | Measure-Object).Count
+          (Get-ChildItem -Path IIS:\Sites | Where-Object { $_.Name -match ([regex]::Unescape("#{iis_site_name}")) } | Measure-Object).Count
         POWERSHELL
       end
 
