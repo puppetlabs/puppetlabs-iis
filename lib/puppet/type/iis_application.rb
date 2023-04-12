@@ -42,11 +42,11 @@ Puppet::Type.newtype(:iis_application) do
     desc 'The physical path to the application directory. This path must be
           fully qualified.'
     munge do |value|
-      v = value.chomp('/') if value.match?(/^.:(\/|\\)/)
-      v = value.chomp('\\') if value.match?(/^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/)
+      v = value.chomp('/') if value.match?(%r{^.:(/|\\)})
+      v = value.chomp('\\') if value.match?(%r{^(/|\\)(/|\\)[^(/|\\)]+(/|\\)[^(/|\\)]+})
 
       raise ArgumentError, 'A non-empty physicalpath must be specified.' if v.nil? || v.empty?
-      raise("File paths must be fully qualified, not '#{v}'") unless v =~ /^.:(\/|\\)/ || v =~ /^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/
+      raise("File paths must be fully qualified, not '#{v}'") unless v =~ %r{^.:(/|\\)} || v =~ %r{^(/|\\)(/|\\)[^(/|\\)]+(/|\\)[^(/|\\)]+}
 
       v
     end

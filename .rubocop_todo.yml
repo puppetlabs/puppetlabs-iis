@@ -167,31 +167,18 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
 
-# Offense count: 13
-# This cop supports safe autocorrection (--autocorrect).
-# Style/RedundantStringEscape:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
-#     - 'lib/puppet/type/iis_application.rb'
-#     - 'spec/acceptance/iis_application_pool_spec.rb'
-#     - 'spec/acceptance/iis_unicode_site_spec.rb'
-#     - 'spec/acceptance/iis_virtual_directory_spec.rb'
-#     - 'spec/acceptance/iis_virtual_directory_spec_test.rb'
-#     - 'spec/support/utilities/iis_site.rb'
-#     - 'spec/support/utilities/utility_helper.rb'
-
 # Offense count: 21
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyle, AllowInnerSlashes.
 # SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'lib/puppet/provider/iis_application/webadministration.rb'
-    - 'lib/puppet/provider/iis_common.rb'
-    - 'lib/puppet/type/iis_application.rb'
-    - 'lib/puppet/type/iis_site.rb'
-    - 'lib/puppet_x/puppetlabs/iis/property/path.rb'
-    - 'spec/acceptance/iis_application_spec.rb'
+# Style/RegexpLiteral:
+#   Exclude:
+#     - 'lib/puppet/provider/iis_application/webadministration.rb'
+#     - 'lib/puppet/provider/iis_common.rb'
+#     - 'lib/puppet/type/iis_application.rb'
+#     - 'lib/puppet/type/iis_site.rb'
+#     - 'lib/puppet_x/puppetlabs/iis/property/path.rb'
+#     - 'spec/acceptance/iis_application_spec.rb'
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).

@@ -146,23 +146,23 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   end
 
   def self.compare_app_names(app, resource)
-    app_appname      =  app.applicationname.split(/[\\\/]/) - Array(app.sitename)
-    resource_appname =  resource[:applicationname].split(/[\\\/]/).reject(&:empty?) - Array(find_sitename(resource))
+    app_appname      =  app.applicationname.split(%r{[\\/]}) - Array(app.sitename)
+    resource_appname =  resource[:applicationname].split(%r{[\\/]}).reject(&:empty?) - Array(find_sitename(resource))
     app_appname == resource_appname
   end
 
   def self.find_sitename(resource)
     if resource.parameters.key?(:virtual_directory)
-      resource[:virtual_directory].gsub('IIS:\\Sites\\', '').split(/[\\\/]/)[0]
+      resource[:virtual_directory].gsub('IIS:\\Sites\\', '').split(%r{[\\/]})[0]
     elsif !resource.parameters.key?(:sitename)
-      resource[:applicationname].split(/[\\\/]/)[0]
+      resource[:applicationname].split(%r{[\\/]})[0]
     else
       resource[:sitename]
     end
   end
 
   def app_name
-    name_segments = @resource[:applicationname].split(/[\\\/]/)
+    name_segments = @resource[:applicationname].split(%r{[\\/]})
     if (@resource[:sitename] && name_segments.count > 1 && name_segments[0] == @resource[:sitename]) || @resource[:sitename].nil?
       name_segments[1..-1].join('/')
     else

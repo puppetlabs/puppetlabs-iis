@@ -2,7 +2,7 @@
 
 # verify if the given path is a local one
 def local_path?(path)
-  (path =~ /^.:(\/|\\)/)
+  (path =~ %r{^.:(/|\\)})
 end
 
 # verify if the given path is an UNC one

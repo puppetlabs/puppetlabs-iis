@@ -52,11 +52,11 @@ Puppet::Type.newtype(:iis_site) do
   newproperty(:physicalpath, parent: PuppetX::PuppetLabs::IIS::Property::Path) do
     desc 'The physical path to the site directory. This path must be fully qualified.'
     munge do |value|
-      v = value.chomp('/') if value.match?(/^.:(\/|\\)/)
-      v = value.chomp('\\') if value.match?(/^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/)
+      v = value.chomp('/') if value.match?(%r{^.:(/|\\)})
+      v = value.chomp('\\') if value.match?(%r{^(/|\\)(/|\\)[^(/|\\)]+(/|\\)[^(/|\\)]+})
 
       raise ArgumentError, 'A non-empty physicalpath must be specified.' if v.nil? || v.empty?
-      raise("File paths must be fully qualified, not '#{v}'") unless v =~ /^.:(\/|\\)/ || v =~ /^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/
+      raise("File paths must be fully qualified, not '#{v}'") unless v =~ %r{^.:(/|\\)} || v =~ %r{^(/|\\)(/|\\)[^(/|\\)]+(/|\\)[^(/|\\)]+}
 
       v
     end
@@ -232,7 +232,7 @@ Puppet::Type.newtype(:iis_site) do
     desc 'Specifies the physical path to place the log file'
     validate do |value|
       raise ArgumentError, 'A non-empty logpath must be specified.' if value.nil? || value.empty?
-      raise("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ || value =~ /^\/\/[^\/]+\/[^\/]+/
+      raise("File paths must be fully qualified, not '#{value}'") unless value =~ %r{^.:(/|\\)} || value =~ %r{^//[^/]+/[^/]+}
     end
   end
 
