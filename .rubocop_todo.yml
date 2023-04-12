@@ -166,20 +166,12 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/timeformat.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
-
-# # Offense count: 2
-# # Configuration parameters: AllowedMethods.
-# # AllowedMethods: respond_to_missing?
-# Style/OptionalBooleanParameter:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_powershell.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Methods.
-Style/RedundantArgument:
-  Exclude:
-    - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
+# Style/RedundantArgument:
+#   Exclude:
+#     - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).

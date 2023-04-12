@@ -157,7 +157,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       pool_hash[:restart_private_memory_limit]       = pool['restart_private_memory_limit']
       pool_hash[:restart_requests_limit]             = pool['restart_requests_limit']
       pool_hash[:restart_time_limit]                 = pool['restart_time_limit']
-      pool_hash[:restart_schedule]                   = pool['restart_schedule'].to_s.split(' ')
+      pool_hash[:restart_schedule]                   = pool['restart_schedule'].to_s.split # split(' ') implied by default
 
       new(pool_hash)
     end
