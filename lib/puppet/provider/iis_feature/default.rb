@@ -5,7 +5,7 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_PowerShell) do
   desc 'IIS feature provider'
 
-  require Pathname.new(__FILE__).dirname + '..' + '..' + '..' + 'puppet_x' + 'puppetlabs' + 'iis' + 'iis_features'
+  require Pathname.new(__FILE__).dirname + '..' + '..' + '..' + 'puppet_x' + 'puppetlabs' + 'iis' + 'iis_features' # rubocop:disable Style/StringConcatenation
   include PuppetX::IIS::Features
 
   confine    feature: :pwshlib
