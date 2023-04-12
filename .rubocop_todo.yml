@@ -166,11 +166,11 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/timeformat.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/Dir:
-  Exclude:
-    - 'spec/spec_helper_local.rb'
+# # Offense count: 1
+# # This cop supports safe autocorrection (--autocorrect).
+# Style/Dir:
+#   Exclude:
+#     - 'spec/spec_helper_local.rb'
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).

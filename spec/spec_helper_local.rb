@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-dir = File.expand_path(File.dirname(__FILE__))
+dir = __dir__
 $LOAD_PATH.unshift File.join(dir, 'lib')
 
 require 'puppet'
