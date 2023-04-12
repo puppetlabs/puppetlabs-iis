@@ -16,27 +16,21 @@ Puppet::Type.newtype(:iis_virtual_directory) do
   newparam(:name, namevar: true) do
     desc 'The name of the virtual directory to manage'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty name must be specified.'
-      end
+      raise ArgumentError, 'A non-empty name must be specified.' if value.nil? || value.empty?
     end
   end
 
   newproperty(:sitename) do
     desc 'The site name under which the virtual directory is created'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty sitename must be specified.'
-      end
+      raise ArgumentError, 'A non-empty sitename must be specified.' if value.nil? || value.empty?
     end
   end
 
   newproperty(:application) do
     desc 'The application under which the virtual directory is created'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty application must be specified.'
-      end
+      raise ArgumentError, 'A non-empty application must be specified.' if value.nil? || value.empty?
     end
   end
 
@@ -46,9 +40,7 @@ Puppet::Type.newtype(:iis_virtual_directory) do
           Supply credentials for access to the UNC path with the `user_name` and
           `password` properties."
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty physicalpath must be specified.'
-      end
+      raise ArgumentError, 'A non-empty physicalpath must be specified.' if value.nil? || value.empty?
 
       super value
     end

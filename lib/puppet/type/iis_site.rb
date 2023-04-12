@@ -43,9 +43,7 @@ Puppet::Type.newtype(:iis_site) do
       the target to this value if target is unset."
 
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty name must be specified.'
-      end
+      raise ArgumentError, 'A non-empty name must be specified.' if value.nil? || value.empty?
 
       super value
     end
@@ -57,9 +55,7 @@ Puppet::Type.newtype(:iis_site) do
       v = value.chomp('/') if value.match?(/^.:(\/|\\)/)
       v = value.chomp('\\') if value.match?(/^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/)
 
-      if v.nil? || v.empty?
-        raise ArgumentError, 'A non-empty physicalpath must be specified.'
-      end
+      raise ArgumentError, 'A non-empty physicalpath must be specified.' if v.nil? || v.empty?
       raise("File paths must be fully qualified, not '#{v}'") unless v =~ /^.:(\/|\\)/ || v =~ /^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/
 
       v
@@ -69,9 +65,7 @@ Puppet::Type.newtype(:iis_site) do
   newproperty(:applicationpool, parent: PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of an ApplicationPool for this IIS Web Site'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty applicationpool name must be specified.'
-      end
+      raise ArgumentError, 'A non-empty applicationpool name must be specified.' if value.nil? || value.empty?
 
       super value
     end
@@ -83,18 +77,14 @@ Puppet::Type.newtype(:iis_site) do
           be a comma delimited list of protocols. Valid protocols are: 'http',
           'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'."
     validate do |value|
-      unless value.is_a?(String)
-        raise("Invalid value '#{value}'. Should be a string")
-      end
+      raise("Invalid value '#{value}'. Should be a string") unless value.is_a?(String)
 
       raise("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
 
       allowed_protocols = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
       protocols = value.split(',')
       protocols.each do |protocol|
-        unless allowed_protocols.include?(protocol)
-          raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
-        end
+        raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") unless allowed_protocols.include?(protocol)
       end
     end
   end
@@ -127,36 +117,22 @@ Puppet::Type.newtype(:iis_site) do
             Indicator'
 
     validate do |value|
-      unless value.is_a?(Hash)
-        raise('All bindings must be a hash')
-      end
-      unless (['protocol', 'bindinginformation'] - value.keys).empty?
-        raise('All bindings must specify protocol and bindinginformation values')
-      end
+      raise('All bindings must be a hash') unless value.is_a?(Hash)
+      raise('All bindings must specify protocol and bindinginformation values') unless (['protocol', 'bindinginformation'] - value.keys).empty?
       unless ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(value['protocol'])
         raise("Invalid value '#{value}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
       end
 
       if ['http', 'https'].include?(value['protocol'])
-        unless %r{^.+:\d+:.*}.match?(value['bindinginformation'])
-          raise("bindinginformation for http and https protocols must be of the format '(ip|*):1-65535:hostname'")
-        end
+        raise("bindinginformation for http and https protocols must be of the format '(ip|*):1-65535:hostname'") unless %r{^.+:\d+:.*}.match?(value['bindinginformation'])
       elsif ['net.pipe'].include?(value['protocol'])
-        unless %r{^[^:]+$}.match?(value['bindinginformation'])
-          raise("bindinginformation for net.pipe protocol must be of the format 'hostname'")
-        end
+        raise("bindinginformation for net.pipe protocol must be of the format 'hostname'") unless %r{^[^:]+$}.match?(value['bindinginformation'])
       elsif ['net.tcp'].include?(value['protocol'])
-        unless %r{^\d+:.*}.match?(value['bindinginformation'])
-          raise("bindinginformation for net.tcp protocol must be of the format '1-65535:hostname'")
-        end
+        raise("bindinginformation for net.tcp protocol must be of the format '1-65535:hostname'") unless %r{^\d+:.*}.match?(value['bindinginformation'])
       elsif ['net.msmq'].include?(value['protocol'])
-        unless %r{^[^:]+$}.match?(value['bindinginformation'])
-          raise("bindinginformation for net.msmq protocol must be of the format 'hostname'")
-        end
+        raise("bindinginformation for net.msmq protocol must be of the format 'hostname'") unless %r{^[^:]+$}.match?(value['bindinginformation'])
       elsif ['msmq.formatname'].include?(value['protocol'])
-        unless %r{^[^:]+$}.match?(value['bindinginformation'])
-          raise("bindinginformation for msmq.formatname protocol must be of the format 'hostname'")
-        end
+        raise("bindinginformation for msmq.formatname protocol must be of the format 'hostname'") unless %r{^[^:]+$}.match?(value['bindinginformation'])
       end
 
       if ['http', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].include?(value['protocol']) && (value['sslflags'] || value['certificatehash'] || value['certificatestorename'])
@@ -164,21 +140,13 @@ Puppet::Type.newtype(:iis_site) do
       end
 
       if value['protocol'] == 'https'
-        unless [0, 1, 2, 3].include?(value['sslflags'])
-          raise("#{value['bindinginformation']}: sslflags must be an integer 0, 1, 2, or 3")
-        end
-        if !value['certificatehash'] || !value['certificatestorename']
-          raise("#{value['bindinginformation']}: certificatehash and certificatestorename are required for https bindings")
-        end
+        raise("#{value['bindinginformation']}: sslflags must be an integer 0, 1, 2, or 3") unless [0, 1, 2, 3].include?(value['sslflags'])
+        raise("#{value['bindinginformation']}: certificatehash and certificatestorename are required for https bindings") if !value['certificatehash'] || !value['certificatestorename']
       end
     end
     munge do |value|
-      if !value.nil? && value['certificatehash']
-        value['certificatehash'] = value['certificatehash'].upcase
-      end
-      if !value.nil? && value['certificatestorename']
-        value['certificatestorename'] = value['certificatestorename'].upcase
-      end
+      value['certificatehash'] = value['certificatehash'].upcase if !value.nil? && value['certificatehash']
+      value['certificatestorename'] = value['certificatestorename'].upcase if !value.nil? && value['certificatestorename']
       value
     end
 
@@ -215,9 +183,7 @@ Puppet::Type.newtype(:iis_site) do
           serviceautostartprovidername => "MyAutostartProvider"
           serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, version=1.0.0.0, Culture=neutral, PublicKeyToken=426f62526f636b73"'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty serviceautostartprovidername name must be specified.'
-      end
+      raise ArgumentError, 'A non-empty serviceautostartprovidername name must be specified.' if value.nil? || value.empty?
       raise("#{name} is not a valid serviceautostartprovidername name") unless %r{^[a-zA-Z0-9\-\_'\s]+$}.match?(value)
     end
     # serviceautostartprovidertype and serviceautostartprovidername work together
@@ -231,9 +197,7 @@ Puppet::Type.newtype(:iis_site) do
           serviceautostartprovidername => "MyAutostartProvider"
           serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, version=1.0.0.0, Culture=neutral, PublicKeyToken=426f62526f636b73"'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty serviceautostartprovidertype name must be specified.'
-      end
+      raise ArgumentError, 'A non-empty serviceautostartprovidertype name must be specified.' if value.nil? || value.empty?
     end
   end
 
@@ -250,12 +214,8 @@ Puppet::Type.newtype(:iis_site) do
   newproperty(:defaultpage, array_matching: :all) do
     desc 'Specifies the default page of the site.'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty defaultpage must be specified.'
-      end
-      unless value.is_a?(Array) || value.is_a?(String)
-        raise("Invalid value '#{value}'. Should be a string or an array of strings")
-      end
+      raise ArgumentError, 'A non-empty defaultpage must be specified.' if value.nil? || value.empty?
+      raise("Invalid value '#{value}'. Should be a string or an array of strings") unless value.is_a?(Array) || value.is_a?(String)
     end
   end
 
@@ -263,21 +223,15 @@ Puppet::Type.newtype(:iis_site) do
     desc "Specifies the format for the log file. When set to 'W3C', used with
           `logflags`"
     validate do |value|
-      unless value.is_a?(String)
-        raise("Invalid value '#{value}'. Should be a string")
-      end
-      unless ['W3C', 'IIS', 'NCSA'].include?(value)
-        raise("Invalid value '#{value}'. Valid values are W3C, IIS, NCSA")
-      end
+      raise("Invalid value '#{value}'. Should be a string") unless value.is_a?(String)
+      raise("Invalid value '#{value}'. Valid values are W3C, IIS, NCSA") unless ['W3C', 'IIS', 'NCSA'].include?(value)
     end
   end
 
   newproperty(:logpath, parent: PuppetX::PuppetLabs::IIS::Property::Path) do
     desc 'Specifies the physical path to place the log file'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty logpath must be specified.'
-      end
+      raise ArgumentError, 'A non-empty logpath must be specified.' if value.nil? || value.empty?
       raise("File paths must be fully qualified, not '#{value}'") unless value =~ /^.:(\/|\\)/ || value =~ /^\/\/[^\/]+\/[^\/]+/
     end
   end
@@ -285,12 +239,8 @@ Puppet::Type.newtype(:iis_site) do
   newproperty(:logperiod) do
     desc 'Specifies how often the log file should rollover'
     validate do |value|
-      unless value.is_a?(String)
-        raise("Invalid value '#{value}'. Should be a string")
-      end
-      unless ['Hourly', 'Daily', 'Weekly', 'Monthly', 'MaxSize'].include?(value)
-        raise("Invalid value '#{value}'. Valid values are Hourly, Daily, Weekly, Monthly, MaxSize")
-      end
+      raise("Invalid value '#{value}'. Should be a string") unless value.is_a?(String)
+      raise("Invalid value '#{value}'. Valid values are Hourly, Daily, Weekly, Monthly, MaxSize") unless ['Hourly', 'Daily', 'Weekly', 'Monthly', 'MaxSize'].include?(value)
     end
   end
 
@@ -299,12 +249,8 @@ Puppet::Type.newtype(:iis_site) do
           value must be in bytes. The value can be any size between
           \'1048576 (1MB)\' and \'4294967295 (4GB)\'.'
     validate do |value|
-      unless value.is_a?(Integer)
-        raise("Invalid value '#{value}'. Should be a number")
-      end
-      if value < 1_048_576 || value > 4_294_967_295
-        raise("Invalid value '#{value}'. Cannot be less than 1048576 or greater than 4294967295")
-      end
+      raise("Invalid value '#{value}'. Should be a number") unless value.is_a?(Integer)
+      raise("Invalid value '#{value}'. Cannot be less than 1048576 or greater than 4294967295") if value < 1_048_576 || value > 4_294_967_295
     end
   end
 
@@ -323,9 +269,7 @@ Puppet::Type.newtype(:iis_site) do
     desc "Specifies what W3C fields are logged in the log file. This is only
           valid when `logformat` is set to 'W3C'."
     validate do |value|
-      unless value.is_a?(String)
-        raise("Invalid logflags value '#{value}'. Should be a string")
-      end
+      raise("Invalid logflags value '#{value}'. Should be a string") unless value.is_a?(String)
 
       unless [
         'Date', 'Time', 'ClientIP', 'UserName', 'SiteName', 'ComputerName', 'ServerIP',
@@ -351,9 +295,7 @@ Puppet::Type.newtype(:iis_site) do
       value.each do |key, limit|
         raise("Invalid iis site limit key '#{key}'. Should be one of: #{valid_limits}") unless valid_limits.include? key
         raise("Invalid value '#{limit}' for #{key}. Must be an integer") unless limit.is_a? Integer
-        if key != 'connectiontimeout' && (limit < 1 || limit > 4_294_967_295)
-          raise("Invalid value '#{limit} for #{key}'. Cannot be less than 1 or greater than 4294967295")
-        end
+        raise("Invalid value '#{limit} for #{key}'. Cannot be less than 1 or greater than 4294967295") if key != 'connectiontimeout' && (limit < 1 || limit > 4_294_967_295)
       end
     end
   end
@@ -370,15 +312,11 @@ Puppet::Type.newtype(:iis_site) do
     # enabledprotocols need to support 2 values and no value
 
     # TODO: need check if logperiod is not MaxSize if logtruncatesize is set. if not
-    if self[:logperiod] && self[:logtruncatesize]
-      raise('Cannot specify logperiod and logtruncatesize at the same time')
-    end
+    raise('Cannot specify logperiod and logtruncatesize at the same time') if self[:logperiod] && self[:logtruncatesize]
 
     # can only use logflags if logformat is W3C
     if self[:logflags]
-      unless ['W3C', 'w3c'].include?(self[:logformat])
-        raise('Cannot specify logflags when logformat is not W3C')
-      end
+      raise('Cannot specify logflags when logformat is not W3C') unless ['W3C', 'w3c'].include?(self[:logformat])
     end
 
     if self[:serviceautostartprovidername]

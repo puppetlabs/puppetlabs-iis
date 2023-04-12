@@ -12,9 +12,7 @@ end
 
 # verify if the given path is a physicalpath
 def verify_physicalpath
-  if @resource[:physicalpath].nil? || @resource[:physicalpath].empty?
-    raise('physicalpath is a required parameter')
-  end
+  raise('physicalpath is a required parameter') if @resource[:physicalpath].nil? || @resource[:physicalpath].empty?
 
   return unless local_path?(@resource[:physicalpath])
   return if File.exist?(@resource[:physicalpath])

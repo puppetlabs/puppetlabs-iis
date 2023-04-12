@@ -30,9 +30,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
   def create
     raise Puppet::Error, "iis_feature can only be used to install IIS features. '#{resource[:name]}' is not an IIS feature" unless PuppetX::IIS::Features.iis_feature?(resource[:name])
 
-    if @resource[:include_management_tools] == true && self.class.windows2008? == true
-      raise Puppet::Error, 'include_management_tools can only be used with Windows 2012 and above'
-    end
+    raise Puppet::Error, 'include_management_tools can only be used with Windows 2012 and above' if @resource[:include_management_tools] == true && self.class.windows2008? == true
 
     cmd = []
     cmd << "Import-Module ServerManager; Add-WindowsFeature -Name '#{resource[:name]}'" if self.class.windows2008? == true
