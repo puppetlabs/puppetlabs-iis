@@ -152,15 +152,13 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   end
 
   def self.find_sitename(resource)
-    sitename = if resource.parameters.key?(:virtual_directory)
-                 resource[:virtual_directory].gsub('IIS:\\Sites\\', '').split(/[\\\/]/)[0]
-               elsif !resource.parameters.key?(:sitename)
-                 resource[:applicationname].split(/[\\\/]/)[0]
-               else
-                 resource[:sitename]
-               end
-
-    sitename
+    if resource.parameters.key?(:virtual_directory)
+      resource[:virtual_directory].gsub('IIS:\\Sites\\', '').split(/[\\\/]/)[0]
+    elsif !resource.parameters.key?(:sitename)
+      resource[:applicationname].split(/[\\\/]/)[0]
+    else
+      resource[:sitename]
+    end
   end
 
   def app_name

@@ -167,7 +167,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
   def iis_properties
     # most of these are found with appcmd list apppool /text:*
-    iis_properties = {
+    {
       # misc
       'auto_start' => 'autoStart',
       'clr_config_file' => 'CLRConfigFile',
@@ -228,8 +228,6 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       'restart_time_limit' => 'recycling.periodicRestart.time',
       'restart_schedule' => 'recycling.periodicRestart.schedule',
     }
-
-    iis_properties
   end
 
   def escape_value(value)
