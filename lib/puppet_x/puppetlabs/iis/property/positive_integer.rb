@@ -12,7 +12,7 @@ module PuppetX
         class PositiveInteger < Puppet::Property
           validate do |value|
             raise "#{name} should be an Integer" unless value.to_i.to_s == value.to_s
-            raise "#{name} should be greater than 0" unless value.to_i > 0
+            raise "#{name} should be greater than 0" unless value.to_i.positive?
           end
         end
       end
