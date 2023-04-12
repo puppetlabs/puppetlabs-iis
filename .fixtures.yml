@@ -1,6 +1,5 @@
 fixtures:
-  forge_modules:
-    dism: 'puppetlabs/dism'
+  forge_modules:    
     pwshlib: 'puppetlabs/pwshlib'
     ruby_task_helper: 'puppetlabs/ruby_task_helper'
   repositories:

@@ -14,9 +14,8 @@ end
 RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
-    LitmusHelper.instance.run_shell('puppet module install puppetlabs/dism -v >= 1.2.0') unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
-    pp = "dism { ['IIS-WebServerRole','IIS-WebServer', 'IIS-WebServerManagementTools']: ensure => present }"
-    LitmusHelper.instance.apply_manifest(pp)
+    # Install IIS and required features on the target host
+    LitmusHelper.instance.run_shell("cmd.exe /c 'Start /w pkgmgr /iu:IIS-WebServerRole;IIS-WebServer;IIS-WebServerManagementTools'") unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
   end
 end
 
