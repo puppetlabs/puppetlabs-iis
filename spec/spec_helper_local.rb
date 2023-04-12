@@ -30,7 +30,7 @@ if Puppet.features.microsoft_windows?
       psversion = provider.powershell_version.split('.').first
       # psversion = `#{powershell} -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -Command \"$PSVersionTable.PSVersion.Major.ToString()\"`.chomp!.to_i
       puts "PowerShell major version number is #{psversion}"
-    rescue
+    rescue StandardError
       puts 'Unable to determine PowerShell version'
       psversion = -1
     end

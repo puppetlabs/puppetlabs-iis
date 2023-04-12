@@ -167,27 +167,15 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
 
-# Offense count: 21
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-# Style/RegexpLiteral:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_application/webadministration.rb'
-#     - 'lib/puppet/provider/iis_common.rb'
-#     - 'lib/puppet/type/iis_application.rb'
-#     - 'lib/puppet/type/iis_site.rb'
-#     - 'lib/puppet_x/puppetlabs/iis/property/path.rb'
-#     - 'spec/acceptance/iis_application_spec.rb'
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: implicit, explicit
-Style/RescueStandardError:
-  Exclude:
-    - 'spec/spec_helper.rb'
-    - 'spec/spec_helper_local.rb'
+# Style/RescueStandardError:
+#   Exclude:
+#     - 'spec/spec_helper.rb'
+#     - 'spec/spec_helper_local.rb'
 
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
