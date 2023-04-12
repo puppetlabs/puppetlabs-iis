@@ -108,7 +108,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   # powershell script content
   def self.ps_script_content(template, resource)
     @param_hash = resource
-    template_path = File.expand_path('../templates', __FILE__)
+    template_path = File.expand_path('templates', __dir__)
     template_file = File.new(template_path + "/webadministration/#{template}.ps1.erb").read
     template      = ERB.new(template_file, trim_mode: '-')
     template.result(binding)

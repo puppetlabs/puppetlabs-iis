@@ -168,15 +168,9 @@ Style/ClassAndModuleChildren:
 
 # # Offense count: 1
 # # This cop supports safe autocorrection (--autocorrect).
-# Style/Dir:
+# Style/ExpandPathArguments:
 #   Exclude:
-#     - 'spec/spec_helper_local.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/ExpandPathArguments:
-  Exclude:
-    - 'lib/puppet/provider/iis_powershell.rb'
+#     - 'lib/puppet/provider/iis_powershell.rb'
 
 # Offense count: 6
 # This cop supports safe autocorrection (--autocorrect).
