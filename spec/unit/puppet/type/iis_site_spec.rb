@@ -81,7 +81,7 @@ describe Puppet::Type.type(:iis_site) do
     it 'allows valid syntax' do
       resource[:authenticationinfo] = {
         'basic' => true,
-        'anonymous' => false,
+        'anonymous' => false
       }
     end
   end
@@ -111,7 +111,7 @@ describe Puppet::Type.type(:iis_site) do
     it 'requires bindinginformation to be ip:port:hostname' do
       resource[:bindings] = {
         'protocol' => 'http',
-        'bindinginformation' => '127.0.0.1:80:hostname',
+        'bindinginformation' => '127.0.0.1:80:hostname'
       }
     end
 
@@ -119,7 +119,7 @@ describe Puppet::Type.type(:iis_site) do
       expect {
         resource[:bindings] = {
           'protocol' => 'http',
-          'bindinginformation' => '*:a:',
+          'bindinginformation' => '*:a:'
         }
       }.to raise_error(Puppet::Error, %r{65535})
     end
@@ -127,14 +127,14 @@ describe Puppet::Type.type(:iis_site) do
     it 'allows * for ip' do
       resource[:bindings] = {
         'protocol' => 'http',
-        'bindinginformation' => '*:80:hostname',
+        'bindinginformation' => '*:80:hostname'
       }
     end
 
     it 'allows empty hostname' do
       resource[:bindings] = {
         'protocol' => 'http',
-        'bindinginformation' => '*:80:',
+        'bindinginformation' => '*:80:'
       }
     end
   end

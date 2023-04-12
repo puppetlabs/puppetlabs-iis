@@ -28,7 +28,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
           'bindinginformation' => '*:443:',
           'sslflags' => 0,
           'certificatehash' => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
-          'certificatestorename' => 'My',
+          'certificatestorename' => 'My'
         }
         expect(webadministration.ssl?).to be true
       end
@@ -39,11 +39,11 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
           'bindinginformation' => '*:443:',
           'sslflags' => 0,
           'certificatehash' => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
-          'certificatestorename' => 'My',
+          'certificatestorename' => 'My'
         },
                                {
                                  'protocol' => 'http',
-                                 'bindinginformation' => '*:8080:',
+                                 'bindinginformation' => '*:8080:'
                                }]
         expect(webadministration.ssl?).to be true
       end
@@ -51,7 +51,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
       it 'returns false if no https bindings are specified' do
         resource[:bindings] = {
           'protocol' => 'http',
-          'bindinginformation' => '*:8080:',
+          'bindinginformation' => '*:8080:'
         }
         expect(webadministration.ssl?).to be false
       end

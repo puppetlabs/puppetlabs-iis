@@ -12,7 +12,7 @@ describe 'iis_application provider' do
   let(:facts) do
     {
       iis_version: '8.0',
-      operatingsystem: 'Windows',
+      operatingsystem: 'Windows'
     }
   end
 
@@ -33,7 +33,7 @@ describe 'iis_application provider' do
       let(:params) do
         {
           title: 'foo\bar',
-          physicalpath: 'C:\noexist',
+          physicalpath: 'C:\noexist'
         }
       end
 
@@ -49,7 +49,7 @@ describe 'iis_application provider' do
         {
           title: 'foo\bar',
           physicalpath: 'C:\exist',
-          sitename: 'foo',
+          sitename: 'foo'
         }
       end
 
@@ -66,7 +66,7 @@ describe 'iis_application provider' do
     let(:params) do
       {
         title: 'foo\bar',
-        virtual_directory: 'IIS:\Sites\exists\vdir',
+        virtual_directory: 'IIS:\Sites\exists\vdir'
       }
     end
 
@@ -83,7 +83,7 @@ describe 'iis_application provider' do
   describe 'updating enabledprotocols' do
     let(:params) do
       {
-        title: 'foo\bar',
+        title: 'foo\bar'
       }
     end
 

@@ -77,7 +77,7 @@ Puppet::Type.type(:iis_feature).provide(:default, parent: Puppet::Provider::IIS_
     json.select { |feature| PuppetX::IIS::Features.iis_feature?(feature['Name']) }.map do |feature|
       feature_hash = {
         name: feature['Name'],
-        ensure: (feature['Installed'] == true) ? :present : :absent,
+        ensure: (feature['Installed'] == true) ? :present : :absent
       }
 
       new(feature_hash)

@@ -8,7 +8,7 @@ describe provider_class do
   let(:facts) do
     {
       iis_version: '8.0',
-      operatingsystem: 'Windows',
+      operatingsystem: 'Windows'
     }
   end
 

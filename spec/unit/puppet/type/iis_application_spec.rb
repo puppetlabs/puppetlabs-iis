@@ -11,7 +11,7 @@ describe 'iis_application' do
     let(:params) do
       {
         title: 'bar',
-        sitename: 'foo',
+        sitename: 'foo'
       }
     end
 
@@ -24,7 +24,7 @@ describe 'iis_application' do
       {
         title: 'anything else',
         sitename: 'foo',
-        applicationname: 'bar',
+        applicationname: 'bar'
       }
     end
 
@@ -36,7 +36,7 @@ describe 'iis_application' do
     let(:params) do
       {
         title: 'foo\bar',
-        virtual_directory: 'IIS:\Sites\foo\bar',
+        virtual_directory: 'IIS:\Sites\foo\bar'
       }
     end
 
@@ -47,7 +47,7 @@ describe 'iis_application' do
     let(:params) do
       {
         title: 'foo\bar',
-        virtual_directory: 'foo\bar',
+        virtual_directory: 'foo\bar'
       }
     end
 
@@ -60,8 +60,8 @@ describe 'iis_application' do
         title: 'foo\bar',
         authenticationinfo: {
           'basic' => true,
-          'anonymous' => true,
-        },
+          'anonymous' => true
+        }
       }
     end
 
@@ -72,7 +72,7 @@ describe 'iis_application' do
     let(:params) do
       {
         title: 'foo\bar',
-        physicalpath: 'C:\test',
+        physicalpath: 'C:\test'
       }
     end
 
@@ -85,7 +85,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationpool: value,
+            applicationpool: value
           }
         end
 
@@ -97,7 +97,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationpool: value,
+            applicationpool: value
           }
         end
 
@@ -112,7 +112,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            sitename: value,
+            sitename: value
           }
         end
 
@@ -124,7 +124,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            sitename: value,
+            sitename: value
           }
         end
 
@@ -138,7 +138,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          applicationpool: '',
+          applicationpool: ''
         }
       end
 
@@ -149,7 +149,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          applicationpool: 'sweet!',
+          applicationpool: 'sweet!'
         }
       end
 
@@ -160,7 +160,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          applicationpool: 'OtherPool',
+          applicationpool: 'OtherPool'
         }
       end
 
@@ -173,7 +173,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          sslflags: 'Ssl',
+          sslflags: 'Ssl'
         }
       end
 
@@ -187,7 +187,7 @@ describe 'iis_application' do
           sslflags: [
             'Ssl',
             'SslNegotiateCert',
-          ],
+          ]
         }
       end
 
@@ -201,7 +201,7 @@ describe 'iis_application' do
           sslflags: [
             'SslOn',
             'SslNegotiateCert',
-          ],
+          ]
         }
       end
 
@@ -214,7 +214,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: 'http,https,net.pipe,net.tcp,net.msmq,msmq.formatname',
+          enabledprotocols: 'http,https,net.pipe,net.tcp,net.msmq,msmq.formatname'
         }
       end
 
@@ -225,7 +225,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: nil,
+          enabledprotocols: nil
         }
       end
 
@@ -236,7 +236,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: '',
+          enabledprotocols: ''
         }
       end
 
@@ -247,7 +247,7 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: 'woot',
+          enabledprotocols: 'woot'
         }
       end
 

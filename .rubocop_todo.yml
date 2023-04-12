@@ -169,25 +169,19 @@ Style/ClassAndModuleChildren:
 
 
 
-# # Offense count: 1
-# # This cop supports unsafe autocorrection (--autocorrect-all).
-# # Configuration parameters: Mode.
-# Style/StringConcatenation:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_feature/default.rb'
 
 # Offense count: 42
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyleForMultiline.
 # SupportedStylesForMultiline: comma, consistent_comma, no_comma
-Style/TrailingCommaInHashLiteral:
-  Exclude:
-    - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
-    - 'lib/puppet/provider/iis_feature/default.rb'
-    - 'spec/spec_helper.rb'
-    - 'spec/unit/puppet/provider/iis_application/webadministration_spec.rb'
-    - 'spec/unit/puppet/provider/iis_application_pool/webadministration_spec.rb'
-    - 'spec/unit/puppet/provider/iis_site/webadministration_spec.rb'
-    - 'spec/unit/puppet/type/iis_application_pool_spec.rb'
-    - 'spec/unit/puppet/type/iis_application_spec.rb'
-    - 'spec/unit/puppet/type/iis_site_spec.rb'
+# Style/TrailingCommaInHashLiteral:
+#   Exclude:
+#     - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
+#     - 'lib/puppet/provider/iis_feature/default.rb'
+#     - 'spec/spec_helper.rb'
+#     - 'spec/unit/puppet/provider/iis_application/webadministration_spec.rb'
+#     - 'spec/unit/puppet/provider/iis_application_pool/webadministration_spec.rb'
+#     - 'spec/unit/puppet/provider/iis_site/webadministration_spec.rb'
+#     - 'spec/unit/puppet/type/iis_application_pool_spec.rb'
+#     - 'spec/unit/puppet/type/iis_application_spec.rb'
+#     - 'spec/unit/puppet/type/iis_site_spec.rb'
