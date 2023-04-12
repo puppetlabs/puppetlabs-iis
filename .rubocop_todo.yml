@@ -167,20 +167,14 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
 
-# # Offense count: 2
-# # This cop supports safe autocorrection (--autocorrect).
-# Style/RedundantConstantBase:
-#   Exclude:
-#     - 'lib/puppet/type/iis_application_pool.rb'
-#     - 'lib/puppet/type/iis_site.rb'
 
 # Offense count: 12
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantRegexpEscape:
-  Exclude:
-    - 'lib/puppet/type/iis_site.rb'
-    - 'lib/puppet_x/puppetlabs/iis/property/name.rb'
-    - 'spec/acceptance/iis_site_spec.rb'
+# # This cop supports safe autocorrection (--autocorrect).
+# Style/RedundantRegexpEscape:
+#   Exclude:
+#     - 'lib/puppet/type/iis_site.rb'
+#     - 'lib/puppet_x/puppetlabs/iis/property/name.rb'
+#     - 'spec/acceptance/iis_site_spec.rb'
 
 # Offense count: 13
 # This cop supports safe autocorrection (--autocorrect).

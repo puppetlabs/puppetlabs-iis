@@ -602,13 +602,13 @@ describe 'iis_site', :suite_b do
         it 'runs the first site on port 80' do
           first_site = resource('iis_site', site_name)
           expect(first_site.stdout).to match(%r{ensure(\s*)=> 'started',})
-          expect(first_site.stdout).to match(%r{\*\:80\:})
+          expect(first_site.stdout).to match(%r{\*:80:})
         end
 
         it 'runs the second site on port 8080' do
           second_site = resource('iis_site', second_site_name)
           expect(second_site.stdout).to match(%r{ensure(\s*)=> 'started',})
-          expect(second_site.stdout).to match(%r{\*\:8080\:#{second_site_name}})
+          expect(second_site.stdout).to match(%r{\*:8080:#{second_site_name}})
         end
       end
 
@@ -681,13 +681,13 @@ describe 'iis_site', :suite_b do
       it 'runs the first site on port 80 with no host header' do
         first_site = resource('iis_site', site_name)
         expect(first_site.stdout).to match(%r{ensure(\s*)=> 'started',})
-        expect(first_site.stdout).to match(%r{\*\:80\:})
+        expect(first_site.stdout).to match(%r{\*:80:})
       end
 
       it 'runs the second site on port 80 but a different host header' do
         second_site = resource('iis_site', second_site_name)
         expect(second_site.stdout).to match(%r{ensure(\s*)=> 'started',})
-        expect(second_site.stdout).to match(%r{\*\:80\:#{second_site_name}})
+        expect(second_site.stdout).to match(%r{\*:80:#{second_site_name}})
       end
     end
   end

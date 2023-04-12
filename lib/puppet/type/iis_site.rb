@@ -184,7 +184,7 @@ Puppet::Type.newtype(:iis_site) do
           serviceautostartprovidertype => "MyAutostartProvider, MyAutostartProvider, version=1.0.0.0, Culture=neutral, PublicKeyToken=426f62526f636b73"'
     validate do |value|
       raise ArgumentError, 'A non-empty serviceautostartprovidername name must be specified.' if value.nil? || value.empty?
-      raise("#{name} is not a valid serviceautostartprovidername name") unless %r{^[a-zA-Z0-9\-\_'\s]+$}.match?(value)
+      raise("#{name} is not a valid serviceautostartprovidername name") unless %r{^[a-zA-Z0-9\-_'\s]+$}.match?(value)
     end
     # serviceautostartprovidertype and serviceautostartprovidername work together
   end
