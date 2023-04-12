@@ -290,7 +290,7 @@ Puppet::Type.newtype(:iis_site) do
     desc 'Configure limits for an IIS Site'
     valid_limits = ['connectiontimeout', 'maxbandwidth', 'maxconnections']
     validate do |value|
-      raise "#{name} should be a Hash" unless value.is_a? ::Hash
+      raise "#{name} should be a Hash" unless value.is_a? Hash
 
       value.each do |key, limit|
         raise("Invalid iis site limit key '#{key}'. Should be one of: #{valid_limits}") unless valid_limits.include? key

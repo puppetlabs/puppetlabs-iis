@@ -30,7 +30,7 @@ Puppet::Type.newtype(:iis_application_pool) do
   newparam(:name, namevar: true, parent: PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The unique name of the ApplicationPool.'
     validate do |value|
-      raise "#{name} should be a String" unless value.is_a? ::String
+      raise "#{name} should be a String" unless value.is_a? String
       raise ArgumentError, "A non-empty #{name} must be specified." if value.nil? || value.empty?
       raise("#{name} should be less than 64 characters") unless value.length < 64
 

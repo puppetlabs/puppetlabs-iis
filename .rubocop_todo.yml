@@ -166,19 +166,13 @@ Style/ClassAndModuleChildren:
     - 'lib/puppet_x/puppetlabs/iis/property/timeformat.rb'
     - 'lib/puppet_x/puppetlabs/iis/property/whole_number.rb'
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-# Style/RedundantAssignment:
-#   Exclude:
-#     - 'lib/puppet/provider/iis_application/webadministration.rb'
-#     - 'lib/puppet/provider/iis_application_pool/webadministration.rb'
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantConstantBase:
-  Exclude:
-    - 'lib/puppet/type/iis_application_pool.rb'
-    - 'lib/puppet/type/iis_site.rb'
+# # Offense count: 2
+# # This cop supports safe autocorrection (--autocorrect).
+# Style/RedundantConstantBase:
+#   Exclude:
+#     - 'lib/puppet/type/iis_application_pool.rb'
+#     - 'lib/puppet/type/iis_site.rb'
 
 # Offense count: 12
 # This cop supports safe autocorrection (--autocorrect).
