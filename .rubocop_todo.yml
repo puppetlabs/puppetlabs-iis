@@ -145,8 +145,8 @@ RSpec/StubbedMock:
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: .
 # SupportedStyles: constant, string
-RSpec/VerifiedDoubleReference:
-  EnforcedStyle: string
+# RSpec/VerifiedDoubleReference:
+#   EnforcedStyle: string
 
 # Offense count: 12
 # This cop supports unsafe autocorrection (--autocorrect-all).

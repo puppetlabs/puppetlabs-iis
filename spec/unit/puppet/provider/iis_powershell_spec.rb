@@ -9,7 +9,7 @@ describe 'test' do
   describe 'run' do
     subject(:iis_powershell_type) { Puppet::Provider::IIS_PowerShell }
 
-    let(:ps_manager) { instance_double('PSManager') }
+    let(:ps_manager) { instance_double(Puppet::Provider::IIS_PowerShell) }
     let(:command) { 'command' }
     let(:execute_response) do
       {
