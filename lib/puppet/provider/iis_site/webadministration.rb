@@ -8,6 +8,9 @@ require File.join(File.dirname(__FILE__), '../../../puppet/provider/iis_powershe
 # to return. This will exponentially increase the total duration of your
 # puppet run
 
+SETTINGS = ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
+            'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].freeze
+
 Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provider::IIS_PowerShell) do
   desc 'IIS Provider using the PowerShell WebAdministration module'
 
@@ -125,16 +128,12 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def self.prefetch(resources)
     sites = instances
     resources.each_key do |site|
-      next unless !sites.nil? && provider = sites.find { |s| s.name == site }
-      unless resources[site]['authenticationinfo'].nil?
-        resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo'])
-      end
+      next unless !sites.nil? && (provider = sites.find { |s| s.name == site })
+
+      resources[site]['authenticationinfo'] = provider.authenticationinfo.merge(resources[site]['authenticationinfo']) unless resources[site]['authenticationinfo'].nil?
       resources[site].provider = provider
     end
   end
-
-  SETTINGS = ['name', 'physicalpath', 'applicationpool', 'hostheader', 'state', 'serverautostart', 'enabledprotocols',
-              'logformat', 'logpath', 'logperiod', 'logtruncatesize', 'loglocaltimerollover', 'logextfileflags'].freeze
 
   def self.instances
     inst_cmd = ps_script_content('_getwebsites', @resource)
@@ -147,7 +146,6 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     site_json.map do |site|
       site_hash = {}
 
-      # In PowerShell 2.0, empty strings come in as nil which then fail insync? tests.
       # Convert nil's to empty strings for all properties which we know are String types
       SETTINGS.each do |setting|
         site[setting] = '' if site[setting].nil?
@@ -191,15 +189,16 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def self.to_bool(value)
     return :true   if value == true   || value =~ %r{(true|t|yes|y|1)$}i
     return :false  if value == false  || value =~ %r{(^$|false|f|no|n|0)$}i
+
     raise ArgumentError, "invalid value for Boolean: \"#{value}\""
   end
 
   def binding_information
-    if @resource[:bindings] && ['http', 'https'].include?(@resource['bindings'].first['protocol'])
-      binding = @resource[:bindings].first
-      matches = binding['bindinginformation'].match(%r{^(?<ip_dns>.+):(?<port>\d*):(?<host_header>(.*))})
-      [matches[:ip_dns], matches[:port], matches[:host_header]]
-    end
+    return unless @resource[:bindings] && ['http', 'https'].include?(@resource['bindings'].first['protocol'])
+
+    binding = @resource[:bindings].first
+    matches = binding['bindinginformation'].match(%r{^(?<ip_dns>.+):(?<port>\d*):(?<host_header>(.*))})
+    [matches[:ip_dns], matches[:port], matches[:host_header]]
   end
 
   def ssl?

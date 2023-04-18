@@ -1,6 +1,5 @@
 fixtures:
-  forge_modules:
-    dism: 'puppetlabs/dism'
+  forge_modules:    
     pwshlib: 'puppetlabs/pwshlib'
     ruby_task_helper: 'puppetlabs/ruby_task_helper'
   repositories:
@@ -8,7 +7,7 @@ fixtures:
     facts: 'https://github.com/puppetlabs/puppetlabs-facts.git'
     puppet_agent:
       repo: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
-      ref: v4.12.1
+      ref: v4.13.0
     provision: 'https://github.com/puppetlabs/provision.git'
   symlinks:
     iis: "#{source_dir}"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-dir = File.expand_path(File.dirname(__FILE__))
+dir = __dir__
 $LOAD_PATH.unshift File.join(dir, 'lib')
 
 require 'puppet'
@@ -18,9 +18,9 @@ if Puppet.features.microsoft_windows?
   def take_ownership(path)
     path = path.tr('/', '\\')
     output = `takeown.exe /F #{path} /R /A /D Y 2>&1`
-    if $CHILD_STATUS != 0 # check if the child process exited cleanly.
-      puts "#{path} got error #{output}"
-    end
+    return unless $CHILD_STATUS != 0 # check if the child process exited cleanly.
+
+    puts "#{path} got error #{output}"
   end
 
   def installed_powershell_major_version
@@ -30,7 +30,7 @@ if Puppet.features.microsoft_windows?
       psversion = provider.powershell_version.split('.').first
       # psversion = `#{powershell} -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -Command \"$PSVersionTable.PSVersion.Major.ToString()\"`.chomp!.to_i
       puts "PowerShell major version number is #{psversion}"
-    rescue
+    rescue StandardError
       puts 'Unable to determine PowerShell version'
       psversion = -1
     end
@@ -46,9 +46,7 @@ RSpec.configure do |config|
   config.after :suite do
     # return to original tmpdir
     ENV['TMPDIR'] = oldtmpdir
-    if Puppet::Util::Platform.windows?
-      take_ownership(tmpdir)
-    end
+    take_ownership(tmpdir) if Puppet::Util::Platform.windows?
     FileUtils.rm_rf(tmpdir)
   end
 end

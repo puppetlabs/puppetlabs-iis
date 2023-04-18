@@ -14,9 +14,8 @@ end
 RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
-    LitmusHelper.instance.run_shell('puppet module install puppetlabs/dism -v >= 1.2.0') unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
-    pp = "dism { ['IIS-WebServerRole','IIS-WebServer', 'IIS-WebServerManagementTools']: ensure => present }"
-    LitmusHelper.instance.apply_manifest(pp)
+    # Install IIS and required features on the target host
+    LitmusHelper.instance.run_shell('Install-WindowsFeature -name Web-Server -IncludeManagementTools') unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
   end
 end
 
@@ -34,7 +33,7 @@ end
 
 def target_host_facts
   facter_version = run_shell('facter --version').stdout.strip.split('.')[0]
-  @target_host_facts ||= if %r{4}.match?(facter_version)
+  @target_host_facts ||= if facter_version.include?('4')
                            run_shell('facter --json --show-legacy').stdout.strip
                          else
                            run_shell('facter -p --json').stdout.strip

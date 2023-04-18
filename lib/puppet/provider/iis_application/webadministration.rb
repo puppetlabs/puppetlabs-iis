@@ -62,6 +62,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     result = self.class.run(inst_cmd)
     raise "Error creating application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
     raise "Error creating application: #{result[:errormessage]}" unless result[:errormessage].nil?
+
     @property_hash[:ensure] = :present
   end
 
@@ -85,18 +86,18 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
     if @property_flush[:sslflags]
       flags = @property_flush[:sslflags].join(',')
-      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'"\
-      " -Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
+      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
+                  "-Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
     end
 
     @property_flush[:authenticationinfo]&.each do |auth, _enable|
-      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}'"\
-      " -Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
+      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
+                  "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
     end
 
     if @property_flush[:enabledprotocols]
-      inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{self.class.find_sitename(resource)}\"]/application[@path=\"/#{app_name}\"]'" \
-      " -Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
+      inst_cmd << "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"#{self.class.find_sitename(resource)}\"]/application[@path=\"/#{app_name}\"]' " \
+                  "-Name enabledProtocols -Value '#{@property_flush[:enabledprotocols]}'"
     end
 
     if @property_flush[:applicationpool]
@@ -112,7 +113,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   def self.prefetch(resources)
     apps = instances
     resources.each do |name, resource|
-      if provider = apps.find { |app| compare_app_names(app, resource) && app.sitename == find_sitename(resource) }
+      if (provider = apps.find { |app| compare_app_names(app, resource) && app.sitename == find_sitename(resource) })
         resources[name].provider = provider
       end
     end
@@ -145,29 +146,25 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   end
 
   def self.compare_app_names(app, resource)
-    app_appname      =  app.applicationname.split(/[\\\/]/) - Array(app.sitename)
-    resource_appname =  resource[:applicationname].split(/[\\\/]/).reject(&:empty?) - Array(find_sitename(resource))
+    app_appname      =  app.applicationname.split(%r{[\\/]}) - Array(app.sitename)
+    resource_appname =  resource[:applicationname].split(%r{[\\/]}).reject(&:empty?) - Array(find_sitename(resource))
     app_appname == resource_appname
   end
 
   def self.find_sitename(resource)
-    sitename = if resource.parameters.key?(:virtual_directory)
-                 resource[:virtual_directory].gsub('IIS:\\Sites\\', '').split(/[\\\/]/)[0]
-               elsif !resource.parameters.key?(:sitename)
-                 resource[:applicationname].split(/[\\\/]/)[0]
-               else
-                 resource[:sitename]
-               end
-
-    sitename
+    if resource.parameters.key?(:virtual_directory)
+      resource[:virtual_directory].gsub('IIS:\\Sites\\', '').split(%r{[\\/]})[0]
+    elsif !resource.parameters.key?(:sitename)
+      resource[:applicationname].split(%r{[\\/]})[0]
+    else
+      resource[:sitename]
+    end
   end
 
   def app_name
-    name_segments = @resource[:applicationname].split(/[\\\/]/)
-    if @resource[:sitename] && name_segments.count > 1 && name_segments[0] == @resource[:sitename]
-      name_segments[1..-1].join('/')
-    elsif @resource[:sitename].nil?
-      name_segments[1..-1].join('/')
+    name_segments = @resource[:applicationname].split(%r{[\\/]})
+    if (@resource[:sitename] && name_segments.count > 1 && name_segments[0] == @resource[:sitename]) || @resource[:sitename].nil?
+      name_segments[1..].join('/')
     else
       name_segments.join('/')
     end
@@ -176,9 +173,10 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   private
 
   def check_paths
-    if @resource[:physicalpath] && !File.exist?(@resource[:physicalpath])
-      raise "physicalpath doesn't exist: #{@resource[:physicalpath]}"
-    end
+    return unless @resource[:physicalpath] && !File.exist?(@resource[:physicalpath])
+
+    raise "physicalpath doesn't exist: #{@resource[:physicalpath]}"
+
     # XXX How do I check for IIS:\ path existence without shelling out to PS?
     # if @resource[:virtual_directory] and ! File.exists?(@resource[:virtual_directory])
     #  fail "virtual_directory doesn't exist: #{@resource[:virtual_directory]}"

@@ -71,13 +71,12 @@ describe 'iis_application_pool' do
 
   let :minimal_config do
     {
-      name: 'Some App Pool',
+      name: 'Some App Pool'
     }
   end
 
   let :optional_config do
-    {
-    }
+    {}
   end
 
   let :default_config do
@@ -169,6 +168,7 @@ describe 'iis_application_pool' do
         type_class.new(config)
       }.not_to raise_error
     end
+
     it "requires #{prop} to be a formatted time" do
       config = { name: 'name' }
       config[prop] = 'string'
@@ -196,6 +196,7 @@ describe 'iis_application_pool' do
     end
 
     next unless upper_limit
+
     it "requires #{prop} to be less than #{upper_limit}" do
       expect {
         upper_limit += 1
@@ -256,6 +257,7 @@ describe 'iis_application_pool' do
       )
       expect(pool[:restart_schedule]).to eq(['00:00:00'])
     end
+
     it 'accepts an array of formatted times' do
       pool = type_class.new(
         name: 'foo',
@@ -263,20 +265,22 @@ describe 'iis_application_pool' do
       )
       expect(pool[:restart_schedule]).to eq(['00:00:00'])
     end
+
     it 'rejects a value that is not a formatted time' do
       expect {
         config = {
           name: 'foo',
-          restart_schedule: 'bottle',
+          restart_schedule: 'bottle'
         }
         type_class.new(config)
       }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})
     end
+
     it 'rejects a formatted time with a granularity of less than 60 seconds' do
       expect {
         config = {
           name: 'foo',
-          restart_schedule: '00:00:45',
+          restart_schedule: '00:00:45'
         }
         type_class.new(config)
       }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})

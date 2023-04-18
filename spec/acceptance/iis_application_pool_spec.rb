@@ -14,12 +14,12 @@ describe 'iis_application_pool', :suite_a do
 
       iis_idempotent_apply('create app pool', manifest)
 
-      it 'resource iis_application_pool is present' do
-        puppet_resource_should_show('ensure', 'present', resource('iis_application_pool', pool_name))
-      end
-
       after(:all) do
         remove_app_pool(pool_name)
+      end
+
+      it 'resource iis_application_pool is present' do
+        puppet_resource_should_show('ensure', 'present', resource('iis_application_pool', pool_name))
       end
     end
 
@@ -37,7 +37,11 @@ describe 'iis_application_pool', :suite_a do
 
       iis_idempotent_apply('create app pool', manifest)
 
-      it 'has all properties correctly configured' do
+      after(:all) do
+        remove_app_pool(pool_name)
+      end
+
+      it 'has all properties correctly configured for IIS 7.0' do
         # Properties introduced in IIS 7.0 (Server 2008 - Kernel 6.1)
         resource_data = resource('iis_application_pool', pool_name)
         [
@@ -72,9 +76,10 @@ describe 'iis_application_pool', :suite_a do
           puppet_resource_should_show(key, value, resource_data)
         end
       end
+
       # Properties introduced in IIS 8.5 (Server 2012R2 - Kernel 6.3)
       unless ['6.2', '6.1'].include?(target_host_facts['kernelmajversion'])
-        it 'has all properties correctly configured' do
+        it 'has all properties correctly configured for IIS 8.5' do
           resource_data = resource('iis_application_pool', pool_name)
           [
             'idle_timeout_action', 'Terminate',
@@ -84,10 +89,6 @@ describe 'iis_application_pool', :suite_a do
           end
         end
       end
-
-      after(:all) do
-        remove_app_pool(pool_name)
-      end
     end
 
     context 'with a password wrapped in Sensitive() defined' do
@@ -96,11 +97,15 @@ describe 'iis_application_pool', :suite_a do
         iis_application_pool { '#{pool_name}':
           ensure    => 'present',
           user_name => 'user',
-          password  => Sensitive('#@\\\'454sdf'),
+          password  => Sensitive('#@\\'454sdf'),
         }
       HERE
 
       iis_idempotent_apply('create app pool', manifest)
+
+      after(:all) do
+        remove_app_pool(pool_name)
+      end
 
       it 'has all properties correctly configured' do
         resource_data = resource('iis_application_pool', pool_name)
@@ -111,10 +116,6 @@ describe 'iis_application_pool', :suite_a do
         ].each_slice(2) do |key, value|
           puppet_resource_should_show(key, value, resource_data)
         end
-      end
-
-      after(:all) do
-        remove_app_pool(pool_name)
       end
     end
 
@@ -130,12 +131,12 @@ describe 'iis_application_pool', :suite_a do
 
         apply_failing_manifest('apply failing manifest', manifest)
 
-        it 'iis_application_pool is absent' do
-          puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
-        end
-
         after(:all) do
           remove_app_pool(pool_name)
+        end
+
+        it 'iis_application_pool is absent' do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
         end
       end
 
@@ -150,12 +151,12 @@ describe 'iis_application_pool', :suite_a do
 
         apply_failing_manifest('create app pool', manifest)
 
-        it 'iis_application_pool is absent' do
-          puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
-        end
-
         after(:all) do
           remove_app_pool(pool_name)
+        end
+
+        it 'iis_application_pool is absent' do
+          puppet_resource_should_show('ensure', 'absent', resource('iis_application_pool', pool_name))
         end
       end
     end
@@ -177,6 +178,10 @@ describe 'iis_application_pool', :suite_a do
 
     iis_idempotent_apply('start the app pool', manifest)
 
+    after(:all) do
+      remove_app_pool(pool_name)
+    end
+
     it 'iis_application_pool is present and has the correct state' do
       resource_data = resource('iis_application_pool', pool_name)
       [
@@ -185,10 +190,6 @@ describe 'iis_application_pool', :suite_a do
       ].each_slice(2) do |key, value|
         puppet_resource_should_show(key, value, resource_data)
       end
-    end
-
-    after(:all) do
-      remove_app_pool(pool_name)
     end
   end
 
@@ -211,7 +212,7 @@ describe 'iis_application_pool', :suite_a do
     end
   end
 
-  context 'when application pool restart_memory_limit set' do
+  context 'when application pool restart_memory_limit set to 3500000' do
     pool_name = SecureRandom.hex(10).to_s
     manifest = <<-HERE
       iis_application_pool { '#{pool_name}':
@@ -228,6 +229,10 @@ describe 'iis_application_pool', :suite_a do
 
     iis_idempotent_apply('set memory limit', manifest)
 
+    after(:all) do
+      remove_app_pool(pool_name)
+    end
+
     it 'has all properties correctly configured' do
       resource_data = resource('iis_application_pool', pool_name)
       [
@@ -238,13 +243,9 @@ describe 'iis_application_pool', :suite_a do
         puppet_resource_should_show(key, value, resource_data)
       end
     end
-
-    after(:all) do
-      remove_app_pool(pool_name)
-    end
   end
 
-  context 'when application pool restart_memory_limit set' do
+  context 'when application pool restart_memory_limit set to 0' do
     pool_name = SecureRandom.hex(10).to_s
     manifest = <<-HERE
       iis_application_pool { '#{pool_name}':
@@ -266,6 +267,10 @@ describe 'iis_application_pool', :suite_a do
 
     iis_idempotent_apply('set values to 0', manifest)
 
+    after(:all) do
+      remove_app_pool(pool_name)
+    end
+
     it 'has all properties correctly configured' do
       resource_data = resource('iis_application_pool', pool_name)
       [
@@ -279,10 +284,6 @@ describe 'iis_application_pool', :suite_a do
       ].each_slice(2) do |key, value|
         puppet_resource_should_show(key, value, resource_data)
       end
-    end
-
-    after(:all) do
-      remove_app_pool(pool_name)
     end
   end
 
@@ -327,6 +328,10 @@ describe 'iis_application_pool', :suite_a do
 
     iis_idempotent_apply('create app pool', manifest)
 
+    after(:all) do
+      remove_app_pool(pool_name)
+    end
+
     it 'has all properties correctly configured' do
       resource_data = resource('iis_application_pool', pool_name)
       [
@@ -362,10 +367,6 @@ describe 'iis_application_pool', :suite_a do
       ].each_slice(2) do |key, value|
         puppet_resource_should_show(key, value, resource_data)
       end
-    end
-
-    after(:all) do
-      remove_app_pool(pool_name)
     end
   end
 end

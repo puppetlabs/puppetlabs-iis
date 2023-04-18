@@ -11,63 +11,68 @@ describe 'iis_application' do
     let(:params) do
       {
         title: 'bar',
-        sitename: 'foo',
+        sitename: 'foo'
       }
     end
 
     it { expect(iis_application_type[:sitename]).to eq 'foo' }
     it { expect(iis_application_type[:applicationname]).to eq 'bar' }
   end
+
   context 'specifying sitename and applicationname' do
     let(:params) do
       {
         title: 'anything else',
         sitename: 'foo',
-        applicationname: 'bar',
+        applicationname: 'bar'
       }
     end
 
     it { expect(iis_application_type[:sitename]).to eq 'foo' }
     it { expect(iis_application_type[:applicationname]).to eq 'bar' }
   end
+
   context 'specifying virtual_directory' do
     let(:params) do
       {
         title: 'foo\bar',
-        virtual_directory: 'IIS:\Sites\foo\bar',
+        virtual_directory: 'IIS:\Sites\foo\bar'
       }
     end
 
     it { expect(iis_application_type[:virtual_directory]).to eq 'IIS:\Sites\foo\bar' }
   end
+
   context 'specifying virtual_directory with no provider path' do
     let(:params) do
       {
         title: 'foo\bar',
-        virtual_directory: 'foo\bar',
+        virtual_directory: 'foo\bar'
       }
     end
 
     it { expect(iis_application_type[:virtual_directory]).to eq 'IIS:/Sites/foo\bar' }
   end
+
   context 'specifying authenticationinfo' do
     let(:params) do
       {
         title: 'foo\bar',
         authenticationinfo: {
-          'basic'     => true,
-          'anonymous' => true,
-        },
+          'basic' => true,
+          'anonymous' => true
+        }
       }
     end
 
     it { expect(iis_application_type[:authenticationinfo]).to eq('basic' => true, 'anonymous' => true) }
   end
+
   context 'specifying physicalpath' do
     let(:params) do
       {
         title: 'foo\bar',
-        physicalpath: 'C:\test',
+        physicalpath: 'C:\test'
       }
     end
 
@@ -80,7 +85,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationpool: value,
+            applicationpool: value
           }
         end
 
@@ -92,7 +97,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            applicationpool: value,
+            applicationpool: value
           }
         end
 
@@ -107,7 +112,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            sitename: value,
+            sitename: value
           }
         end
 
@@ -119,7 +124,7 @@ describe 'iis_application' do
         let(:params) do
           {
             title: 'foo\bar',
-            sitename: value,
+            sitename: value
           }
         end
 
@@ -133,44 +138,48 @@ describe 'iis_application' do
       let(:params) do
         {
           title: 'foo\bar',
-          applicationpool: '',
+          applicationpool: ''
         }
       end
 
       it { expect { iis_application_type }.to raise_error(Puppet::Error, %r{applicationpool}) }
     end
+
     context 'when invalid' do
       let(:params) do
         {
           title: 'foo\bar',
-          applicationpool: 'sweet!',
+          applicationpool: 'sweet!'
         }
       end
 
       it { expect { iis_application_type }.to raise_error(Puppet::Error, %r{applicationpool}) }
     end
+
     context 'when valid' do
       let(:params) do
         {
           title: 'foo\bar',
-          applicationpool: 'OtherPool',
+          applicationpool: 'OtherPool'
         }
       end
 
       it { expect(iis_application_type[:applicationpool]).to eq 'OtherPool' }
     end
   end
+
   describe 'sslflags' do
     context 'single item' do
       let(:params) do
         {
           title: 'foo\bar',
-          sslflags: 'Ssl',
+          sslflags: 'Ssl'
         }
       end
 
       it { expect(iis_application_type[:sslflags]).to eq([:Ssl]) }
     end
+
     context 'array of items' do
       let(:params) do
         {
@@ -178,12 +187,13 @@ describe 'iis_application' do
           sslflags: [
             'Ssl',
             'SslNegotiateCert',
-          ],
+          ]
         }
       end
 
       it { expect(iis_application_type[:sslflags]).to eq([:Ssl, :SslNegotiateCert]) }
     end
+
     context 'array with invalid items' do
       let(:params) do
         {
@@ -191,49 +201,53 @@ describe 'iis_application' do
           sslflags: [
             'SslOn',
             'SslNegotiateCert',
-          ],
+          ]
         }
       end
 
       it { expect { iis_application_type }.to raise_error(Puppet::Error, %r{sslflags}) }
     end
   end
+
   describe 'enabledprotocols' do
     context 'should accept valid string value' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: 'http,https,net.pipe,net.tcp,net.msmq,msmq.formatname',
+          enabledprotocols: 'http,https,net.pipe,net.tcp,net.msmq,msmq.formatname'
         }
       end
 
       it { expect(iis_application_type[:enabledprotocols]).to eq('http,https,net.pipe,net.tcp,net.msmq,msmq.formatname') }
     end
+
     context 'should not allow nil' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: nil,
+          enabledprotocols: nil
         }
       end
 
       it { expect { iis_application_type }.to raise_error(Puppet::Error, %r{Got nil value for enabledprotocols}) }
     end
+
     context 'should not allow empty' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: '',
+          enabledprotocols: ''
         }
       end
 
       it { expect { iis_application_type }.to raise_error(Puppet::ResourceError, %r{Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname}) }
     end
+
     context 'should not accept invalid string value' do
       let(:params) do
         {
           title: 'foo\bar',
-          enabledprotocols: 'woot',
+          enabledprotocols: 'woot'
         }
       end
 

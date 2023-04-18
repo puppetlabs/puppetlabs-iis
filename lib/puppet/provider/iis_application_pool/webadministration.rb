@@ -44,7 +44,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       if property.value.is_a?(Array)
         cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}'"
         property.value.each do |item|
-          cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @\{value=#{escape_value(item)}\}"
+          cmd << "New-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value @{value=#{escape_value(item)}}"
         end
       else
         cmd << "Set-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}' -Value #{escape_value(property.value)}"
@@ -85,7 +85,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
   def self.prefetch(resources)
     pools = instances
     resources.each_key do |pool|
-      if provider = pools.find { |s| s.name == pool }
+      if (provider = pools.find { |s| s.name == pool })
         resources[pool].provider = provider
       end
     end
@@ -157,7 +157,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       pool_hash[:restart_private_memory_limit]       = pool['restart_private_memory_limit']
       pool_hash[:restart_requests_limit]             = pool['restart_requests_limit']
       pool_hash[:restart_time_limit]                 = pool['restart_time_limit']
-      pool_hash[:restart_schedule]                   = pool['restart_schedule'].to_s.split(' ')
+      pool_hash[:restart_schedule]                   = pool['restart_schedule'].to_s.split # split(' ') implied by default
 
       new(pool_hash)
     end
@@ -167,76 +167,74 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
   def iis_properties
     # most of these are found with appcmd list apppool /text:*
-    iis_properties = {
+    {
       # misc
-      'auto_start'                    => 'autoStart',
-      'clr_config_file'               => 'CLRConfigFile',
-      'enable32_bit_app_on_win64'     => 'enable32BitAppOnWin64',
+      'auto_start' => 'autoStart',
+      'clr_config_file' => 'CLRConfigFile',
+      'enable32_bit_app_on_win64' => 'enable32BitAppOnWin64',
       'enable_configuration_override' => 'enableConfigurationOverride',
-      'managed_pipeline_mode'         => 'managedPipelineMode',
-      'managed_runtime_loader'        => 'managedRuntimeLoader',
-      'managed_runtime_version'       => 'managedRuntimeVersion',
-      'pass_anonymous_token'          => 'passAnonymousToken',
-      'start_mode'                    => 'startMode',
-      'queue_length'                  => 'queueLength',
+      'managed_pipeline_mode' => 'managedPipelineMode',
+      'managed_runtime_loader' => 'managedRuntimeLoader',
+      'managed_runtime_version' => 'managedRuntimeVersion',
+      'pass_anonymous_token' => 'passAnonymousToken',
+      'start_mode' => 'startMode',
+      'queue_length' => 'queueLength',
 
       # cpu related
-      'cpu_action'                       => 'cpu.action',
-      'cpu_limit'                        => 'cpu.limit',
-      'cpu_reset_interval'               => 'cpu.resetInterval',
-      'cpu_smp_affinitized'              => 'cpu.smpAffinitized',
-      'cpu_smp_processor_affinity_mask'  => 'cpu.smpProcessorAffinityMask',
+      'cpu_action' => 'cpu.action',
+      'cpu_limit' => 'cpu.limit',
+      'cpu_reset_interval' => 'cpu.resetInterval',
+      'cpu_smp_affinitized' => 'cpu.smpAffinitized',
+      'cpu_smp_processor_affinity_mask' => 'cpu.smpProcessorAffinityMask',
       'cpu_smp_processor_affinity_mask2' => 'cpu.smpProcessorAffinityMask2',
 
       # processmodel related
-      'identity_type'              => 'processModel.identityType',
-      'idle_timeout'               => 'processModel.idleTimeout',
-      'idle_timeout_action'        => 'processModel.idleTimeoutAction',
-      'load_user_profile'          => 'processModel.loadUserProfile',
+      'identity_type' => 'processModel.identityType',
+      'idle_timeout' => 'processModel.idleTimeout',
+      'idle_timeout_action' => 'processModel.idleTimeoutAction',
+      'load_user_profile' => 'processModel.loadUserProfile',
       'log_event_on_process_model' => 'processModel.logEventOnProcessModel',
-      'logon_type'                 => 'processModel.logonType',
-      'manual_group_membership'    => 'processModel.manualGroupMembership',
-      'max_processes'              => 'processModel.maxProcesses',
-      'pinging_enabled'            => 'processModel.pingingEnabled',
-      'ping_interval'              => 'processModel.pingInterval',
-      'ping_response_time'         => 'processModel.pingResponseTime',
-      'set_profile_environment'    => 'processModel.setProfileEnvironment',
-      'shutdown_time_limit'        => 'processModel.shutdownTimeLimit',
-      'startup_time_limit'         => 'processModel.startupTimeLimit',
-      'user_name'                  => 'processModel.userName',
-      'password'                   => 'processModel.password',
+      'logon_type' => 'processModel.logonType',
+      'manual_group_membership' => 'processModel.manualGroupMembership',
+      'max_processes' => 'processModel.maxProcesses',
+      'pinging_enabled' => 'processModel.pingingEnabled',
+      'ping_interval' => 'processModel.pingInterval',
+      'ping_response_time' => 'processModel.pingResponseTime',
+      'set_profile_environment' => 'processModel.setProfileEnvironment',
+      'shutdown_time_limit' => 'processModel.shutdownTimeLimit',
+      'startup_time_limit' => 'processModel.startupTimeLimit',
+      'user_name' => 'processModel.userName',
+      'password' => 'processModel.password',
 
-      'orphan_action_exe'          => 'failure.orphanActionExe',
-      'orphan_action_params'       => 'failure.orphanActionParams',
-      'orphan_worker_process'      => 'failure.orphanWorkerProcess',
+      'orphan_action_exe' => 'failure.orphanActionExe',
+      'orphan_action_params' => 'failure.orphanActionParams',
+      'orphan_worker_process' => 'failure.orphanWorkerProcess',
 
       # rapid-fail
-      'load_balancer_capabilities'        => 'failure.loadBalancerCapabilities',
-      'rapid_fail_protection'             => 'failure.rapidFailProtection',
-      'rapid_fail_protection_interval'    => 'failure.rapidFailProtectionInterval',
+      'load_balancer_capabilities' => 'failure.loadBalancerCapabilities',
+      'rapid_fail_protection' => 'failure.rapidFailProtection',
+      'rapid_fail_protection_interval' => 'failure.rapidFailProtectionInterval',
       'rapid_fail_protection_max_crashes' => 'failure.rapidFailProtectionMaxCrashes',
-      'auto_shutdown_exe'                 => 'failure.autoShutdownExe',
-      'auto_shutdown_params'              => 'failure.autoShutdownParams',
+      'auto_shutdown_exe' => 'failure.autoShutdownExe',
+      'auto_shutdown_params' => 'failure.autoShutdownParams',
 
       # recycle
-      'disallow_overlapping_rotation'      => 'recycling.disallowOverlappingRotation',
+      'disallow_overlapping_rotation' => 'recycling.disallowOverlappingRotation',
       'disallow_rotation_on_config_change' => 'recycling.disallowRotationOnConfigChange',
-      'log_event_on_recycle'               => 'recycling.logEventOnRecycle',
-      'restart_memory_limit'               => 'recycling.periodicRestart.memory',
-      'restart_private_memory_limit'       => 'recycling.periodicRestart.privateMemory',
-      'restart_requests_limit'             => 'recycling.periodicRestart.requests',
-      'restart_time_limit'                 => 'recycling.periodicRestart.time',
-      'restart_schedule'                   => 'recycling.periodicRestart.schedule',
+      'log_event_on_recycle' => 'recycling.logEventOnRecycle',
+      'restart_memory_limit' => 'recycling.periodicRestart.memory',
+      'restart_private_memory_limit' => 'recycling.periodicRestart.privateMemory',
+      'restart_requests_limit' => 'recycling.periodicRestart.requests',
+      'restart_time_limit' => 'recycling.periodicRestart.time',
+      'restart_schedule' => 'recycling.periodicRestart.schedule'
     }
-
-    iis_properties
   end
 
   def escape_value(value)
     if number?(value)
       value
     else
-      "'#{value.to_s.gsub("'", "''")}\'"
+      "'#{value.to_s.gsub("'", "''")}'"
     end
   end
 

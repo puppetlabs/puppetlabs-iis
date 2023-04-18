@@ -9,7 +9,7 @@ describe Puppet::Type.type(:iis_site) do
 
   let(:resource) { described_class.new(name: 'iis_site') }
 
-  it { is_expected.to be_a_kind_of Puppet::Type::Iis_site }
+  it { is_expected.to be_a Puppet::Type::Iis_site }
 
   describe 'parameter :name' do
     subject { resource.parameters[:name] }
@@ -71,15 +71,17 @@ describe Puppet::Type.type(:iis_site) do
         resource[:authenticationinfo] = ['hi']
       }.to raise_error(Puppet::Error, %r{Hash})
     end
+
     it 'requires any of the schemas' do
       expect {
         resource[:authenticationinfo] = { 'wakka' => 'fdskjfndslk' }
       }.to raise_error(Puppet::Error, %r{schema})
     end
+
     it 'allows valid syntax' do
       resource[:authenticationinfo] = {
         'basic' => true,
-        'anonymous' => false,
+        'anonymous' => false
       }
     end
   end
@@ -93,43 +95,50 @@ describe Puppet::Type.type(:iis_site) do
         resource[:bindings] = ['hi']
       }.to raise_error(Puppet::Error, %r{hash})
     end
+
     it 'requires protocol' do
       expect {
         resource[:bindings] = { 'bindinginformation' => 'a:80:c' }
       }.to raise_error(Puppet::Error, %r{protocol})
     end
+
     it 'requires bindinginformation' do
       expect {
         resource[:bindings] = { 'protocol' => 'http' }
       }.to raise_error(Puppet::Error, %r{bindinginformation})
     end
+
     it 'requires bindinginformation to be ip:port:hostname' do
       resource[:bindings] = {
         'protocol' => 'http',
-        'bindinginformation' => '127.0.0.1:80:hostname',
+        'bindinginformation' => '127.0.0.1:80:hostname'
       }
     end
+
     it 'requires number port' do
       expect {
         resource[:bindings] = {
           'protocol' => 'http',
-          'bindinginformation' => '*:a:',
+          'bindinginformation' => '*:a:'
         }
       }.to raise_error(Puppet::Error, %r{65535})
     end
+
     it 'allows * for ip' do
       resource[:bindings] = {
         'protocol' => 'http',
-        'bindinginformation' => '*:80:hostname',
+        'bindinginformation' => '*:80:hostname'
       }
     end
+
     it 'allows empty hostname' do
       resource[:bindings] = {
         'protocol' => 'http',
-        'bindinginformation' => '*:80:',
+        'bindinginformation' => '*:80:'
       }
     end
   end
+
   context 'property :limits' do
     it 'requires a hash' do
       expect {
@@ -139,11 +148,13 @@ describe Puppet::Type.type(:iis_site) do
         resource[:limits] = ['hi']
       }.to raise_error(Puppet::Error, %r{Hash})
     end
+
     it 'accepts only valid limits as keys' do
       expect {
         resource[:limits] = { 'invalid' => 'setting' }
       }.to raise_error(Puppet::Error, %r{Invalid iis site limit key})
     end
+
     it 'rejects invalid limits values' do
       expect {
         resource[:limits] = { 'maxconnections' => 'string' }
@@ -156,6 +167,7 @@ describe Puppet::Type.type(:iis_site) do
       }.to raise_error(Puppet::Error, %r{Cannot be less than 1 or greater than 4294967295})
     end
   end
+
   context 'parameter :applicationpool' do
     it 'does not allow nil' do
       expect {

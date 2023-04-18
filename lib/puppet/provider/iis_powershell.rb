@@ -18,7 +18,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   def self.prefetch(resources)
     nodes = instances
     resources.each_key do |name|
-      if provider = nodes.find { |node| node.name == name }
+      if (provider = nodes.find { |node| node.name == name })
         resources[name].provider = provider
       end
     end
@@ -30,13 +30,13 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
 
   # update if exists
   def flush
-    if exists?
-      update
-    end
+    return unless exists?
+
+    update
   end
 
   # run command
-  def self.run(command, _check = false)
+  def self.run(command, _check: false)
     Puppet.debug("COMMAND: #{command}")
 
     result = ps_manager.execute(command)
@@ -59,7 +59,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
 
   # do_not_use_cached_value is typically only used for testing. In normal usage
   # the PowerShell version does not suddenly change during a Puppet run.
-  def self.ps_major_version(do_not_use_cached_value = false)
+  def self.ps_major_version(do_not_use_cached_value: false)
     if @powershell_major_version.nil? || do_not_use_cached_value
       version = Pwsh::WindowsPowerShell.version
       @powershell_major_version = version.nil? ? nil : version.split('.').first.to_i
@@ -70,6 +70,7 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   # parse json result
   def self.parse_json_result(raw)
     return nil if raw.nil?
+
     # Unfortunately PowerShell tends to automatically insert CRLF characters mid-string (Console Width)
     # However as we're using JSON which does not use Line Endings for termination, we can safely strip them
     raw = raw.delete("\n").delete("\r")
@@ -107,9 +108,9 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   # powershell script content
   def self.ps_script_content(template, resource)
     @param_hash = resource
-    template_path = File.expand_path('../templates', __FILE__)
+    template_path = File.expand_path('templates', __dir__)
     template_file = File.new(template_path + "/webadministration/#{template}.ps1.erb").read
-    template      = ERB.new(template_file, nil, '-')
+    template      = ERB.new(template_file, trim_mode: '-')
     template.result(binding)
   end
 end

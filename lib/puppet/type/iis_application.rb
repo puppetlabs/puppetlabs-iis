@@ -16,7 +16,7 @@ Puppet::Type.newtype(:iis_application) do
     The iis_application type uses an applicationname and a sitename to
     create an IIS Application. When specifying an application you must
     specify both. You can specify the sitename by putting it in the title
-    as in \"$site_name\\$application_name\", or you can use the named
+    as in "$site_name\\$application_name", or you can use the named
     parameters. If converting a virtual directory to an app, you can use
     the virtual_directory parameter to specify the site and omit the
     sitename parameter. To manage two applications of the same name within
@@ -42,13 +42,12 @@ Puppet::Type.newtype(:iis_application) do
     desc 'The physical path to the application directory. This path must be
           fully qualified.'
     munge do |value|
-      v = value.chomp('/') if value.match?(/^.:(\/|\\)/)
-      v = value.chomp('\\') if value.match?(/^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/)
+      v = value.chomp('/') if value.match?(%r{^.:(/|\\)})
+      v = value.chomp('\\') if value.match?(%r{^(/|\\)(/|\\)[^(/|\\)]+(/|\\)[^(/|\\)]+})
 
-      if v.nil? || v.empty?
-        raise ArgumentError, 'A non-empty physicalpath must be specified.'
-      end
-      raise("File paths must be fully qualified, not '#{v}'") unless v =~ /^.:(\/|\\)/ || v =~ /^(\/|\\)(\/|\\)[^(\/|\\)]+(\/|\\)[^(\/|\\)]+/
+      raise ArgumentError, 'A non-empty physicalpath must be specified.' if v.nil? || v.empty?
+      raise("File paths must be fully qualified, not '#{v}'") unless v =~ %r{^.:(/|\\)} || v =~ %r{^(/|\\)(/|\\)[^(/|\\)]+(/|\\)[^(/|\\)]+}
+
       v
     end
   end
@@ -56,9 +55,8 @@ Puppet::Type.newtype(:iis_application) do
   newproperty(:applicationpool, parent: PuppetX::PuppetLabs::IIS::Property::Name) do
     desc 'The name of the application pool for the application.'
     validate do |value|
-      if value.nil? || value.empty?
-        raise ArgumentError, 'A non-empty applicationpool name must be specified.'
-      end
+      raise ArgumentError, 'A non-empty applicationpool name must be specified.' if value.nil? || value.empty?
+
       super value
     end
   end
@@ -92,18 +90,14 @@ Puppet::Type.newtype(:iis_application) do
           Valid protocols are: \'http\', \'https\', \'net.pipe\', \'net.tcp\', \'net.msmq\', \'msmq.formatname\'.'
     validate do |value|
       return if value.nil?
-      unless value.is_a?(String)
-        raise("Invalid value '#{value}'. Should be a string")
-      end
+      raise("Invalid value '#{value}'. Should be a string") unless value.is_a?(String)
 
       raise("Invalid value ''. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") if value.empty?
 
       allowed_protocols = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname'].freeze
       protocols = value.split(',')
       protocols.each do |protocol|
-        unless allowed_protocols.include?(protocol)
-          raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname")
-        end
+        raise("Invalid protocol '#{protocol}'. Valid values are http, https, net.pipe, net.tcp, net.msmq, msmq.formatname") unless allowed_protocols.include?(protocol)
       end
     end
   end

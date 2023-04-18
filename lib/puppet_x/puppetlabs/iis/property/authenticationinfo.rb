@@ -8,9 +8,9 @@ class PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo < Puppet::Property
         before attempting to configure it.'
   valid_schemas = ['anonymous', 'basic', 'clientCertificateMapping',
                    'digest', 'iisClientCertificateMapping', 'windows']
-  def insync?(is)
+  def insync?(service)
     should.reject { |k, v|
-      is[k] == v
+      service[k] == v
     }.empty?
   end
   validate do |value|

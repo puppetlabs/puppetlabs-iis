@@ -24,34 +24,34 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
 
       it 'returns true protocol == https' do
         resource[:bindings] = {
-          'protocol'             => 'https',
-          'bindinginformation'   => '*:443:',
-          'sslflags'             => 0,
-          'certificatehash'      => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
-          'certificatestorename' => 'My',
+          'protocol' => 'https',
+          'bindinginformation' => '*:443:',
+          'sslflags' => 0,
+          'certificatehash' => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
+          'certificatestorename' => 'My'
         }
         expect(webadministration.ssl?).to be true
       end
 
       it 'returns true bindings is an array' do
         resource[:bindings] = [{
-          'protocol'             => 'https',
-          'bindinginformation'   => '*:443:',
-          'sslflags'             => 0,
-          'certificatehash'      => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
-          'certificatestorename' => 'My',
+          'protocol' => 'https',
+          'bindinginformation' => '*:443:',
+          'sslflags' => 0,
+          'certificatehash' => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
+          'certificatestorename' => 'My'
         },
                                {
-                                 'protocol'             => 'http',
-                                 'bindinginformation'   => '*:8080:',
+                                 'protocol' => 'http',
+                                 'bindinginformation' => '*:8080:'
                                }]
         expect(webadministration.ssl?).to be true
       end
 
       it 'returns false if no https bindings are specified' do
         resource[:bindings] = {
-          'protocol'             => 'http',
-          'bindinginformation'   => '*:8080:',
+          'protocol' => 'http',
+          'bindinginformation' => '*:8080:'
         }
         expect(webadministration.ssl?).to be false
       end

@@ -172,7 +172,7 @@ and `cpu_smp_processor_affinity_mask2` properties.
 
 ##### `cpu_smp_processor_affinity_mask`
 
-Specifies the hexadecimal processor mask for multi-processor
+Specifies the hexadecimal processor mask for multi-processor 
 computers, which indicates to which CPU the worker processes in an
 application pool should be bound. Before this property takes effect,
 the `cpu_smp_affinitized` property must be set to `true` for the

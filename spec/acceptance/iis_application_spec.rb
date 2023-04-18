@@ -31,6 +31,11 @@ describe 'iis_application', :suite_a do
       iis_idempotent_apply('create app', manifest)
 
       # include_context 'with a puppet resource run'# do
+      after(:all) do
+        remove_app(app_name)
+        remove_all_sites
+      end
+
       it 'iis_application is absent' do
         result = resource('iis_application', "#{site_name}\\#{app_name}")
         [
@@ -53,11 +58,6 @@ describe 'iis_application', :suite_a do
       it 'runs with no changes' do
         apply_manifest(manifest, catch_changes: true)
       end
-
-      after(:all) do
-        remove_app(app_name)
-        remove_all_sites
-      end
     end
 
     context 'with virtual_directory' do
@@ -78,6 +78,11 @@ describe 'iis_application', :suite_a do
 
       iis_idempotent_apply('create app', manifest)
 
+      after(:all) do
+        remove_app(app_name)
+        remove_all_sites
+      end
+
       it 'iis_application is absent' do
         result = resource('iis_application', "#{site_name}\\#{app_name}")
         [
@@ -86,11 +91,6 @@ describe 'iis_application', :suite_a do
         ].each_slice(2) do |key, value|
           puppet_resource_should_show(key, value, result)
         end
-      end
-
-      after(:all) do
-        remove_app(app_name)
-        remove_all_sites
       end
     end
 
@@ -113,15 +113,15 @@ describe 'iis_application', :suite_a do
 
       iis_idempotent_apply('create app', manifest)
 
-      it 'creates the correct application' do
-        result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
-        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
-        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
-      end
-
       after(:all) do
         remove_app(app_name)
         remove_all_sites
+      end
+
+      it 'creates the correct application' do
+        result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/) # rubocop:disable Style/RegexpLiteral
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
     end
 
@@ -143,15 +143,15 @@ describe 'iis_application', :suite_a do
 
       iis_idempotent_apply('create app', manifest)
 
-      it 'creates the correct application' do
-        result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
-        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/)
-        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
-      end
-
       after(:all) do
         remove_app(app_name)
         remove_all_sites
+      end
+
+      it 'creates the correct application' do
+        result = resource('iis_application', "#{site_name}\\subFolder/#{app_name}")
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/#{app_name}':/) # rubocop:disable Style/RegexpLiteral
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
     end
 
@@ -253,21 +253,21 @@ describe 'iis_application', :suite_a do
 
       iis_idempotent_apply('create app', manifest)
 
-      it 'creates the correct application' do
-        result = resource('iis_application', "#{site_name}\\subFolder/sub2/#{app_name}")
-        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/sub2\/#{app_name}':/)
-        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
-      end
-
       after(:all) do
         remove_app(app_name)
         remove_all_sites
+      end
+
+      it 'creates the correct application' do
+        result = resource('iis_application', "#{site_name}\\subFolder/sub2/#{app_name}")
+        expect(result.stdout).to match(/iis_application { '#{site_name}\\subFolder\/sub2\/#{app_name}':/) # rubocop:disable Style/RegexpLiteral
+        expect(result.stdout).to match(%r{ensure\s*=> 'present',})
       end
     end
   end
 
   context 'when setting' do
-    skip 'sslflags - blocked by MODULES-5561' do
+    it 'sslflags', skip: 'blocked by MODULES-5561' do
       site_name = SecureRandom.hex(10).to_s
       app_name = SecureRandom.hex(10).to_s
       site_hostname = 'www.puppet.local'
@@ -309,7 +309,7 @@ describe 'iis_application', :suite_a do
       iis_idempotent_apply('create app', manifest)
     end
 
-    describe 'authenticationinfo' do
+    describe 'authentication info' do
       site_name = SecureRandom.hex(10).to_s
       app_name = SecureRandom.hex(10).to_s
       before(:all) do
@@ -386,13 +386,14 @@ describe 'iis_application', :suite_a do
 
     iis_idempotent_apply('create app', manifest)
 
-    it 'iis_application is absent' do
-      result = resource('iis_application', "#{site_name}\\#{app_name}")
-      puppet_resource_should_show('ensure', 'absent', result)
-    end
     after(:all) do
       remove_app(app_name)
       remove_all_sites
+    end
+
+    it 'iis_application is absent' do
+      result = resource('iis_application', "#{site_name}\\#{app_name}")
+      puppet_resource_should_show('ensure', 'absent', result)
     end
   end
 
@@ -416,7 +417,7 @@ describe 'iis_application', :suite_a do
           ensure       => 'present',
           sitename     => '#{site_name}',
         }
-      HERE
+    HERE
     iis_idempotent_apply('create app', manifest)
 
     after(:all) do
@@ -465,6 +466,11 @@ describe 'iis_application', :suite_a do
 
     iis_idempotent_apply('create app', manifest)
 
+    after(:all) do
+      remove_app(app_name)
+      remove_all_sites
+    end
+
     it 'contains the first site with the same app name' do
       result = resource('iis_application', "#{site_name}\\#{app_name}")
       expect(result.stdout).to match(%r{#{site_name}\\#{app_name}})
@@ -472,17 +478,13 @@ describe 'iis_application', :suite_a do
       expect(result.stdout).to match %r{C:\\inetpub\\#{site_name}\\#{app_name}}
       expect(result.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
     end
+
     it 'contains the second site with the same app name' do
       result2 = resource('iis_application', "#{site_name2}\\#{app_name}")
       expect(result2.stdout).to match(%r{#{site_name2}\\#{app_name}})
       expect(result2.stdout).to match(%r{ensure\s*=> 'present',})
       expect(result2.stdout).to match %r{C:\\inetpub\\#{site_name2}\\#{app_name}}
       expect(result2.stdout).to match %r{applicationpool\s*=> 'DefaultAppPool'}
-    end
-
-    after(:all) do
-      remove_app(app_name)
-      remove_all_sites
     end
   end
 end

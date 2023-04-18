@@ -32,9 +32,10 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     verify_physicalpath
 
     cmd = []
-    if is_local_path(@resource[:physicalpath])
+    if local_path?(@resource[:physicalpath])
       cmd << "New-WebVirtualDirectory -Name \"#{@resource[:name]}\" "
       raise('sitename is a required parameter') unless @resource[:sitename]
+
       cmd << "-Site \"#{@resource[:sitename]}\" "
     else
       # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
@@ -45,12 +46,12 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
     cmd << '-ErrorAction Stop;'
     if @resource[:user_name]
-      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}'"\
-      " -Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;"
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' " \
+             "-Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;"
     end
     if @resource[:password]
-      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}'"\
-      " -Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;"
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' " \
+             "-Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;"
     end
     cmd = cmd.join
 
@@ -101,7 +102,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
   def self.prefetch(resources)
     virt_dirs = instances
     resources.each_key do |virt_dir|
-      if provider = virt_dirs.find { |s| virt_dir.casecmp(s.name).zero? }
+      if (provider = virt_dirs.find { |s| virt_dir.casecmp(s.name).zero? })
         resources[virt_dir].provider = provider
       end
     end
