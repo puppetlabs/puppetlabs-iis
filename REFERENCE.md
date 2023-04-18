@@ -20,7 +20,7 @@
 The iis_application type uses an applicationname and a sitename to
 create an IIS Application. When specifying an application you must
 specify both. You can specify the sitename by putting it in the title
-as in \"$site_name\\$application_name\", or you can use the named
+as in "$site_name\\$application_name", or you can use the named
 parameters. If converting a virtual directory to an app, you can use
 the virtual_directory parameter to specify the site and omit the
 sitename parameter. To manage two applications of the same name within
@@ -172,7 +172,7 @@ and `cpu_smp_processor_affinity_mask2` properties.
 
 ##### `cpu_smp_processor_affinity_mask`
 
-Specifies the hexadecimal processor mask for multi-processor 
+Specifies the hexadecimal processor mask for multi-processor
 computers, which indicates to which CPU the worker processes in an
 application pool should be bound. Before this property takes effect,
 the `cpu_smp_affinitized` property must be set to `true` for the
