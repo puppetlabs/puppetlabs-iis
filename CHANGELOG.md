@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.0.0) (2023-04-18)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v9.0.0...v10.0.0)
+
+### Changed
+
+- \(CONT-782\) - add puppet 8 support/Drop puppet 6 support [\#367](https://github.com/puppetlabs/puppetlabs-iis/pull/367) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [v9.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v9.0.0) (2023-02-10)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v8.1.1...v9.0.0)
@@ -76,6 +84,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - \(IAC-991\) - Removal of inappropriate terminology [\#293](https://github.com/puppetlabs/puppetlabs-iis/pull/293) ([david22swan](https://github.com/david22swan))
+- \(MODULES-10361\) sort https bindings first [\#252](https://github.com/puppetlabs/puppetlabs-iis/pull/252) ([pillarsdotnet](https://github.com/pillarsdotnet))
 
 ## [v7.1.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v7.1.0) (2020-07-08)
 
@@ -113,7 +122,6 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - \(MODULES-10362\) handle authenticationinfo consistently [\#253](https://github.com/puppetlabs/puppetlabs-iis/pull/253) ([pillarsdotnet](https://github.com/pillarsdotnet))
-- \(MODULES-10361\) sort https bindings first [\#252](https://github.com/puppetlabs/puppetlabs-iis/pull/252) ([pillarsdotnet](https://github.com/pillarsdotnet))
 
 ## [v6.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v6.0.0) (2019-10-30)
 
