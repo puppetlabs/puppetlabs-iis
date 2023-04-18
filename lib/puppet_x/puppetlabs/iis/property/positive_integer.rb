@@ -10,8 +10,8 @@ module PuppetX
       module Property
         # PositiveInteger Property
         class PositiveInteger < Puppet::Property
-          def insync?(service)
-            service.to_i == should.to_i
+          def insync?(is)
+            is.to_i == should.to_i
           end
           validate do |value|
             raise "#{name} should be an Integer" unless value.to_i.to_s == value.to_s
