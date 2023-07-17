@@ -11,11 +11,50 @@ class LitmusHelper
   include PuppetLitmus
 end
 
+# This method allows a block to be passed in and if an exception is raised
+# that matches the 'error_matcher' matcher, the block will wait a set number
+# of seconds before retrying.
+# Params:
+# - max_retry_count - Max number of retries
+# - retry_wait_interval_secs - Number of seconds to wait before retry
+# - error_matcher - Matcher which the exception raised must match to allow retry
+# Example Usage:
+# retry_on_error_matching(3, 5, /OpenGPG Error/) do
+#   apply_manifest(pp, :catch_failures => true)
+# end
+def retry_on_error_matching(max_retry_count = 3, retry_wait_interval_secs = 5, error_matcher = nil)
+  try = 0
+  begin
+    try += 1
+    yield
+  rescue StandardError => e
+    raise unless try < max_retry_count && (error_matcher.nil? || e.message =~ error_matcher)
+
+    sleep retry_wait_interval_secs
+    retry
+  end
+end
+
 RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install IIS and required features on the target host
-    LitmusHelper.instance.run_shell('Install-WindowsFeature -name Web-Server -IncludeManagementTools') unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
+    unless ENV['TARGET_HOST'].nil? || ENV['TARGET_HOST'] == 'localhost'
+      LitmusHelper.instance.run_shell('Install-WindowsFeature -name Web-Server -IncludeManagementTools')
+      LitmusHelper.instance.run_shell('Install-WindowsFeature -Name Web-HTTP-Errors')
+      result = LitmusHelper.instance.run_shell('(Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -NoRestart).RestartNeeded')
+
+      if result.stdout.split("\r\n").last == 'True'
+        puts 'VM need reboot, hence doing force reboot'
+        LitmusHelper.instance.run_shell('Restart-Computer -Force')
+      end
+    end
+
+    # waiting for VM restart to complete and comes in running state
+    retry_on_error_matching(120, 5, %r{.*}) do
+      puts 'waiting for VM to restart..'
+      LitmusHelper.instance.run_shell('ls') # random command to check connectivity to litmus host
+    end
   end
 end
 
