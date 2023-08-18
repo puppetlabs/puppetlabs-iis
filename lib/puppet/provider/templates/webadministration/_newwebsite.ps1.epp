@@ -1,0 +1,34 @@
+<% ip_dns port host_header = resource.provider.binding_information %>
+
+$resource = @{
+  name            = '<%= "#{resource['name']}" %>'
+  ensure          = '<%= "#{resource['ensure']}" %>'
+  physicalpath    = '<%= "#{resource['physicalpath']}" %>'
+  applicationpool = '<%= "#{resource['applicationpool']}" %>'
+}
+
+$createParams = @{
+  Name            = $resource.name
+  PhysicalPath    = $resource.physicalpath
+  ApplicationPool = $resource.applicationpool
+  Force           = $true
+  ErrorAction     = 'Stop'
+  <% if port { -%>
+  <%= "  port            = #{port}\n"-%>
+  <% } -%>
+  <% if host_header { -%>
+  <%= "  HostHeader      = '#{host_header}'\n" -%>
+  <% } -%>
+  <% if resource.provider.ssl { -%>
+  <%= "  Ssl             = $true\n" -%>
+  <% } -%>
+}
+
+# If there are no other websites, specify the Id, otherwise an Index Out of Range error can be thrown
+If ((Get-ChildItem 'IIS:\sites' | Measure-Object).Count -eq 0) {
+  $createParams['Id'] = 1
+}
+
+# create website
+# dont set applicationpool if it doesnt exist
+New-Website @createParams

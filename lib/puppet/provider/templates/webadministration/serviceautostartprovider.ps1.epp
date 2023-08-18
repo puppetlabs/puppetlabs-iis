@@ -1,6 +1,6 @@
-<% if !resource[:serviceautostartprovidername].nil? -%>
-$resource.serviceautostartprovidername = '<%= "#{resource[:serviceautostartprovidername]}" %>'
-$resource.serviceautostartprovidertype = '<%= "#{resource[:serviceautostartprovidertype]}" %>'
+<% if defined(resource['serviceautostartprovidername']) {-%>
+$resource.serviceautostartprovidername = '<%= "#{resource['serviceautostartprovidername']}" %>'
+$resource.serviceautostartprovidertype = '<%= "#{resource['serviceautostartprovidertype']}" %>'
 
 $provider = @(New-Object -TypeName PSObject -Property @{
   Name = $resource.serviceautostartprovidername
@@ -9,7 +9,7 @@ $provider = @(New-Object -TypeName PSObject -Property @{
 
 $website = $null
 try {
-  $wesbite = Get-Item -Path 'IIS:\sites\<%= "#{resource[:name]}" %>'
+  $wesbite = Get-Item -Path 'IIS:\sites\<%= "#{resource['name']}" %>'
 } catch {
   $website = $null
 }
@@ -34,10 +34,10 @@ if($website){
                            -ErrorAction 'Stop'
     }
     
-    Set-ItemProperty -Path "IIS:\Sites\<%= "#{resource[:name]}" %>" `
+    Set-ItemProperty -Path "IIS:\Sites\<%= "#{resource['name']}" %>" `
                      -Name 'applicationDefaults.serviceAutoStartProvider' `
                      -Value $provider.name `
                      -ErrorAction Stop
   }
 }
-<% end -%>
+<% } -%>

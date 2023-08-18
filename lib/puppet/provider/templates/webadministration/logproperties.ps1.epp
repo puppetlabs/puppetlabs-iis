@@ -1,4 +1,4 @@
-$iis_version = '<%= Facter.value(:iis_version) %>'
+$iis_version = '<%= Facter.value('iis_version') %>'
 
 # Convert the string representation of an Enum value into an Int32 safely
 Function ConvertTo-EnumInt32 {
@@ -32,11 +32,11 @@ if ($iis_version -eq '7.5') {
   [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.Web.Administration") | Out-Null
 }
 
-<% if !resource[:logformat].nil? -%>
+<% if defined(resource['logformat']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'LogFile.logFormat'
-  Value = '<%= "#{resource[:logformat]}" %>'
+  Value = '<%= "#{resource['logformat']}" %>'
 }
 
 if ($iis_version -eq '7.5') {
@@ -44,18 +44,18 @@ if ($iis_version -eq '7.5') {
 }
 
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:logpath].nil? -%>
+<% if defined(resource['logpath']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'LogFile.directory'
-  value = '<%= "#{resource[:logpath]}" %>'
+  value = '<%= "#{resource['logpath']}" %>'
 }
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:logflags].nil? -%>
+<% if defined(resource['logflags']) { -%>
 $W3CValue = 'W3C'
 if ($iis_version -eq '7.5') {
   $W3CValue = ConvertTo-EnumInt32 -EnumType ([Microsoft.Web.Administration.LogFormat]) -Value 'W3C' -Name 'logformat'
@@ -69,7 +69,7 @@ $logParams = @{
 Try-SetItemProperty @logParams
 
 $logParams.Name  = 'LogFile.logExtFileFlags'
-$logParams.value = "<%= "#{resource[:logflags].is_a?(Array) ? resource[:logflags].join(',') : resource[:logflags]}" %>"
+$logParams.value = "<%= '#{resource["logflags"].is_a?(Array) ? resource["logflags"].join(",") : resource["logflags"]}' %>"
 
 if ($iis_version -eq '7.5') {
   #  For each flag, convert the strings into Int32 bitwise mask
@@ -81,13 +81,13 @@ if ($iis_version -eq '7.5') {
 }
 
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:logperiod].nil? -%>
+<% if defined(resource['logperiod']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'LogFile.period'
-  value = '<%= "#{resource[:logperiod]}" %>'
+  value = '<%= "#{resource['logperiod']}" %>'
 }
 
 if ($iis_version -eq '7.5') {
@@ -95,13 +95,13 @@ if ($iis_version -eq '7.5') {
 }
 
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:logtruncatesize].nil? -%>
+<% if defined(resource['logtruncatesize']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'LogFile.truncateSize'
-  value = '<%= "#{resource[:logtruncatesize]}" %>'
+  value = '<%= "#{resource['logtruncatesize']}" %>'
 }
 Try-SetItemProperty @logParams
 
@@ -112,13 +112,13 @@ if ($iis_version -eq '7.5') {
 $logParams.Name  = 'LogFile.period'
 $logParams.value = $MaxSizeValue
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:loglocaltimerollover].nil? -%>
+<% if defined(resource['loglocaltimerollover']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'LogFile.localTimeRollover'
-  value = '<%= "#{resource[:loglocaltimerollover]}" %>'
+  value = '<%= "#{resource['loglocaltimerollover']}" %>'
 }
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>

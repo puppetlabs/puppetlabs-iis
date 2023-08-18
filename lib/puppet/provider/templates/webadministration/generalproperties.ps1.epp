@@ -1,32 +1,32 @@
-<% if !resource[:name].nil? -%>
+<% if defined(resource['name']) { -%>
 $nameParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'name'
-  Value = '<%= "#{resource[:name]}" %>'
+  Value = '<%= "#{resource['name']}" %>'
 }
 Try-SetItemProperty @nameParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:physicalpath].nil? -%>
+<% if defined(resource['physicalpath']) { -%>
 $pathParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'physicalpath'
   Value = '<%= "#{resource[:physicalpath]}" %>'
 }
 Try-SetItemProperty @pathParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:applicationpool].nil? -%>
+<% if defined(resource['applicationpool']) { -%>
 $poolParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'applicationpool'
   Value = '<%= "#{resource[:applicationpool]}" %>'
 }
 Try-SetItemProperty @poolParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:defaultpage].nil? -%>
-$resource.defaultpage = @('<%= "#{resource[:defaultpage].join("','")}" %>')
+<% if defined(resource['defaultpage']) { -%>
+$resource.defaultpage = @('<%= "#{resource['defaultpage'].join(',')}" %>')
 $AllDefaultPages = @(
   Get-WebConfiguration -Filter '//defaultDocument/files/*' -PSPath "IIS:\Sites\$($resource.name)" |
     ForEach-Object { $_.value }
@@ -38,31 +38,31 @@ $resource.defaultpage | %{
                          -Value @{value = $_}
   }
 }
-<% end -%>
+<% } -%>
 
-<% if !resource[:enabledprotocols].nil? -%>
+<% if defined(resource['enabledprotocols']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'enabledProtocols'
-  Value = '<%= "#{resource[:enabledprotocols]}" %>'
+  Value = '<%= "#{resource['enabledprotocols']}" %>'
 }
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:serviceautostart].nil? -%>
+<% if defined(resource['serviceautostart']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'applicationDefaults.serviceAutoStartEnabled'
   Value = '<%= "#{resource[:serviceautostart]}" %>'
 }
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>
 
-<% if !resource[:preloadenabled].nil? -%>
+<% if defined(resource['preloadenabled']) { -%>
 $logParams = @{
   Path  = "IIS:\Sites\$($resource.name)"
   Name  = 'applicationDefaults.preloadEnabled'
-  Value = '<%= "#{resource[:preloadenabled]}" %>'
+  Value = '<%= "#{resource['preloadenabled']}" %>'
 }
 Try-SetItemProperty @logParams
-<% end -%>
+<% } -%>

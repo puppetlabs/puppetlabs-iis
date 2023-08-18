@@ -1,4 +1,4 @@
-$iis_version = [Double]'<%= Facter.value(:iis_version) %>'
+$iis_version = [Double]'<%= Facter.value("iis_version") %>'
 
 Get-WebSite | % {
   $name = $_.Name
