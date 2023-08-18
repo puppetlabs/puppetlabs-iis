@@ -1,4 +1,4 @@
-<% ip_dns port host_header = resource.provider.binding_information %>
+<% [$ip_dns, $port, $host_header] = resource.provider.binding_information %>
 
 $resource = @{
   name            = '<%= "#{resource['name']}" %>'
@@ -13,11 +13,11 @@ $createParams = @{
   ApplicationPool = $resource.applicationpool
   Force           = $true
   ErrorAction     = 'Stop'
-  <% if port { -%>
-  <%= "  port            = #{port}\n"-%>
+  <% if $port { -%>
+  <%= "  port            = #{$port}\n"-%>
   <% } -%>
-  <% if host_header { -%>
-  <%= "  HostHeader      = '#{host_header}'\n" -%>
+  <% if $host_header { -%>
+  <%= "  HostHeader      = '#{$host_header}'\n" -%>
   <% } -%>
   <% if resource.provider.ssl { -%>
   <%= "  Ssl             = $true\n" -%>
