@@ -115,6 +115,7 @@ describe 'iis_virtual_directory', :suite_b do
 
       manifest = <<-HERE
         iis_virtual_directory { '#{virt_dir_name}':
+          sitename     => '#{site_name}',
           ensure       => 'absent'
         }
       HERE
