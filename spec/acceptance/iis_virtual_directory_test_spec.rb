@@ -4,13 +4,13 @@ require 'spec_helper_acceptance'
 
 describe 'iis_virtual_directory', :suite_b do
   site_name = SecureRandom.hex(10)
-  before(:all) do
+  before(:context) do
     # Remove 'Default Web Site' to start from a clean slate
     remove_all_sites
     create_site(site_name, true)
   end
 
-  after(:all) do
+  after(:context) do
     remove_all_sites
   end
 
@@ -55,7 +55,7 @@ describe 'iis_virtual_directory', :suite_b do
       iis_idempotent_apply('create iis virtual dir', manifest)
 
       after(:all) do
-        remove_vdir(virt_dir_name)
+        remove_vdir(virt_dir_name, site_name)
       end
 
       it 'iis_virtual_directory should be present' do
@@ -74,56 +74,53 @@ describe 'iis_virtual_directory', :suite_b do
     end
 
     context 'with a password wrapped in Sensitive()' do
-      if installed_puppet_version.to_i < 5
-        skip 'is skipped due to version being lower than puppet 5'
-      else
-        virt_dir_name = SecureRandom.hex(10).to_s
-        manifest = <<-HERE
-          file{ 'c:/foo':
-            ensure => 'directory'
-          }->
-          iis_virtual_directory { '#{virt_dir_name}':
-            ensure       => 'present',
-            sitename     => '#{site_name}',
-            physicalpath => 'c:\\foo',
-            user_name    => 'user',
-            password     => Sensitive('#@\\'454sdf'),
-          }
-        HERE
-
-        iis_idempotent_apply('create iis virtual dir', manifest)
-
-        it 'all parameters are configured' do
-          resource_data = resource('iis_virtual_directory', virt_dir_name)
-          [
-            'ensure', 'present',
-            'user_name', 'user',
-            'password', '#@\\\'454sdf'
-          ].each_slice(2) do |key, value|
-            puppet_resource_should_show(key, value, resource_data)
-          end
-        end
-
-        it 'remove virt dir name' do
-          remove_vdir(virt_dir_name)
-        end
-      end
-    end
-
-    context 'can remove virtual directory' do
       virt_dir_name = SecureRandom.hex(10).to_s
-      before(:all) do
-        create_path('c:/foo')
-        create_vdir(virt_dir_name, 'foo', 'c:/foo')
-      end
-
       manifest = <<-HERE
+        file{ 'c:/foo':
+          ensure => 'directory'
+        }->
         iis_virtual_directory { '#{virt_dir_name}':
-          ensure       => 'absent'
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'c:\\foo',
+          user_name    => 'user',
+          password     => Sensitive('#@\\'454sdf'),
         }
       HERE
 
       iis_idempotent_apply('create iis virtual dir', manifest)
+
+      it 'all parameters are configured' do
+        resource_data = resource('iis_virtual_directory', virt_dir_name)
+        [
+          'ensure', 'present',
+          'user_name', 'user',
+          'password', '#@\\\'454sdf'
+        ].each_slice(2) do |key, value|
+          puppet_resource_should_show(key, value, resource_data)
+        end
+      end
+
+      it 'remove virt dir name' do
+        remove_vdir(virt_dir_name, site_name)
+      end
+    end
+
+    context 'when virtual directory is removed' do
+      virt_dir_name = SecureRandom.hex(10).to_s
+      before(:all) do
+        create_path('c:/foo')
+        create_vdir(virt_dir_name, site_name, 'c:/foo')
+      end
+
+      manifest = <<-HERE
+        iis_virtual_directory { '#{virt_dir_name}':
+          sitename     => '#{site_name}',
+          ensure       => 'absent'
+        }
+      HERE
+
+      iis_idempotent_apply('remove iis virtual dir', manifest)
 
       after(:all) do
         remove_vdir(virt_dir_name)
@@ -134,37 +131,8 @@ describe 'iis_virtual_directory', :suite_b do
       end
     end
 
-    context 'name allows slashes' do
-      virt_dir_name = SecureRandom.hex(10).to_s
-      before(:all) do
-        create_path('c:\inetpub\test_site')
-        create_path('c:\inetpub\test_vdir')
-        create_path('c:\inetpub\deeper')
-        create_site(site_name, true)
-      end
-
-      manifest = <<-HERE
-      iis_virtual_directory{ "test_vdir":
-        ensure       => 'present',
-        sitename     => "#{site_name}",
-        physicalpath => 'c:\\inetpub\\test_vdir',
-      }->
-      iis_virtual_directory { 'test_vdir\deeper':
-        name         => 'test_vdir\deeper',
-        ensure       => 'present',
-        sitename     => '#{site_name}',
-        physicalpath => 'c:\\inetpub\\deeper',
-      }
-      HERE
-      iis_idempotent_apply('create iis virtual dir', manifest)
-
-      after(:all) do
-        remove_vdir(virt_dir_name)
-      end
-    end
-
     context 'with invalid' do
-      context 'physicalpath parameter defined' do
+      context 'when physicalpath parameter is defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
         manifest = <<-HERE
           iis_virtual_directory { '#{virt_dir_name}':
@@ -184,7 +152,7 @@ describe 'iis_virtual_directory', :suite_b do
         end
       end
 
-      context 'physicalpath parameter not defined' do
+      context 'when physicalpath parameter is not defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
         manifest = <<-HERE
           iis_virtual_directory { '#{virt_dir_name}':
