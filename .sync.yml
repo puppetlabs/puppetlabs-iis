@@ -10,8 +10,6 @@ Gemfile:
   use_travis: true
   optional:
     ":development":
-    - gem: github_changelog_generator
-      version: '= 1.15.2'
     - gem: 'ruby-pwsh'
 Rakefile:
   unmanaged: true
