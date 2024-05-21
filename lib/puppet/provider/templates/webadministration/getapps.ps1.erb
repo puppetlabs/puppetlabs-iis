@@ -12,8 +12,13 @@ Get-WebApplication | % {
   }
 
   $sslFlags = @()
-  $sslFlags_raw = [String](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags
-  if ($sslFlags_raw -ne '') { $sslFlags = $sslFlags_raw -split ',' }
+  try {
+    $sslFlags_raw = [String](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/access").sslFlags
+    if ($sslFlags_raw -ne '') { $sslFlags = $sslFlags_raw -split ',' }
+  } catch {
+    continue
+  }
+
   New-Object -TypeName PSObject -Property @{
     name               = $name
     site               = $site

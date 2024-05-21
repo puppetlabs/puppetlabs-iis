@@ -13,7 +13,11 @@ Get-WebSite | % {
   if ($SiteEntityPhysicalPath.EndsWith('/')){
     $null = Set-ItemProperty -Path $SiteEntityPath -Name PhysicalPath -Value $SiteEntityPhysicalPath.TrimEnd('/') -Force
   }
-  
+
+  if (-Not (Test-Path -Path $SiteEntityPhysicalPath)) {
+    New-Item -Path $SiteEntityPhysicalPath -ItemType Directory
+  }
+
   $authenticationTypes = @(
     'anonymous',
     'basic',
