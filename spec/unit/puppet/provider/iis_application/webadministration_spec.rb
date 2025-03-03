@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'puppet/provider/iis_powershell'
 
 describe 'iis_application provider' do
   subject(:iis_application_provider) do

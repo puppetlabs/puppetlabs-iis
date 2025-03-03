@@ -7,7 +7,7 @@ class PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo < Puppet::Property
         authentication. This type does not ensure a given feature is installed
         before attempting to configure it.'
   valid_schemas = ['anonymous', 'basic', 'clientCertificateMapping',
-                   'digest', 'iisClientCertificateMapping', 'windows']
+                   'digest', 'iisClientCertificateMapping', 'windows', 'forms']
   def insync?(is)
     should.reject { |k, v|
       is[k] == v
@@ -16,7 +16,7 @@ class PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo < Puppet::Property
   validate do |value|
     raise "#{name} should be a Hash" unless value.is_a? ::Hash
     unless (value.keys & valid_schemas) == value.keys
-      raise('All schemas must specify any of the following: anonymous, basic, clientCertificateMapping, digest, iisClientCertificateMapping, or windows')
+      raise('All schemas must specify any of the following: anonymous, basic, clientCertificateMapping, digest, iisClientCertificateMapping, windows, or forms')
     end
   end
 end
