@@ -2,7 +2,7 @@
   "name": "puppetlabs-iis",
   "version": "10.1.0",
   "author": "puppetlabs",
-  "summary": "Manage IIS for Windows Server 2012, 2012R2 and 2016. Maintain application sites, pools, installation, and many other IIS settings.",
+  "summary": "Manage IIS for Windows Server 2012, 2012R2, 2016, 2019 and 2022. Maintain application sites, pools, installation, and many other IIS settings.",
   "license": "Apache-2.0",
   "source": "git://github.com/puppetlabs/puppetlabs-iis",
   "project_page": "https://github.com/puppetlabs/puppetlabs-iis",
