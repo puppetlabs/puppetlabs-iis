@@ -20,7 +20,8 @@ Get-WebSite | % {
     'clientCertificateMapping',
     'digest',
     'iisClientCertificateMapping',
-    'windows'
+    'windows',
+    'forms'
   )
   $authenticationTypes | Foreach-Object -Begin { $info = @{} } -Process {
     $p = Get-WebConfiguration -Filter "system.webserver/security/authentication/$($_)Authentication" -PSPath "IIS:\sites\$($name)"
