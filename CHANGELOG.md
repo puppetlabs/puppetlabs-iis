@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.1.1](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.1.1) - 2025-04-03
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.0...v10.1.1)
+
+### Fixed
+
+- (CAT-2274): Add support for forms authentication in web administration templates [#401](https://github.com/puppetlabs/puppetlabs-iis/pull/401) ([span786](https://github.com/span786))
+- (MODULES-11467) update summary to match platforms [#400](https://github.com/puppetlabs/puppetlabs-iis/pull/400) ([amitkarsale](https://github.com/amitkarsale))
+
 ## [v10.1.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.1.0) - 2025-03-12
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.0.1...v10.1.0)
