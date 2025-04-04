@@ -214,5 +214,30 @@ describe 'iis_virtual_directory', :suite_b do
         end
       end
     end
+
+    context 'with same names under different sites.' do
+      site_name1 = SecureRandom.hex(10)
+      site_name2 = SecureRandom.hex(10)
+
+      manifest = <<-HERE
+
+      iis_virtual_directory { "#{site_name1}/includes":
+        ensure => present,
+        name => 'includes',
+        sitename => "#{site_name1}",
+        physicalpath => 'G:\inetpub\includes',
+      }
+
+      iis_virtual_directory { "#{site_name2}includes":
+        ensure => present,
+        name => 'includes',
+        sitename => "#{site_name2}",
+        physicalpath => 'G:\inetpub\includes',
+        end
+      end
+      HERE
+
+      iis_idempotent_apply('create iis virtual dir', manifest)
+    end
   end
 end
