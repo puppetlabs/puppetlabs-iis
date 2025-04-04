@@ -40,17 +40,17 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     else
       # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
       # and UNC paths are inherently not necessarily always available.
-      cmd << "New-Item -Type VirtualDirectory 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' "
+      cmd << "New-Item -Type VirtualDirectory 'IIS:\\Sites\\#{@resource[:path]}' "
     end
     cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
     cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
     cmd << '-ErrorAction Stop;'
     if @resource[:user_name]
-      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' " \
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:path]}' " \
              "-Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;"
     end
     if @resource[:password]
-      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' " \
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:path]}' " \
              "-Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;"
     end
     cmd = cmd.join
@@ -67,10 +67,10 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
     cmd = []
 
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'physicalPath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'application' -Value '#{@resource[:application]}';" if @resource[:application]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'userName' -Value '#{@resource[:user_name]}';" if @resource[:user_name]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' -Name 'password' -Value '#{escape_string(@resource[:password])}';" if @resource[:password]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:path]}' -Name 'physicalPath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:path]}' -Name 'application' -Value '#{@resource[:application]}';" if @resource[:application]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:path]}' -Name 'userName' -Value '#{@resource[:user_name]}';" if @resource[:user_name]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{@resource[:path]}' -Name 'password' -Value '#{escape_string(@resource[:password])}';" if @resource[:password]
 
     cmd = cmd.join
     result = self.class.run(cmd)
@@ -79,11 +79,11 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
   def destroy
     Puppet.debug "Destroying #{@resource[:name]}"
-    test = self.class.run("Test-Path -Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}'")
+    test = self.class.run("Test-Path -Path 'IIS:\\Sites\\#{@resource[:path]}'")
     if test[:stdout].strip.casecmp('true').zero?
       cmd = []
       cmd << 'Remove-Item '
-      cmd << "-Path 'IIS:\\Sites\\#{@resource[:sitename]}\\#{@resource[:name]}' "
+      cmd << "-Path 'IIS:\\Sites\\#{@resource[:path]}' "
       cmd << '-Recurse '
       cmd << '-ErrorAction Stop '
       cmd = cmd.join
@@ -126,9 +126,18 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
       virt_dir_hash[:password]     = virt_dir['password']
       virt_dir_hash[:application]  = virt_dir['application']
       virt_dir_hash[:sitename]     = virt_dir['sitename']
+      virt_dir_hash[:path]         = virt_dir_path(virt_dir['sitename'], virt_dir['name'])
 
       new(virt_dir_hash)
     end
+  end
+
+  def self.virt_dir_path(sitename, name)
+    parts = name.tr('/', '\\').split('\\')
+    parts.shift if parts.first.casecmp?(sitename)
+    normalized_name = parts.join('\\')
+    site_path = "#{sitename}\\#{normalized_name}"
+    [normalized_name, site_path]
   end
 
   def escape_string(value)
