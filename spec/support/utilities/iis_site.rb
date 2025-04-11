@@ -20,3 +20,13 @@ end
 def remove_all_sites
   run_shell(format_powershell_iis_command('Get-Website | Remove-Website'))
 end
+
+def virtual_directory_path_exists?(site_name, path)
+  ps_script = %(
+    $vdir = Get-WebVirtualDirectory -Site "#{site_name}" | Where-Object { $_.Path -eq "#{path}" };
+    if ($vdir) { Write-Output "true" } else { Write-Output "false" }
+  ).strip
+
+  result = run_shell(format_powershell_iis_command(ps_script))
+  result[:stdout].strip.casecmp('true').zero?
+end

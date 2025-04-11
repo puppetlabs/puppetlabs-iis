@@ -214,5 +214,36 @@ describe 'iis_virtual_directory', :suite_b do
         end
       end
     end
+
+    context 'with names prefixed with site name' do
+      virt_dir_name = SecureRandom.hex(10).to_s
+      name = "#{site_name}\\#{virt_dir_name}"
+      manifest = <<-HERE
+        file{ 'c:/foo':
+          ensure => 'directory'
+        }->
+        iis_virtual_directory { '#{name}':
+          ensure       => 'present',
+          sitename     => '#{site_name}',
+          physicalpath => 'c:\\foo'
+        }
+      HERE
+
+      iis_idempotent_apply('create iis virtual dir', manifest)
+
+      it 'configures all expected parameters' do
+        resource_data = resource('iis_virtual_directory', name)
+        puppet_resource_should_show('ensure', 'present', resource_data)
+      end
+
+      it 'has the correct IIS provider path' do
+        expected_path = "/#{site_name}/#{virt_dir_name}"
+        expect(virtual_directory_path_exists?(site_name, expected_path)).to be(true)
+      end
+
+      it 'remove virt dir name' do
+        remove_vdir(virt_dir_name, site_name)
+      end
+    end
   end
 end
