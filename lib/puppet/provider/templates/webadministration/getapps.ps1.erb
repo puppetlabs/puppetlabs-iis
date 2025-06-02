@@ -26,7 +26,7 @@ Get-WebApplication | % {
       clientCertificateMapping    = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/clientCertificateMappingAuthentication").enabled
       iisClientCertificateMapping = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/iisClientCertificateMappingAuthentication").enabled
       windows                     = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/windowsAuthentication").enabled
-      forms                       = [bool](Get-WebConfiguration -Location "${site}/${name}" -Filter "system.webserver/security/authentication/formsAuthentication").enabled
+      forms                       = [string](Get-WebConfigurationProperty -Location "${site}/${name}" -Filter "system.web/authentication" -Name "mode") -eq "Forms"
     }
     enabledprotocols = [string]$_.enabledProtocols
   }

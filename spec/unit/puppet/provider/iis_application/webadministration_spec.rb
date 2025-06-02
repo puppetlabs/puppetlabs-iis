@@ -80,7 +80,61 @@ describe 'iis_application provider' do
 
   describe 'updating physicalpath'
   describe 'updating sslflags'
-  describe 'updating authenticationinfo'
+  describe 'updating authenticationinfo for IIS_Application' do
+    let(:params) do
+      {
+        title: 'foo\bar',
+        name: 'foo\bar',
+        ensure: :present,
+        sitename: 'foo',
+        applicationname: 'bar',
+        applicationpool: 'DefaultAppPool',
+        enabledprotocols: 'http,https',
+        authenticationinfo: {
+          'anonymous' => true,
+          'basic' => false,
+          'clientCertificateMapping' => false,
+          'digest' => false,
+          'iisClientCertificateMapping' => false,
+          'windows' => true,
+          'forms' => false
+        },
+      }
+    end
+    let(:authenticationinfo) do
+      {
+        'anonymous' => true,
+        'basic' => false,
+        'clientCertificateMapping' => false,
+        'digest' => false,
+        'iisClientCertificateMapping' => false,
+        'windows' => false,
+        'forms' => true
+      }
+    end
+
+    before :each do
+      cmdtext = "$webApplication = Get-WebApplication -Site 'foo' -Name 'bar'"
+      cmdtext += "\n"
+      authenticationinfo.each do |auth, enable|
+        if auth == 'forms' # Forms authentication requires a different command
+          mode_value = enable ? 'Forms' : 'None'
+          cmdtext += "Set-WebConfigurationProperty -PSPath 'IIS:/Sites/foo/bar' " \
+                      "-Filter 'system.web/authentication' -Name 'mode' -Value '#{mode_value}' -ErrorAction Stop\n"
+        else
+          cmdtext += "Set-WebConfigurationProperty -Location 'foo/bar' " \
+                    "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{enable} -ErrorAction Stop\n"
+        end
+      end
+      allow(Puppet::Provider::IIS_PowerShell).to receive(:run).and_return(exitcode: 0)
+    end
+
+    it 'updates value' do
+      iis_application_provider.authenticationinfo = authenticationinfo
+      iis_application_provider.update
+    end
+  end
+
   describe 'updating enabledprotocols' do
     let(:params) do
       {

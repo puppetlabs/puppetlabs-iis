@@ -37,7 +37,8 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   def authenticationinfo=(value)
     # Using property flush to find just the changed values, for speed
     @property_flush[:authenticationinfo] = value.select do |k, v|
-      authenticationinfo.key?(k) && authenticationinfo[k] != v
+      auth_info = authenticationinfo.is_a?(Hash) ? authenticationinfo : @resource[:authenticationinfo]
+      auth_info.key?(k) && auth_info[k] != v
     end
   end
 
@@ -90,9 +91,20 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
                   "-Filter 'system.webserver/security/access' -Name 'sslFlags' -Value '#{flags}' -ErrorAction Stop"
     end
 
-    @property_flush[:authenticationinfo]&.each do |auth, _enable|
-      inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
-                  "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{@property_flush[:authenticationinfo][auth]} -ErrorAction Stop"
+    @property_flush[:authenticationinfo]&.each do |auth, enable|
+      if auth == 'forms'
+        # Handle formsAuthentication separately
+        mode_value = enable ? 'Forms' : 'None'
+        # For Forms authentication, we need to set the mode value in the system.web section, not the system.webserver section
+        # This is a workaround for the fact that the WebAdministration module does not support setting the mode value for Forms authentication
+        # at the site level
+        inst_cmd << "Set-WebConfigurationProperty -PSPath 'IIS:/Sites/#{self.class.find_sitename(resource)}/#{app_name}' " \
+                    "-Filter 'system.web/authentication' -Name 'mode' -Value '#{mode_value}' -ErrorAction Stop"
+      else
+        # Handle other authentication types
+        inst_cmd << "Set-WebConfigurationProperty -Location '#{self.class.find_sitename(resource)}/#{app_name}' " \
+                    "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{enable} -ErrorAction Stop"
+      end
     end
 
     if @property_flush[:enabledprotocols]

@@ -24,8 +24,15 @@ Get-WebSite | % {
     'forms'
   )
   $authenticationTypes | Foreach-Object -Begin { $info = @{} } -Process {
-    $p = Get-WebConfiguration -Filter "system.webserver/security/authentication/$($_)Authentication" -PSPath "IIS:\sites\$($name)"
-    $info["$($_)"] = $p.enabled
+    if ($_ -eq 'forms') {
+      # Special handling for formsAuthentication
+      $p = Get-WebConfigurationProperty -Filter "system.web/authentication" -Name "mode" -PSPath "IIS:\Sites\$($name)" -ErrorAction SilentlyContinue
+      $info["$($_)"] = if ($p -eq 'Forms') { $true } else { $false }
+    } else {
+      # Handle other authentication types
+      $p = Get-WebConfiguration -Filter "system.webserver/security/authentication/$($_)Authentication" -PSPath "IIS:\sites\$($name)" -ErrorAction SilentlyContinue
+      $info["$($_)"] = $p.enabled
+    }
   }
   $authenticationinfo = New-Object -TypeName PSObject -Property $info
 
