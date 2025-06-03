@@ -62,13 +62,29 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     cmd << self.class.ps_script_content('serviceautostartprovider', @resource)
 
-    @resource[:authenticationinfo]&.each do |auth, _enable|
+    @resource[:authenticationinfo]&.each do |auth, enable|
       args = []
-      args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
-      args << "-PSPath 'IIS:\\'"
-      args << "-Location '#{@resource[:name]}'"
-      args << '-Name enabled'
-      args << "-Value #{@resource[:authenticationinfo][auth]}"
+      if auth == 'forms'
+        # Handle formsAuthentication separately
+        mode_value = enable ? 'Forms' : 'None'
+        # For Forms authentication, we need to set the mode value
+        # in the system.web section, not the system.webserver section
+        args << "-Filter 'system.web/authentication'"
+
+        # This is a workaround for the fact that the WebAdministration module
+        # does not support setting the mode value for Forms authentication
+        # at the site level
+        args << "-PSPath 'IIS:\\Sites\\#{@resource[:name]}'"
+        args << "-Name 'mode'"
+        args << "-Value '#{mode_value}'"
+      else
+        # Handle other authentication types
+        args << "-Filter 'system.webserver/security/authentication/#{auth}Authentication'"
+        args << "-PSPath 'IIS:\\'"
+        args << "-Location '#{@resource[:name]}'"
+        args << '-Name enabled'
+        args << "-Value #{enable}"
+      end
       cmd << "Set-WebConfigurationProperty #{args.join(' ')} -ErrorAction Stop\n"
     end
 
