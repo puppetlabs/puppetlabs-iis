@@ -30,6 +30,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     Puppet.debug "Creating #{@resource[:name]}"
 
     verify_physicalpath
+    dir_path = virt_dir_path
 
     cmd = []
     if local_path?(@resource[:physicalpath])
@@ -40,17 +41,17 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     else
       # New-WebVirtualDirectory fails when PhysicalPath is a UNC path that unavailable,
       # and UNC paths are inherently not necessarily always available.
-      cmd << "New-Item -Type VirtualDirectory 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' "
+      cmd << "New-Item -Type VirtualDirectory 'IIS:\\Sites\\#{dir_path}' "
     end
     cmd << "-Application \"#{@resource[:application]}\" " if @resource[:application]
     cmd << "-PhysicalPath \"#{@resource[:physicalpath]}\" " if @resource[:physicalpath]
     cmd << '-ErrorAction Stop;'
     if @resource[:user_name]
-      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' " \
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{dir_path}' " \
              "-Name 'userName' -Value '#{@resource[:user_name]}' -ErrorAction Stop;"
     end
     if @resource[:password]
-      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' " \
+      cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{dir_path}' " \
              "-Name 'password' -Value '#{escape_string(@resource[:password])}' -ErrorAction Stop;"
     end
     cmd = cmd.join
@@ -67,10 +68,10 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
     cmd = []
 
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' -Name 'physicalPath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' -Name 'application' -Value '#{@resource[:application]}';" if @resource[:application]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' -Name 'userName' -Value '#{@resource[:user_name]}';" if @resource[:user_name]
-    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' -Name 'password' -Value '#{escape_string(@resource[:password])}';" if @resource[:password]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path}' -Name 'physicalPath' -Value '#{@resource[:physicalpath]}';" if @resource[:physicalpath]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path}' -Name 'application' -Value '#{@resource[:application]}';" if @resource[:application]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path}' -Name 'userName' -Value '#{@resource[:user_name]}';" if @resource[:user_name]
+    cmd << "Set-ItemProperty -Path 'IIS:\\Sites\\#{virt_dir_path}' -Name 'password' -Value '#{escape_string(@resource[:password])}';" if @resource[:password]
 
     cmd = cmd.join
     result = self.class.run(cmd)
@@ -79,11 +80,11 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
   def destroy
     Puppet.debug "Destroying #{@resource[:name]}"
-    test = self.class.run("Test-Path -Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}'")
+    test = self.class.run("Test-Path -Path 'IIS:\\Sites\\#{virt_dir_path}'")
     if test[:stdout].strip.casecmp('true').zero?
       cmd = []
       cmd << 'Remove-Item '
-      cmd << "-Path 'IIS:\\Sites\\#{virt_dir_path(@resource[:sitename], @resource[:name])}' "
+      cmd << "-Path 'IIS:\\Sites\\#{virt_dir_path}' "
       cmd << '-Recurse '
       cmd << '-ErrorAction Stop '
       cmd = cmd.join
@@ -131,15 +132,24 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     end
   end
 
-  def virt_dir_path(sitename, name)
+  def virt_dir_path
+    sitename = @resource[:sitename]
+    name = @resource[:name]
+    app_name = @resource[:application] if @resource[:application]
+
     @cached_virt_dir_path ||= {}
 
-    key = "#{sitename}/#{name}"
-    @cached_virt_dir_path[key] ||= begin
+    cache_key = "#{sitename}/#{name}/#{app_name}"
+    @cached_virt_dir_path[cache_key] ||= begin
       parts = name.tr('/', '\\').split('\\')
-      parts.shift if parts.first.casecmp?(sitename)
-      normalized_name = parts.join('\\')
-      "#{sitename}\\#{normalized_name}"
+      parts.shift if parts.first&.casecmp?(sitename)
+      parts.shift if app_name && parts.first&.casecmp?(app_name)
+
+      path_parts = [sitename]
+      path_parts << app_name if app_name
+      path_parts.concat(parts)
+
+      path_parts.join('\\')
     end
   end
 
