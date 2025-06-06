@@ -5,7 +5,6 @@ require_relative '../../puppet_x/puppetlabs/iis/property/name'
 require_relative '../../puppet_x/puppetlabs/iis/property/hash'
 require_relative '../../puppet_x/puppetlabs/iis/property/path'
 require_relative '../../puppet_x/puppetlabs/iis/property/authenticationinfo'
-require_relative '../../puppet_x/puppetlabs/iis/bindings'
 
 Puppet::Type.newtype(:iis_site) do
   @doc = "Allows creation of a new IIS Web Site and configuration of site
@@ -156,17 +155,8 @@ Puppet::Type.newtype(:iis_site) do
       value
     end
 
-    def should
-      PuppetX::PuppetLabs::IIS::Bindings.sort_bindings(super)
-    end
-
-    def should=(values)
-      super
-      @should = PuppetX::PuppetLabs::IIS::Bindings.sort_bindings(@should)
-    end
-
     def insync?(is)
-      PuppetX::PuppetLabs::IIS::Bindings.sort_bindings(is) == should
+      (is || []).to_set == (should || []).to_set
     end
   end
 
