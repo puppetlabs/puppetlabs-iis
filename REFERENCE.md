@@ -673,6 +673,56 @@ The sslflags parameter accepts integer values from 0 to 3 inclusive.
   the centralized SSL certificate store while requiring Server Name
   Indicator
 
+For non-web protocols, the bindinginformation format varies by protocol:
+
+**net.pipe protocol:**
+- Format: `hostname` (hostname only, no port or colons)
+- Example: `'bindinginformation' => 'hostname'`
+
+**net.tcp protocol:**
+- Format: `port:hostname` (port number required, followed by colon and hostname)
+- Example: `'bindinginformation' => '808:hostname'`
+
+**net.msmq protocol:**
+- Format: `hostname` (hostname only, no port or colons)
+- Example: `'bindinginformation' => 'hostname'`
+
+**msmq.formatname protocol:**
+- Format: `hostname` (hostname only, no port or colons)
+- Example: `'bindinginformation' => 'hostname'`
+
+**Note:** SSL-related parameters (sslflags, certificatehash, certificatestorename) 
+are only valid for HTTPS protocol bindings and will cause validation errors 
+if used with other protocols.
+Example with multiple protocols:
+```puppet
+bindings => [
+  {
+    'bindinginformation' => '*:80:',
+    'protocol'           => 'http',
+  },
+  {
+    'bindinginformation'   => '*:443:hostname',
+    'certificatehash'      => 'ABCDEF1234567890ABCDEF1234567890ABCDEF12',
+    'certificatestorename' => 'MY',
+    'protocol'             => 'https',
+    'sslflags'             => 1,
+  },
+  {
+    'bindinginformation' => 'hostname',
+    'protocol'           => 'net.pipe',
+  },
+  {
+    'bindinginformation' => '808:hostname',
+    'protocol'           => 'net.tcp',
+  },
+  {
+    'bindinginformation' => 'hostname',
+    'protocol'           => 'net.msmq',
+  },
+]
+```
+
 ##### `defaultpage`
 
 Specifies the default page of the site.
@@ -846,4 +896,3 @@ The name of the virtual directory to manage
 
 The specific backend to use for this `iis_virtual_directory` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
-
