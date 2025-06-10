@@ -137,6 +137,40 @@ describe Puppet::Type.type(:iis_site) do
         'bindinginformation' => '*:80:'
       }
     end
+
+    context 'order independent comparison' do
+      let(:bindings_property) { resource.property(:bindings) }
+
+      before(:each) do
+        resource[:bindings] = [
+          { 'protocol' => 'http', 'bindinginformation' => '*:80:' },
+          { 'protocol' => 'net.msmq', 'bindinginformation' => 'hostname' },
+        ]
+      end
+
+      it 'considers same bindings in different order as in sync' do
+        current_bindings = [
+          { 'protocol' => 'net.msmq', 'bindinginformation' => 'hostname' },
+          { 'protocol' => 'http', 'bindinginformation' => '*:80:' },
+        ]
+        expect(bindings_property.insync?(current_bindings)).to be true
+      end
+
+      it 'considers different bindings as out of sync' do
+        current_bindings = [
+          { 'protocol' => 'net.msmq', 'bindinginformation' => 'hostname' },
+          { 'protocol' => 'http', 'bindinginformation' => '*:8080:' },
+        ]
+        expect(bindings_property.insync?(current_bindings)).to be false
+      end
+
+      it 'considers different number of bindings as out of sync' do
+        current_bindings = [
+          { 'protocol' => 'http', 'bindinginformation' => '*:80:' },
+        ]
+        expect(bindings_property.insync?(current_bindings)).to be false
+      end
+    end
   end
 
   context 'property :limits' do
