@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.1.4](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.1.4) - 2025-06-10
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.3...v10.1.4)
+
+### Other
+
+- fix(MODULES-5225): include app_name in cache key for virt_dir_path [#406](https://github.com/puppetlabs/puppetlabs-iis/pull/406) ([imaqsood](https://github.com/imaqsood))
+
 ## [v10.1.3](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.1.3) - 2025-06-04
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.2...v10.1.3)
