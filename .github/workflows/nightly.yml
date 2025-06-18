@@ -5,6 +5,9 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+env:
+  SERVICE_URL: https://facade-maint-config-windows-use-ssh-6f3kfepqcq-ew.a.run.app/v1/provision
+
 jobs:
   Spec:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
@@ -14,4 +17,3 @@ jobs:
     needs: Spec
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_acceptance.yml@main"
     secrets: "inherit"
-
