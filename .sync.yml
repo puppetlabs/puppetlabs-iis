@@ -1,4 +1,7 @@
 ---
+common:
+  service_url: https://facade-maint-config-windows-use-ssh-6f3kfepqcq-ew.a.run.app/v1/provision
+
 ".gitlab-ci.yml":
   delete: true
 ".rubocop.yml":
