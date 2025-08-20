@@ -33,4 +33,28 @@ describe provider_class do
       expect(provider_class.new).to respond_to(method)
     end
   end
+
+  describe '#update' do
+    let(:resource) do
+      Puppet::Type.type(:iis_application_pool).new(
+        name: 'iis_application_pool',
+        password: 'Sup3r$ecret!',
+      )
+    end
+    let(:provider) { described_class.new(resource) }
+
+    it 'passes the password directly in the PowerShell command' do
+      expect(described_class).to receive(:run)
+        .with(a_string_including('processModel.password', 'Sup3r$ecret!'))
+        .and_return({ exitcode: 0, errormessage: '' })
+
+      provider.update
+    end
+
+    it 'redacts password in Puppet logs' do
+      prop = resource.property(:password)
+      expect(prop.should_to_s('Sup3r$ecret!')).to eq('[redacted sensitive information]')
+      expect(prop.is_to_s('Sup3r$ecret!')).to eq('[redacted sensitive information]')
+    end
+  end
 end
