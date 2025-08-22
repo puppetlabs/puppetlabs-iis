@@ -382,6 +382,14 @@ Puppet::Type.newtype(:iis_application_pool) do
           files, this uses AppCmd.exe. This encrypts the password automatically
           before it is written to the XML configuration files. This provides
           better password security than storing unencrypted passwords."
+
+    def should_to_s(_value)
+      '[redacted sensitive information]'
+    end
+
+    def is_to_s(_value) # rubocop:disable Naming/PredicateName
+      '[redacted sensitive information]'
+    end
   end
 
   newproperty(:orphan_action_exe, parent: PuppetX::PuppetLabs::IIS::Property::String) do
