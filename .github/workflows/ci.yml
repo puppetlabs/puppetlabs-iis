@@ -5,13 +5,92 @@ on:
     branches:
       - "main"
   workflow_dispatch:
+
+env:
+  SERVICE_URL: https://facade-maint-config-windows-use-ssh-6f3kfepqcq-ew.a.run.app/v1/provision
     
 jobs:
   Spec:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
     secrets: "inherit"
 
+  setup_matrix:
+    name: "Setup Test Matrix"
+    needs: "Spec"
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.get-matrix.outputs.matrix }}
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+
+      - name: "Bundle environment"
+        run: |
+          echo ::group::bundler environment
+          bundle env
+          echo ::endgroup::
+      
+      - name: Setup Acceptance Test Matrix
+        id: get-matrix
+        run: |
+          bundle exec matrix_from_metadata_v2
+
   Acceptance:
-    needs: Spec
-    uses: "puppetlabs/cat-github-actions/.github/workflows/module_acceptance.yml@main"
-    secrets: "inherit"
+    name: "${{matrix.platforms.label}}, ${{matrix.collection}}"
+    needs:
+      - setup_matrix
+    if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+
+      - name: Print bundle environment
+        run: |
+          echo ::group::bundler environment
+          bundle env
+          echo ::endgroup::
+
+      - name: Provision test environment
+        run: |
+          bundle exec rake "litmus:provision[${{matrix.platforms.provider}},${{ matrix.platforms.image }}]"
+            # Redact password
+            FILE='spec/fixtures/litmus_inventory.yaml'
+            sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
+
+      - name: "Install Puppet agent"
+        run: |
+          bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
+
+      - name: "Install module"
+        run: |
+          bundle exec rake 'litmus:install_module'
+
+      - name: "Run acceptance tests"
+        run: |
+          bundle exec rake 'litmus:acceptance:parallel'
+
+      - name: "Remove test environment"
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          if [[ -f spec/fixtures/litmus_inventory.yaml ]]; then
+            bundle exec rake 'litmus:tear_down'
+          fi
