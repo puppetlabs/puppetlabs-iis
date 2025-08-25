@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.1.6](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.1.6) - 2025-08-25
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.5...v10.1.6)
+
+### Fixed
+
+- (MODULES-11595) Redact password and fix provider spec for iis_application_pool [#412](https://github.com/puppetlabs/puppetlabs-iis/pull/412) ([imaqsood](https://github.com/imaqsood))
+
 ## [v10.1.5](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.1.5) - 2025-06-20
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.4...v10.1.5)
@@ -17,7 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.3...v10.1.4)
 
-### Other
+### Fixed
 
 - fix(MODULES-5225): include app_name in cache key for virt_dir_path [#406](https://github.com/puppetlabs/puppetlabs-iis/pull/406) ([imaqsood](https://github.com/imaqsood))
 
