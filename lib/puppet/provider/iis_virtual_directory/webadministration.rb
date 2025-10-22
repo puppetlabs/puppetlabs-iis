@@ -57,7 +57,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
     cmd = cmd.join
 
     result = self.class.run(cmd)
-    Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    Puppet.err "Error creating virtual directory: #{result[:errormessage]}" unless result[:exitcode].zero?
     @resource[:ensure] = :present
   end
 
@@ -75,7 +75,7 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
 
     cmd = cmd.join
     result = self.class.run(cmd)
-    Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    Puppet.err "Error updating virtual directory: #{result[:errormessage]}" unless result[:exitcode].zero?
   end
 
   def destroy
@@ -90,13 +90,13 @@ Puppet::Type.type(:iis_virtual_directory).provide(:webadministration, parent: Pu
       cmd = cmd.join
 
       result = self.class.run(cmd)
-      Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+      Puppet.err "Error destroying virtual directory: #{result[:errormessage]}" unless result[:exitcode].zero?
     end
     @property_hash[:ensure] = :absent
   end
 
   def initialize(value = {})
-    super(value)
+    super
     @property_flush = {}
   end
 

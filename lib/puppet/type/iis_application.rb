@@ -57,7 +57,7 @@ Puppet::Type.newtype(:iis_application) do
     validate do |value|
       raise ArgumentError, 'A non-empty applicationpool name must be specified.' if value.nil? || value.empty?
 
-      super value
+      super(value)
     end
   end
 

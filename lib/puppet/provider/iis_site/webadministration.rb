@@ -39,7 +39,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     result = self.class.run(inst_cmd)
 
-    Puppet.err "Error creating website: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:exitcode].zero?
     Puppet.err "Error creating website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
     exists?
@@ -92,7 +92,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     result = self.class.run(inst_cmd)
 
-    Puppet.err "Error updating website: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:exitcode].zero?
     Puppet.err "Error updating website: #{result[:errormessage]}" unless result[:errormessage].nil?
 
     exists?
@@ -101,7 +101,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
   def destroy
     inst_cmd = "Remove-Website -Name \"#{@resource[:name]}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
-    Puppet.err "Error destroying website: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:exitcode].zero?
     Puppet.err "Error destroying website: #{result[:errormessage]}" unless result[:errormessage].nil?
     exists?
   end
@@ -111,7 +111,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
 
     result   = self.class.run(inst_cmd)
 
-    (result[:exitcode]).zero?
+    result[:exitcode].zero?
   end
 
   def start
@@ -120,7 +120,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     inst_cmd = "Start-Website -Name \"#{@resource[:name]}\" -ErrorVariable errvar;if($errvar){ throw \"$($errvar). Perhaps there is another website with this port or configuration setting\" }"
     result   = self.class.run(inst_cmd)
 
-    raise "Error starting website: #{result[:errormessage]}" unless result[:errormessage].nil? || (result[:exitcode]).zero?
+    raise "Error starting website: #{result[:errormessage]}" unless result[:errormessage].nil? || result[:exitcode].zero?
 
     true
   end
@@ -131,13 +131,13 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     inst_cmd = "Stop-Website -Name \"#{@resource[:name]}\" -ErrorVariable errvar;if($errvar){ throw \"$($errvar).\" }"
     result   = self.class.run(inst_cmd)
 
-    raise "Error stopping website: #{result[:errormessage]}" unless result[:errormessage].nil? || (result[:exitcode]).zero?
+    raise "Error stopping website: #{result[:errormessage]}" unless result[:errormessage].nil? || result[:exitcode].zero?
 
     true
   end
 
   def initialize(value = {})
-    super(value)
+    super
     @property_flush = {}
   end
 

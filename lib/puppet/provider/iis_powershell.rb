@@ -6,7 +6,7 @@ require 'ruby-pwsh'
 # This is the base class on which other providers are based.
 class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   def initialize(value = {})
-    super(value)
+    super
     @original_values = if value.is_a? Hash
                          value.clone
                        else

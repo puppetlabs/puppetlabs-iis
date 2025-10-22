@@ -34,7 +34,7 @@ Puppet::Type.newtype(:iis_application_pool) do
       raise ArgumentError, "A non-empty #{name} must be specified." if value.nil? || value.empty?
       raise("#{name} should be less than 64 characters") unless value.length < 64
 
-      super value
+      super(value)
     end
   end
 
@@ -134,7 +134,7 @@ Puppet::Type.newtype(:iis_application_pool) do
           Pool](https://www.iis.net/configreference/system.applicationhost/applicationPools/add/failure).
           Valid options 11 to 65535."
     validate do |value|
-      super value
+      super(value)
       raise "#{name} should be greater than 10" unless value.to_i > 10
       raise "#{name} should be less than or equal to 65535" unless value.to_i <= 65_535
     end
@@ -155,7 +155,7 @@ Puppet::Type.newtype(:iis_application_pool) do
           optional set of events can be triggered. These optional events are
           determined by the `cpu_action` property."
     validate do |value|
-      super value
+      super(value)
       raise "#{name} should be less than or equal to 100000" unless value.to_i <= 100_000
     end
   end
@@ -316,7 +316,7 @@ Puppet::Type.newtype(:iis_application_pool) do
           for that application pool. In this example, setting `max_processes` to
           a value of 0 or 4 would have the same result."
     validate do |value|
-      super value
+      super(value)
       raise "#{name} should be less than or equal to 2147483647" unless value.to_i <= 2_147_483_647
     end
   end
@@ -444,7 +444,7 @@ Puppet::Type.newtype(:iis_application_pool) do
     desc "Specifies the maximum number of failures allowed within the number of
           minutes specified by the `rapid_fail_protection_interval` property."
     validate do |value|
-      super value
+      super(value)
       raise "#{name} should be less than or equal to 2147483647" unless value.to_i <= 2_147_483_647
     end
   end
