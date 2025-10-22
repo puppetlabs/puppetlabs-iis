@@ -22,7 +22,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
   mk_resource_methods
 
   def initialize(value = {})
-    super(value)
+    super
     @property_flush = {}
   end
 
@@ -54,14 +54,14 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     check_paths
     if @resource[:virtual_directory]
       args = []
-      args << (@resource[:virtual_directory]).to_s
+      args << @resource[:virtual_directory].to_s
       args << "-ApplicationPool #{@resource[:applicationpool].inspect}" if @resource[:applicationpool]
       inst_cmd = "ConvertTo-WebApplication #{args.join(' ')} -Force -ErrorAction Stop"
     else
       inst_cmd = self.class.ps_script_content('newapplication', @resource)
     end
     result = self.class.run(inst_cmd)
-    raise "Error creating application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    raise "Error creating application: #{result[:errormessage]}" unless result[:exitcode].zero?
     raise "Error creating application: #{result[:errormessage]}" unless result[:errormessage].nil?
 
     @property_hash[:ensure] = :present
@@ -71,7 +71,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
     inst_cmd = "Remove-WebApplication -Site \"#{self.class.find_sitename(resource)}\" -Name \"#{app_name}\" -ErrorAction Stop"
     result   = self.class.run(inst_cmd)
     @property_hash.clear
-    raise "Error destroying application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    raise "Error destroying application: #{result[:errormessage]}" unless result[:exitcode].zero?
     raise "Error destroying application: #{result[:errormessage]}" unless result[:errormessage].nil?
   end
 
@@ -118,7 +118,7 @@ Puppet::Type.type(:iis_application).provide(:webadministration, parent: Puppet::
 
     inst_cmd = inst_cmd.join("\n")
     result   = self.class.run(inst_cmd)
-    raise "Error updating application: #{result[:errormessage]}" unless (result[:exitcode]).zero?
+    raise "Error updating application: #{result[:errormessage]}" unless result[:exitcode].zero?
     raise "Error updating application: #{result[:errormessage]}" unless result[:errormessage].nil?
   end
 

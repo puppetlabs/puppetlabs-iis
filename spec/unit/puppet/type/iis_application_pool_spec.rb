@@ -99,16 +99,6 @@ describe 'iis_application_pool' do
     expect(params + [:provider]).to include(*type_class.parameters)
   end
 
-  [:state,
-   :managed_pipeline_mode,
-   :managed_runtime_version,
-   :start_mode,
-   :cpu_action,
-   :idle_timeout_action,
-   :logon_type,
-   :load_balancer_capabilities,
-   :identity_type].freeze
-
   [:name,
    :clr_config_file,
    :managed_runtime_loader,

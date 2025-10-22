@@ -23,7 +23,7 @@ Puppet::Type.type(:iis_site).provide(:iisadministration) do
   mk_resource_methods
 
   def initialize(value = {})
-    super(value)
+    super
     @property_flush = {}
   end
 end

@@ -50,7 +50,7 @@ Puppet::Type.newtype(:iis_site) do
     validate do |value|
       raise ArgumentError, 'A non-empty name must be specified.' if value.nil? || value.empty?
 
-      super value
+      super(value)
     end
   end
 
@@ -72,7 +72,7 @@ Puppet::Type.newtype(:iis_site) do
     validate do |value|
       raise ArgumentError, 'A non-empty applicationpool name must be specified.' if value.nil? || value.empty?
 
-      super value
+      super(value)
     end
   end
 
