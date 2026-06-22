@@ -383,6 +383,12 @@ Puppet::Type.newtype(:iis_application_pool) do
           before it is written to the XML configuration files. This provides
           better password security than storing unencrypted passwords."
 
+    # Mark the property sensitive so Puppet redacts it everywhere a change
+    # event is recorded. This is what hides the value in the structured
+    # `desired_value`/`previous_value` fields rendered by the PE console
+    # report; the `*_to_s` overrides below only mask the message string.
+    sensitive true
+
     def should_to_s(_value)
       '[redacted sensitive information]'
     end

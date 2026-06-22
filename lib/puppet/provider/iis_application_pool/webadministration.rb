@@ -40,7 +40,8 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
     @resource.properties.select { |rp| rp.name != :ensure && rp.name != :state }.each do |property|
       property_name = iis_properties[property.name.to_s]
-      Puppet.debug "Changing #{property_name} to #{property.value}"
+      log_value = property.sensitive ? '[redacted]' : property.value
+      Puppet.debug "Changing #{property_name} to #{log_value}"
       if property.value.is_a?(Array)
         cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}'"
         property.value.each do |item|
@@ -63,8 +64,8 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
     cmd = cmd.join("\n")
     result = self.class.run(cmd)
-    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:exitcode].zero?
-    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+    Puppet.err "Error updating apppool: #{redact_sensitive(result[:errormessage])}" unless result[:exitcode].zero?
+    Puppet.err "Error updating apppool: #{redact_sensitive(result[:errormessage])}" unless result[:errormessage].nil?
   end
 
   def destroy
@@ -228,6 +229,20 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       'restart_time_limit' => 'recycling.periodicRestart.time',
       'restart_schedule' => 'recycling.periodicRestart.schedule'
     }
+  end
+
+  # Scrub the value of any sensitive property out of a string before it is
+  # logged. PowerShell errors can echo back the failing command, which would
+  # otherwise expose the plaintext password in an err-level report log entry.
+  def redact_sensitive(message)
+    msg = message.to_s
+    @resource.parameters.each_value do |param|
+      next unless param.respond_to?(:sensitive) && param.sensitive
+
+      value = param.value.to_s
+      msg = msg.gsub(value, '[redacted]') unless value.empty?
+    end
+    msg
   end
 
   def escape_value(value)

@@ -56,5 +56,24 @@ describe provider_class do
       expect(prop.should_to_s('Sup3r$ecret!')).to eq('[redacted sensitive information]')
       expect(prop.is_to_s('Sup3r$ecret!')).to eq('[redacted sensitive information]')
     end
+
+    it 'marks the password property as sensitive so change events are redacted' do
+      # This is what redacts the structured desired_value/previous_value
+      # fields shown in the PE console report, not just the message string.
+      expect(resource.property(:password).sensitive).to be true
+    end
+
+    it 'does not log the plaintext password at debug level' do
+      allow(described_class).to receive(:run).and_return({ exitcode: 0, errormessage: '' })
+      expect(Puppet).not_to receive(:debug).with(a_string_including('Sup3r$ecret!'))
+      provider.update
+    end
+
+    it 'redacts the password from PowerShell error messages' do
+      allow(described_class).to receive(:run)
+        .and_return({ exitcode: 1, errormessage: "Set-ItemProperty failed with -Value 'Sup3r$ecret!'" })
+      expect(Puppet).not_to receive(:err).with(a_string_including('Sup3r$ecret!'))
+      provider.update
+    end
   end
 end
