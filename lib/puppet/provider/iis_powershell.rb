@@ -36,20 +36,35 @@ class Puppet::Provider::IIS_PowerShell < Puppet::Provider # rubocop:disable all
   end
 
   # run command
-  def self.run(command, _check: false)
-    Puppet.debug("COMMAND: #{command}")
+  #
+  # sensitive_values is an optional list of strings (e.g. passwords) that must
+  # never reach the logs. The command is still executed verbatim; only the
+  # debug output is scrubbed. This is required because the command string,
+  # STDOUT and the error message can all echo back secrets passed to IIS.
+  def self.run(command, _check: false, sensitive_values: [])
+    Puppet.debug("COMMAND: #{redact_sensitive(command, sensitive_values)}")
 
     result = ps_manager.execute(command)
     stderr = result[:stderr]
 
     stderr&.each do |er|
-      er.each { |e| Puppet.debug "STDERR: #{e.chop}" } unless er.empty?
+      er.each { |e| Puppet.debug "STDERR: #{redact_sensitive(e.chop, sensitive_values)}" } unless er.empty?
     end
 
-    Puppet.debug "STDOUT: #{result[:stdout]}" unless result[:stdout].nil?
-    Puppet.debug "ERRMSG: #{result[:errormessage]}" unless result[:errormessage].nil?
+    Puppet.debug "STDOUT: #{redact_sensitive(result[:stdout], sensitive_values)}" unless result[:stdout].nil?
+    Puppet.debug "ERRMSG: #{redact_sensitive(result[:errormessage], sensitive_values)}" unless result[:errormessage].nil?
 
     result
+  end
+
+  # Scrub any sensitive values out of a string before it is logged.
+  def self.redact_sensitive(text, sensitive_values)
+    str = text.to_s
+    sensitive_values.each do |value|
+      value = value.to_s
+      str = str.gsub(value, '[redacted]') unless value.empty?
+    end
+    str
   end
 
   # PowerShellManager - Responsible for managing PowerShell
