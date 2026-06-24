@@ -43,9 +43,9 @@ describe provider_class do
     end
     let(:provider) { described_class.new(resource) }
 
-    it 'passes the password directly in the PowerShell command' do
+    it 'passes the password directly in the PowerShell command and flags it sensitive for logging' do
       expect(described_class).to receive(:run)
-        .with(a_string_including('processModel.password', 'Sup3r$ecret!'))
+        .with(a_string_including('processModel.password', 'Sup3r$ecret!'), sensitive_values: array_including('Sup3r$ecret!'))
         .and_return({ exitcode: 0, errormessage: '' })
 
       provider.update
@@ -55,6 +55,65 @@ describe provider_class do
       prop = resource.property(:password)
       expect(prop.should_to_s('Sup3r$ecret!')).to eq('[redacted sensitive information]')
       expect(prop.is_to_s('Sup3r$ecret!')).to eq('[redacted sensitive information]')
+    end
+
+    it 'marks the password property as sensitive so change events are redacted' do
+      # This is what redacts the structured desired_value/previous_value
+      # fields shown in the PE console report, not just the message string.
+      expect(resource.property(:password).sensitive).to be true
+    end
+
+    it 'does not log the plaintext password at debug level' do
+      allow(described_class).to receive(:run).and_return({ exitcode: 0, errormessage: '' })
+      expect(Puppet).not_to receive(:debug).with(a_string_including('Sup3r$ecret!'))
+      provider.update
+    end
+
+    it 'redacts the password from PowerShell error messages' do
+      allow(described_class).to receive(:run)
+        .and_return({ exitcode: 1, errormessage: "Set-ItemProperty failed with -Value 'Sup3r$ecret!'" })
+      expect(Puppet).not_to receive(:err).with(a_string_including('Sup3r$ecret!'))
+      provider.update
+    end
+
+    it 'does not raise an error on a successful run that returns an empty error message' do
+      allow(described_class).to receive(:run).and_return({ exitcode: 0, errormessage: '' })
+      expect(Puppet).not_to receive(:err)
+      provider.update
+    end
+  end
+
+  describe '.run' do
+    # This exercises the shared run method directly, which is the real
+    # debug-level leak vector: it logs `COMMAND: <full command>` before the
+    # provider gets a chance to redact anything.
+    let(:ps_manager) do
+      instance_double(Pwsh::Manager, execute: { stdout: nil, stderr: nil, errormessage: nil, exitcode: 0 })
+    end
+
+    before(:each) do
+      allow(described_class).to receive(:ps_manager).and_return(ps_manager)
+      allow(Puppet).to receive(:debug)
+    end
+
+    it 'redacts sensitive values from the command logged at debug level' do
+      expect(Puppet).not_to receive(:debug).with(a_string_including('Sup3r$ecret!'))
+
+      described_class.run(
+        "Set-ItemProperty -Name 'processModel.password' -Value 'Sup3r$ecret!'",
+        sensitive_values: ['Sup3r$ecret!'],
+      )
+    end
+
+    it 'still executes the command verbatim, including the secret' do
+      expect(ps_manager).to receive(:execute)
+        .with(a_string_including('Sup3r$ecret!'))
+        .and_return({ stdout: nil, stderr: nil, errormessage: nil, exitcode: 0 })
+
+      described_class.run(
+        "Set-ItemProperty -Name 'processModel.password' -Value 'Sup3r$ecret!'",
+        sensitive_values: ['Sup3r$ecret!'],
+      )
     end
   end
 end

@@ -40,7 +40,8 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
 
     @resource.properties.select { |rp| rp.name != :ensure && rp.name != :state }.each do |property|
       property_name = iis_properties[property.name.to_s]
-      Puppet.debug "Changing #{property_name} to #{property.value}"
+      log_value = property.sensitive ? '[redacted]' : property.value
+      Puppet.debug "Changing #{property_name} to #{log_value}"
       if property.value.is_a?(Array)
         cmd << "Clear-ItemProperty -Path 'IIS:\\AppPools\\#{@resource[:name]}' -Name '#{property_name}'"
         property.value.each do |item|
@@ -62,9 +63,9 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     end
 
     cmd = cmd.join("\n")
-    result = self.class.run(cmd)
-    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:exitcode].zero?
-    Puppet.err "Error updating apppool: #{result[:errormessage]}" unless result[:errormessage].nil?
+    result = self.class.run(cmd, sensitive_values: sensitive_values)
+    return if result[:exitcode].zero? && (result[:errormessage].nil? || result[:errormessage].empty?)
+    Puppet.err "Error updating apppool: #{redact_sensitive(result[:errormessage])}"
   end
 
   def destroy
@@ -228,6 +229,21 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       'restart_time_limit' => 'recycling.periodicRestart.time',
       'restart_schedule' => 'recycling.periodicRestart.schedule'
     }
+  end
+
+  # Values of every property flagged sensitive, used to scrub secrets out of
+  # anything that gets logged (the shared run command/STDOUT/ERRMSG as well as
+  # the err-level message below). A failing PowerShell command echoes back the
+  # command text, which would otherwise expose the plaintext password.
+  def sensitive_values
+    @resource.parameters.each_value
+             .select { |param| param.respond_to?(:sensitive) && param.sensitive }
+             .map { |param| param.value.to_s }
+             .reject(&:empty?)
+  end
+
+  def redact_sensitive(message)
+    self.class.redact_sensitive(message, sensitive_values)
   end
 
   def escape_value(value)
