@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v11.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v11.0.0) - 2026-06-28
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.6...v11.0.0)
+
+### Changed
+
+- (CAT-2374) Puppetcore update [#414](https://github.com/puppetlabs/puppetlabs-iis/pull/414) ([LukasAud](https://github.com/LukasAud))
+
+### Other
+
+- (MODULES-11595) Mark iis_application_pool password as sensitive to stop report leak [#418](https://github.com/puppetlabs/puppetlabs-iis/pull/418) ([imaqsood](https://github.com/imaqsood))
+
 ## [v10.1.6](https://github.com/puppetlabs/puppetlabs-iis/tree/v10.1.6) - 2025-08-25
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.5...v10.1.6)
