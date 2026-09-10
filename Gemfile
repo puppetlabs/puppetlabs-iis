@@ -9,7 +9,6 @@ else
 end
 source gemsource_default
 
-gem 'puppet-syntax', git: 'https://github.com/puppetlabs/puppet-syntax', tag: '5.1.0'
 
 def location_for(place_or_constraint, fake_constraint = nil, opts = {})
   git_url_regex  = /\A(?<url>(?:https?|git)[:@][^#]*)(?:#(?<branch>.*))?/
