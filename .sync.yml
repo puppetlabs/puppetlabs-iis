@@ -11,6 +11,9 @@ Gemfile:
   optional:
     ":development":
     - gem: 'ruby-pwsh'
+  overrides:
+    - gem: 'puppet_litmus'
+      version: '~> 2.0'
 Rakefile:
   unmanaged: true
 spec/spec_helper.rb:
