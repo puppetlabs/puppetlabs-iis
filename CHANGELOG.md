@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v11.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v11.0.0) - 2026-06-28
+## [v11.1.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v11.1.0) - 2026-09-15
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v11.0.0...v11.1.0)
+
+### Added
+
+- (MODULES-11733) Add Puppet 9 support [#420](https://github.com/puppetlabs/puppetlabs-iis/pull/420) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
+## [v11.0.0](https://github.com/puppetlabs/puppetlabs-iis/tree/v11.0.0) - 2026-07-01
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-iis/compare/v10.1.6...v11.0.0)
 
@@ -13,7 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - (CAT-2374) Puppetcore update [#414](https://github.com/puppetlabs/puppetlabs-iis/pull/414) ([LukasAud](https://github.com/LukasAud))
 
-### Other
+### Fixed
 
 - (MODULES-11595) Mark iis_application_pool password as sensitive to stop report leak [#418](https://github.com/puppetlabs/puppetlabs-iis/pull/418) ([imaqsood](https://github.com/imaqsood))
 
