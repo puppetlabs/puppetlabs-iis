@@ -5,6 +5,7 @@ require 'puppet_blacksmith/rake_tasks' if Bundler.rubygems.find_name('puppet-bla
 require 'github_changelog_generator/task' if Bundler.rubygems.find_name('github_changelog_generator').any?
 require 'puppet-strings/tasks' if Bundler.rubygems.find_name('puppet-strings').any?
 
+PuppetLint.configuration.send('disable_strict_indent')
 PuppetLint.configuration.fail_on_warnings = true
 PuppetLint.configuration.send('relative')
 PuppetLint.configuration.send('disable_80chars')
