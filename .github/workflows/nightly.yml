@@ -8,6 +8,10 @@ on:
 jobs:
   Spec:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
+    with:
+      # patron (a faraday-patron/faraday_middleware transitive dep pulled in by
+      # puppet_litmus's winrm chain) needs libcurl dev headers to build its native extension.
+      additional_packages: "libcurl4-openssl-dev"
     secrets: "inherit"
 
   Acceptance:
