@@ -3,7 +3,7 @@
 require 'spec_helper_acceptance'
 
 describe 'a minimal IIS config:', :suite_a do
-  manifest = <<-EOF
+  manifest = <<-MANIFEST
     file {'c:\\inetpub\\minimal':
       ensure => directory,
       source => 'C:\\inetpub\\wwwroot',
@@ -14,7 +14,7 @@ describe 'a minimal IIS config:', :suite_a do
       physicalpath    => 'c:\\inetpub\\minimal',
       applicationpool => 'DefaultAppPool',
     }
-  EOF
+  MANIFEST
 
   iis_idempotent_apply('create app', manifest)
 end

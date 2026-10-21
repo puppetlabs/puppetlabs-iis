@@ -65,6 +65,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
     cmd = cmd.join("\n")
     result = self.class.run(cmd, sensitive_values: sensitive_values)
     return if result[:exitcode].zero? && (result[:errormessage].nil? || result[:errormessage].empty?)
+
     Puppet.err "Error updating apppool: #{redact_sensitive(result[:errormessage])}"
   end
 
@@ -227,7 +228,7 @@ Puppet::Type.type(:iis_application_pool).provide(:webadministration, parent: Pup
       'restart_private_memory_limit' => 'recycling.periodicRestart.privateMemory',
       'restart_requests_limit' => 'recycling.periodicRestart.requests',
       'restart_time_limit' => 'recycling.periodicRestart.time',
-      'restart_schedule' => 'recycling.periodicRestart.schedule'
+      'restart_schedule' => 'recycling.periodicRestart.schedule',
     }
   end
 

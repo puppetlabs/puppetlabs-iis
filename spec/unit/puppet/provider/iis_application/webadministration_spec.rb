@@ -13,7 +13,7 @@ describe 'iis_application provider' do
   let(:facts) do
     {
       iis_version: '8.0',
-      operatingsystem: 'Windows'
+      operatingsystem: 'Windows',
     }
   end
 
@@ -27,14 +27,14 @@ describe 'iis_application provider' do
         allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
       end
 
-      it { iis_application_provider.create }
+      it { expect { iis_application_provider.create }.not_to raise_error }
     end
 
     context 'with nonexistent physicalpath' do
       let(:params) do
         {
           title: 'foo\bar',
-          physicalpath: 'C:\noexist'
+          physicalpath: 'C:\noexist',
         }
       end
 
@@ -50,7 +50,7 @@ describe 'iis_application provider' do
         {
           title: 'foo\bar',
           physicalpath: 'C:\exist',
-          sitename: 'foo'
+          sitename: 'foo',
         }
       end
 
@@ -59,7 +59,7 @@ describe 'iis_application provider' do
         allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{New-WebApplication}).and_return(exitcode: 0)
       end
 
-      it { iis_application_provider.create }
+      it { expect { iis_application_provider.create }.not_to raise_error }
     end
   end
 
@@ -67,7 +67,7 @@ describe 'iis_application provider' do
     let(:params) do
       {
         title: 'foo\bar',
-        virtual_directory: 'IIS:\Sites\exists\vdir'
+        virtual_directory: 'IIS:\Sites\exists\vdir',
       }
     end
 
@@ -75,7 +75,7 @@ describe 'iis_application provider' do
       allow(Puppet::Provider::IIS_PowerShell).to receive(:run).with(%r{ConvertTo-WebApplication}).and_return(exitcode: 0)
     end
 
-    it { iis_application_provider.create }
+    it { expect { iis_application_provider.create }.not_to raise_error }
   end
 
   describe 'updating physicalpath'
@@ -97,7 +97,7 @@ describe 'iis_application provider' do
           'digest' => false,
           'iisClientCertificateMapping' => false,
           'windows' => true,
-          'forms' => false
+          'forms' => false,
         },
       }
     end
@@ -109,7 +109,7 @@ describe 'iis_application provider' do
         'digest' => false,
         'iisClientCertificateMapping' => false,
         'windows' => false,
-        'forms' => true
+        'forms' => true,
       }
     end
 
@@ -120,25 +120,27 @@ describe 'iis_application provider' do
         if auth == 'forms' # Forms authentication requires a different command
           mode_value = enable ? 'Forms' : 'None'
           cmdtext += "Set-WebConfigurationProperty -PSPath 'IIS:/Sites/foo/bar' " \
-                      "-Filter 'system.web/authentication' -Name 'mode' -Value '#{mode_value}' -ErrorAction Stop\n"
+                     "-Filter 'system.web/authentication' -Name 'mode' -Value '#{mode_value}' -ErrorAction Stop\n"
         else
           cmdtext += "Set-WebConfigurationProperty -Location 'foo/bar' " \
-                    "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{enable} -ErrorAction Stop\n"
+                     "-Filter 'system.webserver/security/authentication/#{auth}Authentication' -Name enabled -Value #{enable} -ErrorAction Stop\n"
         end
       end
       allow(Puppet::Provider::IIS_PowerShell).to receive(:run).and_return(exitcode: 0)
     end
 
     it 'updates value' do
-      iis_application_provider.authenticationinfo = authenticationinfo
-      iis_application_provider.update
+      expect {
+        iis_application_provider.authenticationinfo = authenticationinfo
+        iis_application_provider.update
+      }.not_to raise_error
     end
   end
 
   describe 'updating enabledprotocols' do
     let(:params) do
       {
-        title: 'foo\bar'
+        title: 'foo\bar',
       }
     end
 
@@ -146,14 +148,16 @@ describe 'iis_application provider' do
       cmdtext = "$webApplication = Get-WebApplication -Site 'foo' -Name 'bar'"
       cmdtext += "\n"
       cmdtext += "Set-WebConfigurationProperty -Filter 'system.applicationHost/sites/site[@name=\"foo\"]/application[@path=\"/bar\"]' -Name enabledProtocols -Value 'http,https,net.tcp'"
-      allow(Puppet::Provider::IIS_PowerShell).to receive(:run) \
-        .with(cmdtext) \
+      allow(Puppet::Provider::IIS_PowerShell).to receive(:run)
+        .with(cmdtext)
         .and_return(exitcode: 0)
     end
 
     it 'updates value' do
-      iis_application_provider.enabledprotocols = 'http,https,net.tcp'
-      iis_application_provider.update
+      expect {
+        iis_application_provider.enabledprotocols = 'http,https,net.tcp'
+        iis_application_provider.update
+      }.not_to raise_error
     end
   end
 end

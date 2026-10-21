@@ -91,7 +91,7 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     end
   end
 
-  context 'parameter :physicalpath' do
+  context 'with parameter :physicalpath' do
     it 'does not allow nil' do
       expect {
         resource[:physicalpath] = nil
@@ -105,18 +105,20 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     end
 
     it 'accepts forward-slash and backslash paths' do
-      resource[:physicalpath] = 'c:/directory/subdirectory'
-      resource[:physicalpath] = 'c:\\directory\\subdirectory'
+      expect {
+        resource[:physicalpath] = 'c:/directory/subdirectory'
+        resource[:physicalpath] = 'c:\\directory\\subdirectory'
+      }.not_to raise_error
     end
   end
 
-  context 'parameter :user_name' do
+  context 'with parameter :user_name' do
     it 'requires it to be a string' do
       expect(type_class).to require_string_for(:user_name)
     end
   end
 
-  context 'parameter :password' do
+  context 'with parameter :password' do
     it 'requires it to be a string' do
       expect(type_class).to require_string_for(:password)
     end

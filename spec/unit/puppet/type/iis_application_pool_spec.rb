@@ -71,7 +71,7 @@ describe 'iis_application_pool' do
 
   let :minimal_config do
     {
-      name: 'Some App Pool'
+      name: 'Some App Pool',
     }
   end
 
@@ -197,7 +197,7 @@ describe 'iis_application_pool' do
     end
   end
 
-  context 'parameter :name' do
+  context 'with parameter :name' do
     it 'does not allow nil' do
       expect {
         pool = type_class.new(
@@ -239,7 +239,7 @@ describe 'iis_application_pool' do
     end
   end
 
-  context 'parameter :restart_schedule' do
+  context 'with parameter :restart_schedule' do
     it 'accepts a formatted time' do
       pool = type_class.new(
         name: 'foo',
@@ -260,7 +260,7 @@ describe 'iis_application_pool' do
       expect {
         config = {
           name: 'foo',
-          restart_schedule: 'bottle'
+          restart_schedule: 'bottle',
         }
         type_class.new(config)
       }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})
@@ -270,7 +270,7 @@ describe 'iis_application_pool' do
       expect {
         config = {
           name: 'foo',
-          restart_schedule: '00:00:45'
+          restart_schedule: '00:00:45',
         }
         type_class.new(config)
       }.to raise_error(Puppet::Error, %r{Parameter restart_schedule failed})

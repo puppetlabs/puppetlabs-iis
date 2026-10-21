@@ -120,7 +120,7 @@ describe 'iis_application_pool', :suite_a do
     end
 
     context 'with invalid' do
-      context 'state parameter defined' do
+      context 'with state parameter defined' do
         pool_name = SecureRandom.hex(10).to_s
         manifest  = <<-HERE
         iis_application_pool { '#{pool_name}':
@@ -140,7 +140,7 @@ describe 'iis_application_pool', :suite_a do
         end
       end
 
-      context 'managed_pipeline_mode parameter defined' do
+      context 'with managed_pipeline_mode parameter defined' do
         pool_name = SecureRandom.hex(10).to_s
         manifest  = <<-HERE
         iis_application_pool { '#{pool_name}':

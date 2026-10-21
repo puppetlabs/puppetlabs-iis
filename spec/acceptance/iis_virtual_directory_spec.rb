@@ -115,11 +115,13 @@ describe 'iis_virtual_directory', :suite_b do
       end
 
       it 'remove virt dir name' do
-        remove_vdir(virt_dir_name, site_name)
+        expect {
+          remove_vdir(virt_dir_name, site_name)
+        }.not_to raise_error
       end
     end
 
-    context 'can remove virtual directory' do
+    context 'when removing a virtual directory' do
       virt_dir_name = SecureRandom.hex(10).to_s
       before(:all) do
         create_path('c:/foo')
@@ -143,8 +145,8 @@ describe 'iis_virtual_directory', :suite_b do
       end
     end
 
-    context 'name allows slashes' do
-      context 'simple case' do
+    context 'when the name contains slashes' do
+      context 'with a simple name' do
         virt_dir_name = SecureRandom.hex(10).to_s
         before(:all) do
           create_path('c:\inetpub\test_site')
@@ -175,7 +177,7 @@ describe 'iis_virtual_directory', :suite_b do
     end
 
     context 'with invalid' do
-      context 'physicalpath parameter defined' do
+      context 'with physicalpath parameter defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
         manifest = <<-HERE
         iis_virtual_directory { '#{virt_dir_name}':
@@ -195,7 +197,7 @@ describe 'iis_virtual_directory', :suite_b do
         end
       end
 
-      context 'physicalpath parameter not defined' do
+      context 'without physicalpath parameter defined' do
         virt_dir_name = SecureRandom.hex(10).to_s
         manifest = <<-HERE
         iis_virtual_directory { '#{virt_dir_name}':
@@ -242,7 +244,9 @@ describe 'iis_virtual_directory', :suite_b do
       end
 
       it 'remove virt dir name' do
-        remove_vdir(virt_dir_name, site_name)
+        expect {
+          remove_vdir(virt_dir_name, site_name)
+        }.not_to raise_error
       end
     end
   end

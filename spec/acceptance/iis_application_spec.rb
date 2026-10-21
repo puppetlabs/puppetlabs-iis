@@ -397,7 +397,7 @@ describe 'iis_application', :suite_a do
     end
   end
 
-  context 'physicalpath is not set' do
+  context 'when physicalpath is not set' do
     site_name = SecureRandom.hex(10).to_s
     app_name = SecureRandom.hex(10).to_s
     before(:all) do

@@ -15,7 +15,7 @@ class PuppetX::PuppetLabs::IIS::Property::AuthenticationInfo < Puppet::Property
   end
   validate do |value|
     raise "#{name} should be a Hash" unless value.is_a? ::Hash
-    unless (value.keys & valid_schemas) == value.keys
+    unless (value.keys - valid_schemas).empty?
       raise('All schemas must specify any of the following: anonymous, basic, clientCertificateMapping, digest, iisClientCertificateMapping, windows, or forms')
     end
   end
