@@ -3,6 +3,46 @@
   delete: true
 ".rubocop.yml":
   include_todos: true
+  cop_overrides:
+    # The acceptance helpers in spec/support/utilities/utility_helper.rb define
+    # `it` blocks, so tell rubocop-rspec they are example macros.
+    RSpec:
+      Language:
+        Examples:
+          Regular:
+          - iis_idempotent_apply
+          - apply_failing_manifest
+          - puppet_resource_run
+    # puppet_resource_should_show wraps `expect`, and litmus apply_manifest
+    # raises on failure when called with catch_failures, catch_changes or
+    # expect_failures (all call sites do).
+    RSpec/NoExpectationExample:
+      AllowedPatterns:
+      - "^expect_"
+      - "^assert_"
+      - "^puppet_resource_should_show$"
+      - "^apply_manifest$"
+    # Puppet::Property#insync?(is) is Puppet's own signature; `is` joins
+    # RuboCop's default AllowedNames (the list replaces the default, so it
+    # is repeated in full).
+    Naming/MethodParameterName:
+      AllowedNames:
+      - as
+      - at
+      - by
+      - cc
+      - db
+      - id
+      - if
+      - in
+      - io
+      - ip
+      - is
+      - of
+      - "on"
+      - os
+      - pp
+      - to
 appveyor.yml:
   delete: true
 
