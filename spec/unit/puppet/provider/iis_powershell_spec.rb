@@ -29,7 +29,8 @@ describe 'test' do
         end
 
         it 'does not modify the command' do
-          expect(ps_manager).to receive(:execute).with(command).and_return(execute_response)
+          allow(ps_manager).to receive(:execute).with(command).and_return(execute_response)
+          expect(ps_manager).to receive(:execute).with(command)
           iis_powershell_type.run(command)
         end
       end

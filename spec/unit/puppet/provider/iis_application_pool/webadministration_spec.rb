@@ -8,7 +8,7 @@ describe provider_class do
   let(:facts) do
     {
       iis_version: '8.0',
-      operatingsystem: 'Windows'
+      operatingsystem: 'Windows',
     }
   end
 
@@ -44,9 +44,11 @@ describe provider_class do
     let(:provider) { described_class.new(resource) }
 
     it 'passes the password directly in the PowerShell command and flags it sensitive for logging' do
-      expect(described_class).to receive(:run)
+      allow(described_class).to receive(:run)
         .with(a_string_including('processModel.password', 'Sup3r$ecret!'), sensitive_values: array_including('Sup3r$ecret!'))
         .and_return({ exitcode: 0, errormessage: '' })
+      expect(described_class).to receive(:run)
+        .with(a_string_including('processModel.password', 'Sup3r$ecret!'), sensitive_values: array_including('Sup3r$ecret!'))
 
       provider.update
     end
@@ -106,9 +108,11 @@ describe provider_class do
     end
 
     it 'still executes the command verbatim, including the secret' do
-      expect(ps_manager).to receive(:execute)
+      allow(ps_manager).to receive(:execute)
         .with(a_string_including('Sup3r$ecret!'))
         .and_return({ stdout: nil, stderr: nil, errormessage: nil, exitcode: 0 })
+      expect(ps_manager).to receive(:execute)
+        .with(a_string_including('Sup3r$ecret!'))
 
       described_class.run(
         "Set-ItemProperty -Name 'processModel.password' -Value 'Sup3r$ecret!'",

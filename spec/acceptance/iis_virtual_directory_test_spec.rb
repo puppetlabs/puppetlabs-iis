@@ -102,7 +102,9 @@ describe 'iis_virtual_directory', :suite_b do
       end
 
       it 'remove virt dir name' do
-        remove_vdir(virt_dir_name, site_name)
+        expect {
+          remove_vdir(virt_dir_name, site_name)
+        }.not_to raise_error
       end
     end
 

@@ -42,7 +42,7 @@ describe 'iis_site', :suite_b do
     end
 
     context 'with all parameters specified' do
-      context 'using W3C log format, logflags and logtruncatesize' do
+      context 'with W3C log format, logflags and logtruncatesize' do
         site_name = SecureRandom.hex(10).to_s
         before(:all) do
           create_path('C:\inetpub\new')
@@ -138,7 +138,7 @@ describe 'iis_site', :suite_b do
         end
       end
 
-      context 'using preloadenabled', if: target_host_facts['kernelmajversion'] != '6.1' do
+      context 'with preloadenabled', if: target_host_facts['kernelmajversion'] != '6.1' do
         before(:all) do
           create_path('C:\inetpub\new')
         end
@@ -172,7 +172,7 @@ describe 'iis_site', :suite_b do
         end
       end
 
-      context 'using non-W3C log format and logtperiod' do
+      context 'with non-W3C log format and logtperiod' do
         before(:all) do
           create_path('C:\inetpub\tmp')
         end
@@ -215,7 +215,7 @@ describe 'iis_site', :suite_b do
         end
       end
 
-      context 'setting authenticationinfo' do
+      context 'when setting authenticationinfo' do
         site_name = SecureRandom.hex(10)
         before(:all) do
           create_path('C:\inetpub\tmp')
@@ -240,8 +240,8 @@ describe 'iis_site', :suite_b do
         end
       end
 
-      context 'can change site state from stopped to started' do
-        context 'stopped to started' do
+      context 'when changing site state' do
+        context 'when going from stopped to started' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\tmp')
@@ -274,7 +274,7 @@ describe 'iis_site', :suite_b do
           end
         end
 
-        context 'started to stopped' do
+        context 'when going from started to stopped' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\tmp')
@@ -307,7 +307,7 @@ describe 'iis_site', :suite_b do
           end
         end
 
-        context 'started to absent' do
+        context 'when going from started to absent' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_site(site_name, true)
@@ -341,7 +341,7 @@ describe 'iis_site', :suite_b do
           remove_all_sites
         end
 
-        context 'logformat' do
+        context 'with logformat' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\wwwroot')
@@ -359,7 +359,7 @@ describe 'iis_site', :suite_b do
           apply_failing_manifest('apply failed manifest', manifest)
         end
 
-        context 'logperiod' do
+        context 'with logperiod' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\wwwroot')
@@ -378,8 +378,8 @@ describe 'iis_site', :suite_b do
         end
       end
 
-      context 'can changed previously set value' do
-        context 'physicalpath' do
+      context 'when changing a previously set value' do
+        context 'with physicalpath' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\new')
@@ -405,7 +405,7 @@ describe 'iis_site', :suite_b do
           end
         end
 
-        context 'applicationpool' do
+        context 'with applicationpool' do
           site_name = SecureRandom.hex(10).to_s
           pool_name = SecureRandom.hex(10).to_s
           before(:all) do
@@ -430,7 +430,7 @@ describe 'iis_site', :suite_b do
           end
         end
 
-        context 'bindings' do
+        context 'with bindings' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\new')
@@ -476,7 +476,7 @@ describe 'iis_site', :suite_b do
           end
         end
 
-        context 'enabledprotocols' do
+        context 'with enabledprotocols' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\new')
@@ -511,7 +511,7 @@ describe 'iis_site', :suite_b do
           end
         end
 
-        context 'logflags' do
+        context 'with logflags' do
           site_name = SecureRandom.hex(10).to_s
           before(:all) do
             create_path('C:\inetpub\new')

@@ -23,7 +23,7 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     end
   end
 
-  context 'parameter :sitename' do
+  context 'with parameter :sitename' do
     it 'does not allow nil' do
       expect {
         resource[:sitename] = nil
@@ -37,7 +37,7 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     end
   end
 
-  context 'parameter :application' do
+  context 'with parameter :application' do
     it 'does not allow nil' do
       expect {
         resource[:application] = nil
@@ -51,7 +51,7 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     end
   end
 
-  context 'parameter :physicalpath' do
+  context 'with parameter :physicalpath' do
     it 'does not allow nil' do
       expect {
         resource[:physicalpath] = nil
@@ -65,8 +65,10 @@ describe Puppet::Type.type(:iis_virtual_directory) do
     end
 
     it 'accepts forward and back slashes' do
-      resource[:physicalpath] = 'c:/thisstring-location/value/somefile.txt'
-      resource[:physicalpath] = 'c:\\thisstring-location\\value\\somefile.txt'
+      expect {
+        resource[:physicalpath] = 'c:/thisstring-location/value/somefile.txt'
+        resource[:physicalpath] = 'c:\\thisstring-location\\value\\somefile.txt'
+      }.not_to raise_error
     end
   end
 end

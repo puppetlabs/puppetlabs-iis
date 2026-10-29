@@ -213,7 +213,7 @@ Puppet::Type.type(:iis_site).provide(:webadministration, parent: Puppet::Provide
     return unless @resource[:bindings] && ['http', 'https'].include?(@resource['bindings'].first['protocol'])
 
     binding = @resource[:bindings].first
-    matches = binding['bindinginformation'].match(%r{^(?<ip_dns>.+):(?<port>\d*):(?<host_header>(.*))})
+    matches = binding['bindinginformation'].match(%r{^(?<ip_dns>.+):(?<port>\d*):(?<host_header>.*)})
     [matches[:ip_dns], matches[:port], matches[:host_header]]
   end
 

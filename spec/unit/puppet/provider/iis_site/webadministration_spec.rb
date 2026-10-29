@@ -12,7 +12,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
     result
   end
 
-  context 'verify provider' do
+  context 'when verifying the provider' do
     it { is_expected.to be_an_instance_of Puppet::Type::Iis_site::ProviderWebadministration }
     it { is_expected.to respond_to(:create)  }
     it { is_expected.to respond_to(:exists?) }
@@ -20,7 +20,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
     it { is_expected.to respond_to(:start)   }
     it { is_expected.to respond_to(:stop)    }
 
-    context 'verify ssl? function' do
+    context 'when calling ssl?' do
       it { is_expected.to respond_to(:ssl?) }
 
       it 'returns true protocol == https' do
@@ -29,7 +29,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
           'bindinginformation' => '*:443:',
           'sslflags' => 0,
           'certificatehash' => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
-          'certificatestorename' => 'My'
+          'certificatestorename' => 'My',
         }
         expect(webadministration.ssl?).to be true
       end
@@ -40,11 +40,11 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
           'bindinginformation' => '*:443:',
           'sslflags' => 0,
           'certificatehash' => 'D69B5C3315FF0DA09AF640784622CF20DC51F03E',
-          'certificatestorename' => 'My'
+          'certificatestorename' => 'My',
         },
                                {
                                  'protocol' => 'http',
-                                 'bindinginformation' => '*:8080:'
+                                 'bindinginformation' => '*:8080:',
                                }]
         expect(webadministration.ssl?).to be true
       end
@@ -52,14 +52,14 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
       it 'returns false if no https bindings are specified' do
         resource[:bindings] = {
           'protocol' => 'http',
-          'bindinginformation' => '*:8080:'
+          'bindinginformation' => '*:8080:',
         }
         expect(webadministration.ssl?).to be false
       end
     end
   end
 
-  context 'updating authenticationinfo for IIS_Site' do
+  context 'when updating authenticationinfo for IIS_Site' do
     let(:iis_site_resource) do
       result = Puppet::Type.type(:iis_site).new(
         name: 'foo',
@@ -74,7 +74,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
           'digest' => false,
           'iisClientCertificateMapping' => false,
           'windows' => false,
-          'forms' => true
+          'forms' => true,
         },
       )
       result.provider = webadministration
@@ -88,7 +88,7 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
         'digest' => false,
         'iisClientCertificateMapping' => false,
         'windows' => false,
-        'forms' => true
+        'forms' => true,
       }
     end
 
@@ -122,8 +122,10 @@ describe Puppet::Type.type(:iis_site).provider(:webadministration) do
     end
 
     it 'updates value' do
-      webadministration.authenticationinfo = authenticationinfo
-      webadministration.update
+      expect {
+        webadministration.authenticationinfo = authenticationinfo
+        webadministration.update
+      }.not_to raise_error
     end
   end
 end

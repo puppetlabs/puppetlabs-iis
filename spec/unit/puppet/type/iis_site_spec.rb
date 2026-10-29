@@ -42,7 +42,7 @@ describe Puppet::Type.type(:iis_site) do
   end
 
   # TODO: fix tests below
-  context 'parameter :physicalpath' do
+  context 'with parameter :physicalpath' do
     it 'does not allow nil' do
       expect {
         resource[:physicalpath] = nil
@@ -56,13 +56,15 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts any string value' do
-      resource[:physicalpath] = 'c:/thisstring-location/value/somefile.txt'
-      resource[:physicalpath] = 'c:\\thisstring-location\\value\\somefile.txt'
-      resource[:physicalpath] = '\\\\server.fqdn\\thisstring-location\\value\\somefile.txt'
+      expect {
+        resource[:physicalpath] = 'c:/thisstring-location/value/somefile.txt'
+        resource[:physicalpath] = 'c:\\thisstring-location\\value\\somefile.txt'
+        resource[:physicalpath] = '\\\\server.fqdn\\thisstring-location\\value\\somefile.txt'
+      }.not_to raise_error
     end
   end
 
-  context 'property: authenticationinfo' do
+  context 'with property :authenticationinfo' do
     it 'requires a hash or array of hashes' do
       expect {
         resource[:authenticationinfo] = 'hi'
@@ -79,14 +81,16 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'allows valid syntax' do
-      resource[:authenticationinfo] = {
-        'basic' => true,
-        'anonymous' => false
-      }
+      expect {
+        resource[:authenticationinfo] = {
+          'basic' => true,
+          'anonymous' => false,
+        }
+      }.not_to raise_error
     end
   end
 
-  context 'property :bindings' do
+  context 'with property :bindings' do
     it 'requires a hash or array of hashes' do
       expect {
         resource[:bindings] = 'hi'
@@ -109,36 +113,42 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'requires bindinginformation to be ip:port:hostname' do
-      resource[:bindings] = {
-        'protocol' => 'http',
-        'bindinginformation' => '127.0.0.1:80:hostname'
-      }
+      expect {
+        resource[:bindings] = {
+          'protocol' => 'http',
+          'bindinginformation' => '127.0.0.1:80:hostname',
+        }
+      }.not_to raise_error
     end
 
     it 'requires number port' do
       expect {
         resource[:bindings] = {
           'protocol' => 'http',
-          'bindinginformation' => '*:a:'
+          'bindinginformation' => '*:a:',
         }
       }.to raise_error(Puppet::Error, %r{65535})
     end
 
     it 'allows * for ip' do
-      resource[:bindings] = {
-        'protocol' => 'http',
-        'bindinginformation' => '*:80:hostname'
-      }
+      expect {
+        resource[:bindings] = {
+          'protocol' => 'http',
+          'bindinginformation' => '*:80:hostname',
+        }
+      }.not_to raise_error
     end
 
     it 'allows empty hostname' do
-      resource[:bindings] = {
-        'protocol' => 'http',
-        'bindinginformation' => '*:80:'
-      }
+      expect {
+        resource[:bindings] = {
+          'protocol' => 'http',
+          'bindinginformation' => '*:80:',
+        }
+      }.not_to raise_error
     end
 
-    context 'order independent comparison' do
+    context 'when comparing independent of order' do
       let(:bindings_property) { resource.property(:bindings) }
 
       before(:each) do
@@ -173,7 +183,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'property :limits' do
+  context 'with property :limits' do
     it 'requires a hash' do
       expect {
         resource[:limits] = 'hi'
@@ -202,7 +212,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :applicationpool' do
+  context 'with parameter :applicationpool' do
     it 'does not allow nil' do
       expect {
         resource[:applicationpool] = nil
@@ -216,12 +226,14 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts any string value' do
-      resource[:applicationpool] = 'value'
-      resource[:applicationpool] = 'thisstring-location'
+      expect {
+        resource[:applicationpool] = 'value'
+        resource[:applicationpool] = 'thisstring-location'
+      }.not_to raise_error
     end
   end
 
-  context 'parameter :enabledprotocols' do
+  context 'with parameter :enabledprotocols' do
     it 'does not allow nil' do
       expect {
         resource[:enabledprotocols] = nil
@@ -235,13 +247,15 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts valid string value' do
-      resource[:enabledprotocols] = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname']
-      resource[:enabledprotocols] = 'http'
-      resource[:enabledprotocols] = 'https'
-      resource[:enabledprotocols] = 'net.pipe'
-      resource[:enabledprotocols] = 'net.tcp'
-      resource[:enabledprotocols] = 'net.msmq'
-      resource[:enabledprotocols] = 'msmq.formatname'
+      expect {
+        resource[:enabledprotocols] = ['http', 'https', 'net.pipe', 'net.tcp', 'net.msmq', 'msmq.formatname']
+        resource[:enabledprotocols] = 'http'
+        resource[:enabledprotocols] = 'https'
+        resource[:enabledprotocols] = 'net.pipe'
+        resource[:enabledprotocols] = 'net.tcp'
+        resource[:enabledprotocols] = 'net.msmq'
+        resource[:enabledprotocols] = 'msmq.formatname'
+      }.not_to raise_error
     end
 
     it 'does not accept invalid string value' do
@@ -251,13 +265,17 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :serviceautostart' do
+  context 'with parameter :serviceautostart' do
     it 'accepts :true' do
-      resource[:serviceautostart] = :true
+      expect {
+        resource[:serviceautostart] = :true
+      }.not_to raise_error
     end
 
     it 'accepts :false' do
-      resource[:serviceautostart] = :false
+      expect {
+        resource[:serviceautostart] = :false
+      }.not_to raise_error
     end
 
     it 'rejects non-boolean values' do
@@ -285,7 +303,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :serviceautostartprovidername' do
+  context 'with parameter :serviceautostartprovidername' do
     it 'does not allow nil' do
       expect {
         resource[:serviceautostartprovidername] = nil
@@ -299,12 +317,14 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts any string value' do
-      resource[:serviceautostartprovidername] = 'value'
-      resource[:serviceautostartprovidername] = 'thisstring-location'
+      expect {
+        resource[:serviceautostartprovidername] = 'value'
+        resource[:serviceautostartprovidername] = 'thisstring-location'
+      }.not_to raise_error
     end
   end
 
-  context 'parameter :serviceautostartprovidertype' do
+  context 'with parameter :serviceautostartprovidertype' do
     it 'does not allow nil' do
       expect {
         resource[:serviceautostartprovidertype] = nil
@@ -318,18 +338,24 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts any string value' do
-      resource[:serviceautostartprovidertype] = 'value'
-      resource[:serviceautostartprovidertype] = 'thisstring-location'
+      expect {
+        resource[:serviceautostartprovidertype] = 'value'
+        resource[:serviceautostartprovidertype] = 'thisstring-location'
+      }.not_to raise_error
     end
   end
 
-  context 'parameter :preloadenabled' do
+  context 'with parameter :preloadenabled' do
     it 'accepts :true' do
-      resource[:preloadenabled] = :true
+      expect {
+        resource[:preloadenabled] = :true
+      }.not_to raise_error
     end
 
     it 'accepts :false' do
-      resource[:preloadenabled] = :false
+      expect {
+        resource[:preloadenabled] = :false
+      }.not_to raise_error
     end
 
     it 'rejects non-boolean values' do
@@ -357,7 +383,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :defaultpage' do
+  context 'with parameter :defaultpage' do
     it 'does not allow nil' do
       expect {
         resource[:defaultpage] = nil
@@ -371,12 +397,14 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts valid string value and string array' do
-      resource[:defaultpage] = ['wakka', 'foo']
-      resource[:defaultpage] = 'default.htm'
+      expect {
+        resource[:defaultpage] = ['wakka', 'foo']
+        resource[:defaultpage] = 'default.htm'
+      }.not_to raise_error
     end
   end
 
-  context 'parameter :logformat' do
+  context 'with parameter :logformat' do
     it 'does not allow nil' do
       expect {
         resource[:logformat] = nil
@@ -390,10 +418,12 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts valid string value' do
-      resource[:logformat] = ['W3C', 'IIS']
-      resource[:logformat] = 'W3C'
-      resource[:logformat] = 'IIS'
-      resource[:logformat] = 'NCSA'
+      expect {
+        resource[:logformat] = ['W3C', 'IIS']
+        resource[:logformat] = 'W3C'
+        resource[:logformat] = 'IIS'
+        resource[:logformat] = 'NCSA'
+      }.not_to raise_error
     end
 
     it 'does not accept invalid string value' do
@@ -403,7 +433,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :logpath' do
+  context 'with parameter :logpath' do
     it 'does not allow nil' do
       expect {
         resource[:logpath] = nil
@@ -417,12 +447,14 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts any string value' do
-      resource[:logpath] = 'c:/thisstring-location/value/somefile.txt'
-      resource[:logpath] = 'c:\\thisstring-location\\value\\somefile.txt'
+      expect {
+        resource[:logpath] = 'c:/thisstring-location/value/somefile.txt'
+        resource[:logpath] = 'c:\\thisstring-location\\value\\somefile.txt'
+      }.not_to raise_error
     end
   end
 
-  context 'parameter :logperiod' do
+  context 'with parameter :logperiod' do
     it 'does not allow nil' do
       expect {
         resource[:logperiod] = nil
@@ -436,12 +468,14 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts valid string value' do
-      resource[:logperiod] = ['Hourly', 'Daily']
-      resource[:logperiod] = 'Hourly'
-      resource[:logperiod] = 'Daily'
-      resource[:logperiod] = 'Weekly'
-      resource[:logperiod] = 'Monthly'
-      resource[:logperiod] = 'MaxSize'
+      expect {
+        resource[:logperiod] = ['Hourly', 'Daily']
+        resource[:logperiod] = 'Hourly'
+        resource[:logperiod] = 'Daily'
+        resource[:logperiod] = 'Weekly'
+        resource[:logperiod] = 'Monthly'
+        resource[:logperiod] = 'MaxSize'
+      }.not_to raise_error
     end
 
     it 'does not accept invalid string value' do
@@ -451,7 +485,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :logtruncatesize' do
+  context 'with parameter :logtruncatesize' do
     it 'does not allow nil' do
       expect {
         resource[:logtruncatesize] = nil
@@ -474,8 +508,10 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts valid int value' do
-      resource[:logtruncatesize] = 1_048_576
-      resource[:logtruncatesize] = 4_294_967_295
+      expect {
+        resource[:logtruncatesize] = 1_048_576
+        resource[:logtruncatesize] = 4_294_967_295
+      }.not_to raise_error
     end
 
     it 'does not accept invalid string value' do
@@ -485,13 +521,17 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :loglocaltimerollover' do
+  context 'with parameter :loglocaltimerollover' do
     it 'accepts :true' do
-      resource[:loglocaltimerollover] = :true
+      expect {
+        resource[:loglocaltimerollover] = :true
+      }.not_to raise_error
     end
 
     it 'accepts :false' do
-      resource[:loglocaltimerollover] = :false
+      expect {
+        resource[:loglocaltimerollover] = :false
+      }.not_to raise_error
     end
 
     it 'rejects non-boolean values' do
@@ -519,7 +559,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'parameter :logflags' do
+  context 'with parameter :logflags' do
     it 'does not allow nil' do
       expect {
         resource[:logflags] = nil
@@ -537,10 +577,12 @@ describe Puppet::Type.type(:iis_site) do
     end
 
     it 'accepts valid string value' do
-      resource[:logflags] = ['Date', 'Time']
-      resource[:logflags] = 'Date'
-      resource[:logflags] = 'Time'
-      resource[:logflags] = 'ClientIP'
+      expect {
+        resource[:logflags] = ['Date', 'Time']
+        resource[:logflags] = 'Date'
+        resource[:logflags] = 'Time'
+        resource[:logflags] = 'ClientIP'
+      }.not_to raise_error
     end
 
     it 'does not accept invalid string value' do
@@ -554,7 +596,7 @@ describe Puppet::Type.type(:iis_site) do
     end
   end
 
-  context 'mulitple parameter validation' do
+  context 'with multiple parameters' do
     it 'does not allow logperiod and logtruncatesize to be specified at same time' do
       expect {
         resource[:logperiod] = 'Daily'
